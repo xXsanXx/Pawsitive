@@ -17,8 +17,8 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public Account login(String username, String password) {
-        return accountRepository.findByUsername(username)
+    public Account login(String email, String password) {
+        return accountRepository.findByEmail(email)
                 .filter(a -> passwordEncoder.matches(password, a.getPasswordHash()))
                 .orElse(null);
     }

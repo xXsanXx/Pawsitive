@@ -37,20 +37,25 @@ public class AccountController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String username = body.get("username");
+        String email = body.get("email");
         String password = body.get("password");
 
-        Account account = accountService.login(username, password);
+        Account account = accountService.login(email, password);
 
         if (account != null) {
             String token = jwtUtils.generateToken(
-                    account.getUsername(),
+                    account.getEmail(),
                     account.getRole().name()
             );
-            return ResponseEntity.ok(Map.of("token", token, "role", account.getRole().name()));
-        } else {
-            return ResponseEntity.status(401).body("Неверный логин или пароль");
+            return ResponseEntity.ok(
+                    Map.of(
+                            "token", token,
+                            "role", account.getRole().name()
+                    )
+            );
         }
+        return ResponseEntity.status(401).body("Неверный логин или пароль");
+
     }
 
 
