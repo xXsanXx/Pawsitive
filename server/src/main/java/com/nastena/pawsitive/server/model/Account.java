@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,11 +16,11 @@ public class User {
     private Role role;
 
     public enum Role {
-        OWNER, SHELTER
+        USER, SHELTER
     }
 
-    public User() {}
-    public User(String username, String email, String passwordHash, Role role) {
+    public Account() {}
+    public Account(String username, String email, String passwordHash, Role role) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -62,7 +62,7 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-    
+
 
 
 
