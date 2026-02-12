@@ -1,14 +1,16 @@
-package com.nastena.pawsitive.server.model;
+package com.nastena.pawsitive.server.account;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "accounts")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+
+    @Column(unique = true)
     private String email;
     private String passwordHash;
 
