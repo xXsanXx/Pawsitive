@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.server.account;
 
 import com.nastena.pawsitive.server.security.JwtUtils;
+import com.nastena.pawsitive.server.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,22 +14,27 @@ import java.util.Map;
 @RequestMapping("/api/account")
 public class AccountController {
     private final AccountService accountService;
+    private final UserService userService;
     private final JwtUtils jwtUtils;
 
-    public AccountController(AccountService accountService, JwtUtils jwtUtils) {
+    public AccountController(AccountService accountService, UserService userService, JwtUtils jwtUtils) {
         this.accountService = accountService;
+        this.userService = userService;
         this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
         try {
-            String username = body.get("username");
             String email = body.get("email");
             String password = body.get("password");
             Account.Role role = Account.Role.valueOf(body.get("role"));
 
-            Account newAccount = accountService.register(username, email, password, role);
+            Account newAccount = accountService.register(email, password, role);
+            switch (role) {
+                case USER -> userService.createUser(newAccount);
+            }
+
             return ResponseEntity.ok(newAccount);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Ошибка регистрации: " + e.getMessage());
@@ -55,8 +61,5 @@ public class AccountController {
             );
         }
         return ResponseEntity.status(401).body("Неверный логин или пароль");
-
     }
-
-
 }

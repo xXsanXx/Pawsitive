@@ -8,10 +8,10 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
 
     @Column(unique = true)
     private String email;
+
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
@@ -22,8 +22,7 @@ public class Account {
     }
 
     public Account() {}
-    public Account(String username, String email, String passwordHash, Role role) {
-        this.username = username;
+    public Account(String email, String passwordHash, Role role) {
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
@@ -31,14 +30,6 @@ public class Account {
 
     public Long getId() {
         return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {

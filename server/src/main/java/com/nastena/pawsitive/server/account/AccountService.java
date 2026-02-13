@@ -11,9 +11,9 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Account register(String username, String email, String password, Account.Role role) {
+    public Account register(String email, String password, Account.Role role) {
         String hashed = passwordEncoder.encode(password);
-        Account account = new Account(username, email, hashed, role);
+        Account account = new Account(email, hashed, role);
         return accountRepository.save(account);
     }
 
