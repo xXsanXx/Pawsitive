@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.server.account;
 
 import com.nastena.pawsitive.server.security.JwtUtils;
+import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +16,13 @@ import java.util.Map;
 public class AccountController {
     private final AccountService accountService;
     private final UserService userService;
+    private final ShelterService shelterService;
     private final JwtUtils jwtUtils;
 
-    public AccountController(AccountService accountService, UserService userService, JwtUtils jwtUtils) {
+    public AccountController(AccountService accountService, UserService userService, ShelterService shelterService, JwtUtils jwtUtils) {
         this.accountService = accountService;
         this.userService = userService;
+        this.shelterService = shelterService;
         this.jwtUtils = jwtUtils;
     }
 
@@ -33,6 +36,7 @@ public class AccountController {
             Account newAccount = accountService.register(email, password, role);
             switch (role) {
                 case USER -> userService.createUser(newAccount);
+                case SHELTER -> shelterService.createShelter(newAccount);
             }
 
             return ResponseEntity.ok(newAccount);
