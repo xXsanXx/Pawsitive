@@ -11,18 +11,10 @@ import java.util.List;
 @RestController
 @RequestMapping("api/animals")
 public class AnimalController {
-    private final AnimalServer animalServer;
+    private final AnimalService animalService;
 
-    public AnimalController(AnimalServer animalServer) {
-        this.animalServer = animalServer;
-    }
-
-    @GetMapping
-    public List<AnimalResponseDto> getAll() {
-        return animalServer.getAllAnimals()
-                .stream()
-                .map(AnimalResponseDto::new)
-                .toList();
+    public AnimalController(AnimalService animalService) {
+        this.animalService = animalService;
     }
 
     @GetMapping
@@ -32,7 +24,7 @@ public class AnimalController {
             @RequestParam(required = false) Integer minAge,
             @RequestParam(required = false) Integer maxAge
     ) {
-        return animalServer
+        return animalService
                 .getAnimalWithFilters(type, gender, minAge, maxAge)
                 .stream()
                 .map(AnimalResponseDto::new)

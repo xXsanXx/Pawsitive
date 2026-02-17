@@ -3,8 +3,6 @@ package com.nastena.pawsitive.server.animal;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import jakarta.persistence.*;
 
-import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
-
 @Entity
 @Table(name = "animals")
 public class Animal {

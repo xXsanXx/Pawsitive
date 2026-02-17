@@ -12,6 +12,9 @@ public class AccountService {
     }
 
     public Account register(String email, String password, Account.Role role) {
+        if (accountRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
         String hashed = passwordEncoder.encode(password);
         Account account = new Account(email, hashed, role);
         return accountRepository.save(account);

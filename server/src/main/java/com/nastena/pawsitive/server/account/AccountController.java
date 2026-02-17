@@ -40,7 +40,9 @@ public class AccountController {
                 case SHELTER -> shelterService.createShelter(newAccount);
             }
 
-            return ResponseEntity.ok(newAccount);
+            return ResponseEntity.ok(
+                    new AccountResponseDto(null, role.name())
+            );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Ошибка регистрации: " + e.getMessage());
         }

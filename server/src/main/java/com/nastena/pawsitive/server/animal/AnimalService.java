@@ -3,14 +3,13 @@ package com.nastena.pawsitive.server.animal;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import org.springframework.stereotype.Service;
 
-import javax.lang.model.element.AnnotationMirror;
 import java.util.List;
 
 @Service
-public class AnimalServer {
+public class AnimalService {
     private final AnimalRepository animalRepository;
 
-    public AnimalServer(AnimalRepository animalRepository) {
+    public AnimalService(AnimalRepository animalRepository) {
         this.animalRepository = animalRepository;
     }
 

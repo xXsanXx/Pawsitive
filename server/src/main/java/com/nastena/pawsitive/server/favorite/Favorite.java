@@ -43,4 +43,12 @@ public class Favorite {
     public Animal getAnimal() {
         return animal;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
+    }
 }

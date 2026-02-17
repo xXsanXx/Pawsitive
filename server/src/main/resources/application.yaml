@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: server
+
+jwt:
+  secret: my-super-secret-key-123456789

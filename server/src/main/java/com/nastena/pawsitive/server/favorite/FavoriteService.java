@@ -1,7 +1,9 @@
 package com.nastena.pawsitive.server.favorite;
 
 import com.nastena.pawsitive.server.animal.Animal;
+import com.nastena.pawsitive.server.animal.AnimalRepository;
 import com.nastena.pawsitive.server.user.User;
+import com.nastena.pawsitive.server.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class FavoriteService {
         if (favoriteRepository.existsByUserAndAnimal(user, animal)) {
             return; // уже в избранном — ничего не делаем
         }
+        Favorite favorite = new Favorite(user, animal);
         favoriteRepository.save(new Favorite(user, animal));
     }
 
