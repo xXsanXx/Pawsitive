@@ -3,6 +3,7 @@ package com.nastena.pawsitive.server.animal;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import org.springframework.stereotype.Service;
 
+import javax.lang.model.element.AnnotationMirror;
 import java.util.List;
 
 @Service
@@ -24,5 +25,14 @@ public class AnimalServer {
 
     public List<Animal> getAllAnimals() {
         return animalRepository.findAll();
+    }
+
+    public List<Animal> getAnimalWithFilters(
+            String type,
+            Animal.Gender gender,
+            Integer minAge,
+            Integer maxAge
+    ) {
+        return animalRepository.findWithFilters(type, gender, minAge, maxAge);
     }
 }
