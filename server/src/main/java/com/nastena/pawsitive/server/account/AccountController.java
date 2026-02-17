@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.account;
 
+import com.nastena.pawsitive.server.account.dto.AccountResponseDto;
 import com.nastena.pawsitive.server.security.JwtUtils;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.UserService;
@@ -58,11 +59,9 @@ public class AccountController {
                     account.getRole().name()
             );
             return ResponseEntity.ok(
-                    Map.of(
-                            "token", token,
-                            "role", account.getRole().name()
-                    )
+                    new AccountResponseDto(token, account.getRole().name())
             );
+
         }
         return ResponseEntity.status(401).body("Неверный логин или пароль");
     }

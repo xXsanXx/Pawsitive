@@ -27,6 +27,10 @@ public class Animal {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    public Shelter getShelter() {
+        return shelter;
+    }
+
     public enum Gender {
         MALE, FEMALE
     }

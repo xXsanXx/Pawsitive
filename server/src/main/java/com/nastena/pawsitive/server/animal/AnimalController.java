@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.animal;
 
+import com.nastena.pawsitive.server.animal.dto.AnimalResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,10 @@ public class AnimalController {
     }
 
     @GetMapping
-    public List<Animal> getAll() {
-        return animalServer.getAllAnimals();
+    public List<AnimalResponseDto> getAll() {
+        return animalServer.getAllAnimals()
+                .stream()
+                .map(AnimalResponseDto::new)
+                .toList();
     }
 }
