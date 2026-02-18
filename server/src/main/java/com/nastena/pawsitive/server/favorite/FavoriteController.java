@@ -1,12 +1,9 @@
 package com.nastena.pawsitive.server.favorite;
-import com.nastena.pawsitive.server.account.Account;
-import com.nastena.pawsitive.server.account.AccountRepository;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalRepository;
 import com.nastena.pawsitive.server.favorite.dto.FavoriteResponseDto;
-import com.nastena.pawsitive.server.security.JwtUtils;
+import com.nastena.pawsitive.server.security.UserAuthService;
 import com.nastena.pawsitive.server.user.User;
-import com.nastena.pawsitive.server.user.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,44 +13,50 @@ import java.util.List;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
-    private final JwtUtils jwtUtils;
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
     private final AnimalRepository animalRepository;
+    private final UserAuthService userAuthService;
 
     public FavoriteController(
-            FavoriteService favoriteService, JwtUtils jwtUtils, AccountRepository accountRepository, UserRepository userRepository, AnimalRepository animalRepository
+            FavoriteService favoriteService,
+            AnimalRepository animalRepository,
+            UserAuthService userAuthService
     ) {
         this.favoriteService = favoriteService;
-        this.jwtUtils = jwtUtils;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
         this.animalRepository = animalRepository;
+        this.userAuthService = userAuthService;
     }
 
-    private User getCurrentUser(String authHeader) {
-        String token = authHeader.substring(7);
-        String email = jwtUtils.getEmailFromToken(token);
-
-        Account account = accountRepository.findByEmail(email).orElseThrow();
-        return userRepository.findByAccount(account).orElseThrow();
-    }
-
+    // ❤️ добавить в избранное
     @PostMapping("/{animalId}")
     public void addToFavorites(
-            @RequestParam("Authorization") String autHeader,
+            @RequestHeader("Authorization") String authHeader,
             @PathVariable Long animalId
     ) {
-        User user = getCurrentUser(autHeader);
+        User user = userAuthService.getUserFromToken(authHeader);
         Animal animal = animalRepository.findById(animalId).orElseThrow();
+
         favoriteService.addToFavorites(user, animal);
     }
 
+    // ❌ удалить из избранного
+    @DeleteMapping("/{animalId}")
+    public void removeFromFavorites(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long animalId
+    ) {
+        User user = userAuthService.getUserFromToken(authHeader);
+        Animal animal = animalRepository.findById(animalId).orElseThrow();
+
+        favoriteService.removeFromFavorites(user, animal);
+    }
+
+    // 📋 список избранного
     @GetMapping
     public List<FavoriteResponseDto> getFavorites(
             @RequestHeader("Authorization") String authHeader
     ) {
-        User user = getCurrentUser(authHeader);
+        User user = userAuthService.getUserFromToken(authHeader);
+
         return favoriteService.getUserFavorites(user)
                 .stream()
                 .map(f -> new FavoriteResponseDto(

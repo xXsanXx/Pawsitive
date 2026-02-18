@@ -35,7 +35,8 @@ public class JwtUtils {
     }
 
     public String getEmailFromToken(String token) {
-        return validateToken(token).getSubject();
+        Claims claims = validateToken(token);
+        return claims.getSubject();
     }
 
 
