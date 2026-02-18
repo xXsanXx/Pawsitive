@@ -2,8 +2,8 @@ package com.nastena.pawsitive.server.favorite;
 
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalRepository;
+import com.nastena.pawsitive.server.favorite.dto.FavoriteResponseDto;
 import com.nastena.pawsitive.server.user.User;
-import com.nastena.pawsitive.server.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,25 +12,43 @@ import java.util.List;
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
+    private final AnimalRepository animalRepository;
 
-    public FavoriteService(FavoriteRepository favoriteRepository) {
+    public FavoriteService(
+            FavoriteRepository favoriteRepository,
+            AnimalRepository animalRepository
+    ) {
         this.favoriteRepository = favoriteRepository;
+        this.animalRepository = animalRepository;
     }
 
-    public void addToFavorites(User user, Animal animal) {
+    public void addToFavorites(User user, Long animalId) {
+        Animal animal = animalRepository.findById(animalId).orElseThrow();
+
         if (favoriteRepository.existsByUserAndAnimal(user, animal)) {
-            return; // уже в избранном — ничего не делаем
+            return;
         }
-        Favorite favorite = new Favorite(user, animal);
+
         favoriteRepository.save(new Favorite(user, animal));
     }
 
-    public void removeFromFavorites(User user, Animal animal) {
+    public void removeFromFavorites(User user, Long animalId) {
+        Animal animal = animalRepository.findById(animalId).orElseThrow();
+
         favoriteRepository.findByUserAndAnimal(user, animal)
                 .ifPresent(favoriteRepository::delete);
     }
 
-    public List<Favorite> getUserFavorites(User user) {
-        return favoriteRepository.findAllByUser(user);
+    public List<FavoriteResponseDto> getUserFavoritesDto(User user) {
+        return favoriteRepository.findAllByUser(user)
+                .stream()
+                .map(f -> new FavoriteResponseDto(
+                        f.getAnimal().getId(),
+                        f.getAnimal().getAnimalName(),
+                        f.getAnimal().getType(),
+                        f.getAnimal().getAge(),
+                        f.getAnimal().getShelter().getShelterName()
+                ))
+                .toList();
     }
 }
