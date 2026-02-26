@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.data.api
+package com.nastena.pawsitive.data.remote
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

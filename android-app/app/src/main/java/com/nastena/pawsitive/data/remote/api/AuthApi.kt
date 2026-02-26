@@ -1,7 +1,7 @@
-package com.nastena.pawsitive.data.api
+package com.nastena.pawsitive.data.remote.api
 
-import com.nastena.pawsitive.data.model.LoginRequest
-import com.nastena.pawsitive.data.model.LoginResponse
+import com.nastena.pawsitive.data.remote.dto.LoginRequest
+import com.nastena.pawsitive.data.remote.dto.LoginResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

@@ -1,8 +1,8 @@
 package com.nastena.pawsitive.data.repository
 
-import com.nastena.pawsitive.data.api.AuthApi
-import com.nastena.pawsitive.data.api.RetrofitClient
-import com.nastena.pawsitive.data.model.LoginRequest
+import com.nastena.pawsitive.data.remote.api.AuthApi
+import com.nastena.pawsitive.data.remote.RetrofitClient
+import com.nastena.pawsitive.data.remote.dto.LoginRequest
 
 class AuthRepository {
     private val api = RetrofitClient
