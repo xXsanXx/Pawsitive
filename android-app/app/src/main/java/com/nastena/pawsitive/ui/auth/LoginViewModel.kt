@@ -1,21 +1,37 @@
 package com.nastena.pawsitive.ui.auth
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.nastena.pawsitive.data.datastore.TokenManager
+import com.nastena.pawsitive.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val repository: AuthRepository = AuthRepository(),
+    private val tokenManager: TokenManager
+) : ViewModel() {
+
     private val _state = MutableStateFlow<LoginState>(LoginState.Idle)
     val state: StateFlow<LoginState> = _state.asStateFlow()
 
     fun login(email: String, password: String) {
-        _state.value = LoginState.Loading
+        viewModelScope.launch {
+            _state.value = LoginState.Loading
 
-        if (email == "test@test.com" && password == "1234") {
-            _state.value = LoginState.Success("fake_jwt_token")
-        } else {
-            _state.value = LoginState.Error("Wrong email or password")
+            val result = repository.login(email, password)
+
+            _state.value = result.fold(
+                onSuccess = { token ->
+                    tokenManager.saveToken(token)
+                    LoginState.Success(token)
+                },
+                onFailure = { error ->
+                    LoginState.Error(error.message ?: "Unknown error")
+                }
+            )
         }
     }
 }

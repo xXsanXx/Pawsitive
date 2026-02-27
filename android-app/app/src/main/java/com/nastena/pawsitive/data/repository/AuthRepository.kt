@@ -5,10 +5,24 @@ import com.nastena.pawsitive.data.remote.RetrofitClient
 import com.nastena.pawsitive.data.remote.dto.LoginRequest
 
 class AuthRepository {
-    private val api = RetrofitClient
-        .retrofit
-        .create(AuthApi::class.java)
+    private val api: AuthApi =
+        RetrofitClient.instance.create(AuthApi::class.java)
 
-    suspend fun login(email: String, password: String) =
-        api.login(LoginRequest(email, password))
+    suspend fun login(email: String, password: String): Result<String> {
+        return try {
+            val response = api.login(LoginRequest(email, password))
+            if (response.isSuccessful) {
+                val token = response.body()?.token
+                if (token != null) {
+                    Result.success(token)
+                } else {
+                    Result.failure(Exception("Token is null"))
+                }
+            } else {
+                Result.failure(Exception("Ошибка: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
