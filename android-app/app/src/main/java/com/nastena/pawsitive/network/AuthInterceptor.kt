@@ -9,12 +9,11 @@ class AuthInterceptor(
     private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+
         val originalRequest = chain.request()
 
         val token = runBlocking {
-            tokenManager.token
-                .map { it }
-                .first()
+            tokenManager.getToken()
         }
 
         val newRequest = if (token != null) {

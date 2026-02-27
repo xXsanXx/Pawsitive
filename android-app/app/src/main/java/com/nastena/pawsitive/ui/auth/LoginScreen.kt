@@ -2,14 +2,13 @@ package com.nastena.pawsitive.ui.auth
 
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel
 ) {
     val state by viewModel.state.collectAsState()
 

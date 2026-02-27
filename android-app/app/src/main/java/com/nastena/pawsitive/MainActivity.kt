@@ -3,34 +3,33 @@ package com.nastena.pawsitive
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.nastena.pawsitive.data.datastore.TokenManager
+import com.nastena.pawsitive.data.remote.RetrofitClient
+import com.nastena.pawsitive.data.remote.api.AuthApi
+import com.nastena.pawsitive.data.repository.AuthRepository
 import com.nastena.pawsitive.ui.auth.LoginScreen
-import com.nastena.pawsitive.ui.theme.PawsitiveTheme
+import com.nastena.pawsitive.ui.auth.LoginViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            PawsitiveTheme {
-                LoginScreen()
-            }
-        }
-    }
-}
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-    PawsitiveTheme {
-        LoginScreen()
+        val tokenManager = TokenManager(applicationContext)
+
+        val retrofit = RetrofitClient.create(tokenManager)
+
+        val authApi = retrofit.create(AuthApi::class.java)
+
+        val repository = AuthRepository(authApi)
+
+        setContent {
+            LoginScreen(
+                viewModel = LoginViewModel(
+                    repository = repository,
+                    tokenManager = tokenManager
+                )
+            )
+        }
     }
 }
 
