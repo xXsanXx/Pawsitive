@@ -8,12 +8,20 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    LaunchedEffect(state) {
+        if (state is LoginState.Success) {
+            onLoginSuccess()
+        }
+    }
 
     Column(
         modifier = Modifier

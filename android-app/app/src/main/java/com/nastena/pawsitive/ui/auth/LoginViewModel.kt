@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.ui.auth
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.data.datastore.TokenManager
 import com.nastena.pawsitive.data.repository.AuthRepository
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val repository: AuthRepository = AuthRepository(),
+    private val repository: AuthRepository,
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
