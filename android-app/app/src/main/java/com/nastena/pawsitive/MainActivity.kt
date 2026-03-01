@@ -17,6 +17,9 @@ import com.nastena.pawsitive.ui.auth.home.HomeViewModelFactory
 import com.nastena.pawsitive.ui.auth.login.LoginScreen
 import com.nastena.pawsitive.ui.auth.login.LoginViewModel
 import com.nastena.pawsitive.ui.auth.login.LoginViewModelFactory
+import com.nastena.pawsitive.ui.auth.register.RegisterScreen
+import com.nastena.pawsitive.ui.auth.register.RegisterViewModel
+import com.nastena.pawsitive.ui.auth.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.auth.splash.SplashScreen
 
 class MainActivity : ComponentActivity() {
@@ -78,10 +81,14 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable("register") {
+                    val registerViewModel: RegisterViewModel = viewModel(
+                        factory = RegisterViewModelFactory(repository)
+                    )
                     RegisterScreen(
+                        viewModel = registerViewModel,
                         onRegisterSuccess = {
-                            navController.navigate("home") {
-                                popUpTo("login") { inclusive = true}
+                            navController.navigate("login") {
+                                popUpTo("register") { inclusive = true }
                             }
                         },
                         onBack = {

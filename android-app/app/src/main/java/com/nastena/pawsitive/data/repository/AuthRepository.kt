@@ -1,12 +1,19 @@
 package com.nastena.pawsitive.data.repository
 
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.semantics.Role
 import com.nastena.pawsitive.data.remote.api.AuthApi
 import com.nastena.pawsitive.data.remote.dto.LoginRequest
+import com.nastena.pawsitive.data.remote.dto.RegisterRequest
 
 class AuthRepository(
     private val api: AuthApi
 ) {
-    suspend fun login(email: String, password: String): Result<String> {
+    suspend fun login(
+        email: String,
+        password: String
+    ): Result<String> {
+
         return try {
             val response = api.login(LoginRequest(email, password))
 
@@ -21,6 +28,28 @@ class AuthRepository(
             } else {
                 Result.failure(Exception("Ошибка: ${response.code()}"))
             }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun register(
+        email: String,
+        password: String,
+        role: String
+    ): Result<Unit> {
+
+        return try {
+            val response = api.register(
+                RegisterRequest(email, password, role)
+            )
+
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Ошибка: ${response.code()}"))
+            }
+
         } catch (e: Exception) {
             Result.failure(e)
         }
