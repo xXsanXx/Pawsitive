@@ -11,9 +11,13 @@ import com.nastena.pawsitive.data.datastore.TokenManager
 import com.nastena.pawsitive.data.remote.RetrofitClient
 import com.nastena.pawsitive.data.remote.api.AuthApi
 import com.nastena.pawsitive.data.repository.AuthRepository
-import com.nastena.pawsitive.ui.auth.LoginScreen
-import com.nastena.pawsitive.ui.auth.LoginViewModel
-import com.nastena.pawsitive.ui.auth.LoginViewModelFactory
+import com.nastena.pawsitive.ui.auth.home.HomeScreen
+import com.nastena.pawsitive.ui.auth.home.HomeViewModel
+import com.nastena.pawsitive.ui.auth.home.HomeViewModelFactory
+import com.nastena.pawsitive.ui.auth.login.LoginScreen
+import com.nastena.pawsitive.ui.auth.login.LoginViewModel
+import com.nastena.pawsitive.ui.auth.login.LoginViewModelFactory
+import com.nastena.pawsitive.ui.auth.splash.SplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +39,30 @@ class MainActivity : ComponentActivity() {
                 factory = LoginViewModelFactory(repository, tokenManager)
             )
 
+            val homeViewModel: HomeViewModel = viewModel(
+                factory = HomeViewModelFactory(tokenManager)
+            )
+
             NavHost(
                 navController = navController,
-                startDestination = "login"
+                startDestination = "splash"
             ) {
+                composable("splash") {
+                    SplashScreen(
+                        tokenManager = tokenManager,
+                        onAuthorized = {
+                            navController.navigate("home") {
+                                popUpTo("splash") { inclusive = true }
+                            }
+                        },
+                        onUnauthorized = {
+                            navController.navigate("login") {
+                                popUpTo("splash") { inclusive = true }
+                            }
+                        }
+                    )
+                }
+
                 composable("login") {
                     LoginScreen(
                         viewModel = loginViewModel,
@@ -68,6 +92,7 @@ class MainActivity : ComponentActivity() {
 
                 composable("home") {
                     HomeScreen(
+                        viewModel = homeViewModel,
                         onLogout = {
                             navController.navigate("login") {
                                 popUpTo("home") { inclusive = true}

@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.auth
+package com.nastena.pawsitive.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,4 +14,3 @@ class LoginViewModelFactory(
         return LoginViewModel(repository, tokenManager) as T
     }
 }
-

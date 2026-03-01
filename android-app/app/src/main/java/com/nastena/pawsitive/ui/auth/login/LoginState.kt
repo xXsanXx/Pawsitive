@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.auth
+package com.nastena.pawsitive.ui.auth.login
 
 sealed class LoginState {
     object Idle : LoginState()

@@ -1,10 +1,12 @@
-package com.nastena.pawsitive.ui.auth
+package com.nastena.pawsitive.ui.auth.login
 
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.nastena.pawsitive.ui.auth.login.LoginState
+import com.nastena.pawsitive.ui.auth.login.LoginViewModel
 
 @Composable
 fun LoginScreen(

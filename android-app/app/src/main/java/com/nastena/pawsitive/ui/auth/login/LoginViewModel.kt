@@ -1,7 +1,6 @@
-package com.nastena.pawsitive.ui.auth
+package com.nastena.pawsitive.ui.auth.login
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.data.datastore.TokenManager
 import com.nastena.pawsitive.data.repository.AuthRepository
