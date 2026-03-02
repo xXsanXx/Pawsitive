@@ -47,7 +47,8 @@ fun RegisterScreen(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -56,26 +57,33 @@ fun RegisterScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Простая смена роли (можно потом сделать Dropdown)
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Роль: ")
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Button(onClick = { role = "USER" }) {
+                Button(
+                    onClick = { role = "USER" },
+                    enabled = state !is RegisterState.Loading
+                ) {
                     Text("USER")
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Button(onClick = { role = "SHELTER" }) {
-                    Text("SHELTER")
+                Button(
+                    onClick = { role = "SHELTER" },
+                    enabled = state !is RegisterState.Loading
+                    ) {
+                        Text("SHELTER")
                 }
             }
 
@@ -85,27 +93,45 @@ fun RegisterScreen(
                 onClick = {
                     viewModel.register(email, password, role)
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = state !is RegisterState.Loading
             ) {
                 Text("Register")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            TextButton(onClick = onBack) {
+            TextButton(
+                onClick = onBack,
+                enabled = state !is RegisterState.Loading
+            ) {
                 Text("Back to Login")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            when (state) {
+            when (val currentState = state) {
+
                 is RegisterState.Loading -> {
                     CircularProgressIndicator()
                 }
 
                 is RegisterState.Error -> {
+
+                    val errorMessage = when (val error = currentState.error) {
+                        RegisterError.EmptyFields -> "Заполните все поля"
+                        RegisterError.InvalidEmail -> "Некорректный email"
+                        RegisterError.WeakPassword -> "Пароль минимум 12 символов, должен содержать буквы и цифры"
+                        RegisterError.InvalidRole -> "Выберите роль"
+                        RegisterError.EmailAlreadyExists -> "Email уже существует"
+                        is RegisterError.ServerError -> error.message
+                        RegisterError.Unknown -> "Неизвестная ошибка"
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
-                        text = (state as RegisterState.Error).message,
+                        text = errorMessage,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -113,5 +139,6 @@ fun RegisterScreen(
                 else -> {}
             }
         }
+
     }
 }
