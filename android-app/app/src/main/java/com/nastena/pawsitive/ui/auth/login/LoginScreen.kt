@@ -1,12 +1,11 @@
 package com.nastena.pawsitive.ui.auth.login
 
-import androidx.compose.runtime.*
-import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.nastena.pawsitive.ui.auth.login.LoginState
-import com.nastena.pawsitive.ui.auth.login.LoginViewModel
 
 @Composable
 fun LoginScreen(
@@ -14,6 +13,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
+
     val state by viewModel.state.collectAsState()
 
     var email by remember { mutableStateOf("") }
@@ -25,52 +25,110 @@ fun LoginScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        OutlinedTextField(
-            value = email,
-            onValueChange = {email = it},
-            label = {Text ("Email")}
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = {password = it},
-            label = {Text("Password")}
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {viewModel.login(email, password)}
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Login")
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Вход",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-        when (state) {
-            is LoginState.Loading -> {
-                CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = {
+                    email = it
+                },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                enabled = state !is LoginState.Loading
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                enabled = state !is LoginState.Loading
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    viewModel.login(email, password)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = state !is LoginState.Loading
+            ) {
+                Text("Login")
             }
 
-            is LoginState.Error -> {
-                Text(
-                    text = (state as LoginState.Error).message ?: "Ошибка",
-                    color = MaterialTheme.colorScheme.error
-                )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            TextButton(
+                onClick = onNavigateToRegister,
+                enabled = state !is LoginState.Loading
+            ) {
+                Text("Нет аккаунта? Зарегистрироваться")
             }
 
-            is LoginState.Success -> {
-                Text("Успешный вход!")
-            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-            else -> {}
+            when (val currentState = state) {
+
+                is LoginState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is LoginState.Error -> {
+
+                    val errorMessage = when (val error = currentState.error) {
+
+                        LoginError.EmptyFields ->
+                            "Заполните все поля"
+
+                        LoginError.InvalidEmail ->
+                            "Некорректный email"
+
+                        LoginError.WeakPassword ->
+                            "Пароль минимум 6 символов"
+
+                        LoginError.InvalidCredentials ->
+                            "Неверный email или пароль"
+
+                        LoginError.NetworkError ->
+                            "Нет соединения с интернетом"
+
+                        is LoginError.ServerError ->
+                            error.message
+
+                        LoginError.Unknown ->
+                            "Неизвестная ошибка"
+                    }
+
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                else -> {}
+            }
         }
     }
 }
