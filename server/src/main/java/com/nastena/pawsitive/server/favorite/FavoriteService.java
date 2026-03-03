@@ -44,7 +44,7 @@ public class FavoriteService {
                 .stream()
                 .map(f -> new FavoriteResponseDto(
                         f.getAnimal().getId(),
-                        f.getAnimal().getAnimalName(),
+                        f.getAnimal().getName(),
                         f.getAnimal().getType(),
                         f.getAnimal().getAge(),
                         f.getAnimal().getShelter().getShelterName()

@@ -9,7 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.data.datastore.TokenManager
 import com.nastena.pawsitive.data.remote.RetrofitClient
+import com.nastena.pawsitive.data.remote.api.AnimalApi
 import com.nastena.pawsitive.data.remote.api.AuthApi
+import com.nastena.pawsitive.data.repository.AnimalRepository
 import com.nastena.pawsitive.data.repository.AuthRepository
 import com.nastena.pawsitive.ui.home.HomeViewModel
 import com.nastena.pawsitive.ui.home.HomeViewModelFactory
@@ -21,19 +23,25 @@ import com.nastena.pawsitive.ui.auth.register.RegisterViewModel
 import com.nastena.pawsitive.ui.auth.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.auth.splash.SplashScreen
 import com.nastena.pawsitive.ui.home.ShelterHomeScreen
-import com.nastena.pawsitive.ui.home.UserHomeScreen
+import com.nastena.pawsitive.ui.user.home.UserHomeScreen
+import com.nastena.pawsitive.ui.user.home.UserHomeViewModel
+import com.nastena.pawsitive.ui.user.home.UserHomeViewModelFactory
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         val tokenManager = TokenManager(applicationContext)
 
         val retrofit = RetrofitClient.create(tokenManager)
 
         val authApi = retrofit.create(AuthApi::class.java)
+        val animalApi = retrofit.create(AnimalApi::class.java)
 
         val repository = AuthRepository(authApi, tokenManager)
+        val animalRepository = AnimalRepository(animalApi)
 
         setContent {
 
@@ -87,7 +95,12 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable("user_home") {
+
+                    val viewModel: UserHomeViewModel = viewModel(
+                        factory = UserHomeViewModelFactory(animalRepository)
+                    )
                     UserHomeScreen(
+                        viewModel = viewModel,
                         onLogout = {
                             navController.navigate("login") {
                                 popUpTo("user_home") { inclusive = true}

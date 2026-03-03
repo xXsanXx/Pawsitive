@@ -26,7 +26,7 @@ public class FavoriteResponseDto {
         return animalId;
     }
 
-    public String getAnimalName() {
+    public String getName() {
         return animalName;
     }
 
