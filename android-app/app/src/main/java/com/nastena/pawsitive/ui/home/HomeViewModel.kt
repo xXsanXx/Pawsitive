@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.auth.home
+package com.nastena.pawsitive.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

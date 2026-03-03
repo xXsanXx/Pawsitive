@@ -2,6 +2,7 @@ package com.nastena.pawsitive.ui.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nastena.pawsitive.data.remote.dto.Role
 import com.nastena.pawsitive.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ class RegisterViewModel(
 
     fun register(email: String,
                  password: String,
-                 role: String
+                 role: Role
     ) {
         val trimmedEmail = email.trim()
         val trimmedPassword = password.trim()
@@ -37,7 +38,7 @@ class RegisterViewModel(
             return
         }
 
-        if (role != "USER" && role != "SHELTER") {
+        if (role != Role.USER && role != Role.SHELTER) {
             _state.value = RegisterState.Error(RegisterError.InvalidRole)
             return
         }

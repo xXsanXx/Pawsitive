@@ -5,13 +5,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.nastena.pawsitive.data.datastore.TokenManager
+import com.nastena.pawsitive.data.remote.dto.Role
 
 @Composable
 fun LoginScreen(
+    navController: NavController,
     viewModel: LoginViewModel,
-    onLoginSuccess: () -> Unit,
+    tokenManager: TokenManager,
     onNavigateToRegister: () -> Unit
+
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -21,7 +27,22 @@ fun LoginScreen(
 
     LaunchedEffect(state) {
         if (state is LoginState.Success) {
-            onLoginSuccess()
+
+            val role = tokenManager.getRole()
+
+            when (role) {
+                Role.USER -> {
+                    navController.navigate("user_home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+                Role.SHELTER -> {
+                    navController.navigate("shelter_home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+                null -> {}
+            }
         }
     }
 
@@ -50,7 +71,7 @@ fun LoginScreen(
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = state !is LoginState.Loading
+
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -63,7 +84,7 @@ fun LoginScreen(
                 label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = state !is LoginState.Loading
+
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -73,7 +94,6 @@ fun LoginScreen(
                     viewModel.login(email, password)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = state !is LoginState.Loading
             ) {
                 Text("Login")
             }
@@ -82,7 +102,6 @@ fun LoginScreen(
 
             TextButton(
                 onClick = onNavigateToRegister,
-                enabled = state !is LoginState.Loading
             ) {
                 Text("Нет аккаунта? Зарегистрироваться")
             }
@@ -106,7 +125,7 @@ fun LoginScreen(
                             "Некорректный email"
 
                         LoginError.WeakPassword ->
-                            "Пароль минимум 6 символов"
+                            "Пароль минимум 12 символов"
 
                         LoginError.InvalidCredentials ->
                             "Неверный email или пароль"

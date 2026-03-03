@@ -11,9 +11,8 @@ import com.nastena.pawsitive.data.datastore.TokenManager
 import com.nastena.pawsitive.data.remote.RetrofitClient
 import com.nastena.pawsitive.data.remote.api.AuthApi
 import com.nastena.pawsitive.data.repository.AuthRepository
-import com.nastena.pawsitive.ui.auth.home.HomeScreen
-import com.nastena.pawsitive.ui.auth.home.HomeViewModel
-import com.nastena.pawsitive.ui.auth.home.HomeViewModelFactory
+import com.nastena.pawsitive.ui.home.HomeViewModel
+import com.nastena.pawsitive.ui.home.HomeViewModelFactory
 import com.nastena.pawsitive.ui.auth.login.LoginScreen
 import com.nastena.pawsitive.ui.auth.login.LoginViewModel
 import com.nastena.pawsitive.ui.auth.login.LoginViewModelFactory
@@ -21,6 +20,8 @@ import com.nastena.pawsitive.ui.auth.register.RegisterScreen
 import com.nastena.pawsitive.ui.auth.register.RegisterViewModel
 import com.nastena.pawsitive.ui.auth.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.auth.splash.SplashScreen
+import com.nastena.pawsitive.ui.home.ShelterHomeScreen
+import com.nastena.pawsitive.ui.home.UserHomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
         val authApi = retrofit.create(AuthApi::class.java)
 
-        val repository = AuthRepository(authApi)
+        val repository = AuthRepository(authApi, tokenManager)
 
         setContent {
 
@@ -53,27 +54,15 @@ class MainActivity : ComponentActivity() {
                 composable("splash") {
                     SplashScreen(
                         tokenManager = tokenManager,
-                        onAuthorized = {
-                            navController.navigate("home") {
-                                popUpTo("splash") { inclusive = true }
-                            }
-                        },
-                        onUnauthorized = {
-                            navController.navigate("login") {
-                                popUpTo("splash") { inclusive = true }
-                            }
-                        }
+                        navController = navController
                     )
                 }
 
                 composable("login") {
                     LoginScreen(
                         viewModel = loginViewModel,
-                        onLoginSuccess = {
-                            navController.navigate("home") {
-                                popUpTo("login") { inclusive = true}
-                            }
-                        },
+                        navController = navController,
+                        tokenManager = tokenManager,
                         onNavigateToRegister = {
                             navController.navigate("register")
                         }
@@ -97,12 +86,21 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                composable("home") {
-                    HomeScreen(
-                        viewModel = homeViewModel,
+                composable("user_home") {
+                    UserHomeScreen(
                         onLogout = {
                             navController.navigate("login") {
-                                popUpTo("home") { inclusive = true}
+                                popUpTo("user_home") { inclusive = true}
+                            }
+                        }
+                    )
+                }
+
+                composable("shelter_user") {
+                    ShelterHomeScreen(
+                        onLogout = {
+                            navController.navigate("login") {
+                                popUpTo("_home") { inclusive = true}
                             }
                         }
                     )

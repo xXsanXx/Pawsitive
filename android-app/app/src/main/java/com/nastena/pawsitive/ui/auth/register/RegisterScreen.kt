@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.nastena.pawsitive.data.remote.dto.Role
 
 @Composable
 fun RegisterScreen(
@@ -18,7 +19,7 @@ fun RegisterScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var role by remember { mutableStateOf("USER") } // по умолчанию USER
+    var role by remember { mutableStateOf(Role.USER) } // по умолчанию USER
 
     LaunchedEffect(state) {
         if (state is RegisterState.Success) {
@@ -71,19 +72,19 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
-                    onClick = { role = "USER" },
+                    onClick = { role = Role.USER},
                     enabled = state !is RegisterState.Loading
                 ) {
-                    Text("USER")
+                    Text(Role.USER.name)
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
-                    onClick = { role = "SHELTER" },
+                    onClick = { role = Role.SHELTER },
                     enabled = state !is RegisterState.Loading
                     ) {
-                        Text("SHELTER")
+                        Text(Role.SHELTER.name)
                 }
             }
 

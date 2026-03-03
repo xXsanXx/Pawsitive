@@ -1,42 +1,37 @@
 package com.nastena.pawsitive.data.repository
 
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.semantics.Role
+import com.nastena.pawsitive.data.datastore.TokenManager
 import com.nastena.pawsitive.data.remote.api.AuthApi
 import com.nastena.pawsitive.data.remote.dto.LoginRequest
 import com.nastena.pawsitive.data.remote.dto.RegisterRequest
+import com.nastena.pawsitive.data.remote.dto.Role
 
 class AuthRepository(
-    private val api: AuthApi
+    private val api: AuthApi,
+    private val tokenManager: TokenManager
 ) {
     suspend fun login(
         email: String,
         password: String
-    ): Result<String> {
+    ): Result<Unit> {
 
         return try {
             val response = api.login(LoginRequest(email, password))
 
-            if (response.isSuccessful) {
-                val token = response.body()?.token
+            tokenManager.saveToken(response.token)
+            tokenManager.saveRole(response.role)
 
-                if (token != null) {
-                    Result.success(token)
-                } else {
-                    Result.failure(Exception("Token is null"))
-                }
-            } else {
-                Result.failure(Exception("Ошибка: ${response.code()}"))
-            }
+            Result.success(Unit)
+
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
+    }
     suspend fun register(
         email: String,
         password: String,
-        role: String
+        role: Role
     ): Result<Unit> {
 
         return try {
@@ -44,11 +39,9 @@ class AuthRepository(
                 RegisterRequest(email, password, role)
             )
 
-            if (response.isSuccessful) {
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("Ошибка: ${response.code()}"))
-            }
+            tokenManager.saveToken(response.token)
+            tokenManager.saveRole(response.role)
+            Result.success(Unit)
 
         } catch (e: Exception) {
             Result.failure(e)
