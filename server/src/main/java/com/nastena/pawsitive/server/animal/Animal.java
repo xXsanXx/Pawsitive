@@ -43,7 +43,7 @@ public class Animal {
         return id;
     }
 
-    public String getAnimalName() {
+    public String getName() {
         return animalName;
     }
 

@@ -15,7 +15,7 @@ public class AnimalResponseDto {
 
     public AnimalResponseDto(Animal animal) {
         this.id = animal.getId();
-        this.name = animal.getAnimalName();
+        this.name = animal.getName();
         this.type = animal.getType();
         this.breed = animal.getBreed();
         this.age = animal.getAge();
@@ -28,7 +28,7 @@ public class AnimalResponseDto {
         return id;
     }
 
-    public String getAnimalName() {
+    public String getName() {
         return name;
     }
 
