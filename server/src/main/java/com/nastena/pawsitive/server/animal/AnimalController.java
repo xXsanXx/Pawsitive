@@ -2,6 +2,7 @@ package com.nastena.pawsitive.server.animal;
 
 import com.nastena.pawsitive.server.animal.dto.AnimalRequestDto;
 import com.nastena.pawsitive.server.animal.dto.AnimalResponseDto;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class AnimalController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('Shelter')")
     public AnimalResponseDto addAnimal(
             @RequestBody AnimalRequestDto dto,
             @RequestHeader("Authorization") String authHeader

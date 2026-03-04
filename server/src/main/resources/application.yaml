@@ -3,4 +3,4 @@ spring:
     name: server
 
 jwt:
-  secret: my-super-secret-key-123456789
+  secret: pawsitive_super_secret_key_2025_secure
