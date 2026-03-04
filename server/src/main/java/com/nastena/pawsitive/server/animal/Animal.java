@@ -29,6 +29,10 @@ public class Animal {
         return shelter;
     }
 
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
+    }
+
     public enum Gender {
         MALE, FEMALE
     }

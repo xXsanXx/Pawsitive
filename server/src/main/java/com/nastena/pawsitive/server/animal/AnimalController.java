@@ -1,10 +1,8 @@
 package com.nastena.pawsitive.server.animal;
 
+import com.nastena.pawsitive.server.animal.dto.AnimalRequestDto;
 import com.nastena.pawsitive.server.animal.dto.AnimalResponseDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +27,13 @@ public class AnimalController {
                 .stream()
                 .map(AnimalResponseDto::new)
                 .toList();
+    }
+
+    @PostMapping
+    public AnimalResponseDto addAnimal(
+            @RequestBody AnimalRequestDto dto,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        return animalService.addAnimal(dto, authHeader);
     }
 }
