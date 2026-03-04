@@ -1,20 +1,25 @@
 package com.nastena.pawsitive.server.account;
 
-import com.nastena.pawsitive.server.account.dto.AccountResponseDto;
+import com.nastena.pawsitive.server.account.dto.AccountLoginRequest;
+import com.nastena.pawsitive.server.account.dto.AccountLoginResponse;
+import com.nastena.pawsitive.server.account.dto.AccountRegisterRequest;
+import com.nastena.pawsitive.server.account.dto.AccountRole;
 import com.nastena.pawsitive.server.security.JwtUtils;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/account")
 public class AccountController {
+
     private final AccountService accountService;
     private final UserService userService;
     private final ShelterService shelterService;
@@ -28,43 +33,37 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
-        try {
-            String email = body.get("email");
-            String password = body.get("password");
-            Account.Role role = Account.Role.valueOf(body.get("role"));
+    public ResponseEntity<?> register(@RequestBody AccountRegisterRequest accountRegisterRequest) {
+        String email = accountRegisterRequest.email();
+        String password = accountRegisterRequest.password();
+        AccountRole role = accountRegisterRequest.role();
 
-            Account newAccount = accountService.register(email, password, role);
-            switch (role) {
-                case USER -> userService.createUser(newAccount);
-                case SHELTER -> shelterService.createShelter(newAccount);
-            }
+        log.info(" [register] email: {}, password: {}, role: {}", email, password, role.name());
 
-            return ResponseEntity.ok(
-                    new AccountResponseDto(null, role.name())
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Ошибка регистрации: " + e.getMessage());
+        Account newAccount = accountService.registerOrThrow(email, password, role);
+        switch (role) {
+            case USER -> userService.createUser(newAccount);
+            case SHELTER -> shelterService.createShelter(newAccount);
         }
+        return ResponseEntity.ok("Регистрация успешна!");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String password = body.get("password");
+    public ResponseEntity<?> login(@RequestBody AccountLoginRequest accountLoginRequest) {
 
-        Account account = accountService.login(email, password);
+        String email = accountLoginRequest.email();
+        String password = accountLoginRequest.password();
 
-        if (account != null) {
-            String token = jwtUtils.generateToken(
-                    account.getEmail(),
-                    account.getRole().name()
-            );
-            return ResponseEntity.ok(
-                    new AccountResponseDto(token, account.getRole().name())
-            );
+        log.info(" [login] email: {}, password: {}", email, password);
 
-        }
-        return ResponseEntity.status(401).body("Неверный логин или пароль");
+        Account account = accountService.loginOrThrow(email, password);
+
+        String token = jwtUtils.generateToken(
+                account.getEmail(),
+                account.getRole().name()
+        );
+        return ResponseEntity.ok(
+                new AccountLoginResponse(token, account.getRole().name())
+        );
     }
 }

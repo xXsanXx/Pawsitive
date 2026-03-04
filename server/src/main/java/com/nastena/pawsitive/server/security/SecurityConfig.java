@@ -29,12 +29,11 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/animals/**").permitAll()
+                        .requestMatchers("/api/account/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
-                        jwtFilter,
+                       jwtFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
         return http.build();

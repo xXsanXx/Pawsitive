@@ -1,6 +1,23 @@
 spring:
   application:
     name: server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pawsitive
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
+  address: 127.0.0.1
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: pawsitive
+    key-store-type: PKCS12
+    key-alias: tomcat
 
 jwt:
   secret: pawsitive_super_secret_key_2025_secure
