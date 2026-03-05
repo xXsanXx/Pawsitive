@@ -7,6 +7,7 @@ import com.nastena.pawsitive.server.account.dto.AccountRole;
 import com.nastena.pawsitive.server.security.JwtUtils;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
