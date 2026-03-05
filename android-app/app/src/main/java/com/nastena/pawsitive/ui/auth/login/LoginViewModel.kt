@@ -43,13 +43,12 @@ class LoginViewModel(
 
             val result = repository.login(trimmedEmail, trimmedPassword)
 
-            _state.value = result.fold(
-                onSuccess = { token ->
-                    tokenManager.saveToken(token)
-                    LoginState.Success
+            result.fold(
+                onSuccess = { _ ->
+                    _state.value = LoginState.Success
                 },
                 onFailure = { throwable ->
-                    handleServerError(throwable)
+                    _state.value = handleServerError(throwable)
                 }
             )
         }

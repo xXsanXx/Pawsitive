@@ -10,24 +10,7 @@ class AuthRepository(
     private val api: AuthApi,
     private val tokenManager: TokenManager
 ) {
-    suspend fun login(
-        email: String,
-        password: String
-    ): Result<Unit> {
 
-        return try {
-            val response = api.login(LoginRequest(email, password))
-
-            tokenManager.saveToken(response.token)
-            tokenManager.saveRole(response.role)
-
-            Result.success(Unit)
-
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-
-    }
     suspend fun register(
         email: String,
         password: String,
@@ -47,4 +30,24 @@ class AuthRepository(
             Result.failure(e)
         }
     }
+
+    suspend fun login(
+        email: String,
+        password: String
+    ): Result<Unit> {
+
+        return try {
+            val response = api.login(LoginRequest(email, password))
+
+            tokenManager.saveToken(response.token)
+            tokenManager.saveRole(response.role)
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
+    }
+
 }

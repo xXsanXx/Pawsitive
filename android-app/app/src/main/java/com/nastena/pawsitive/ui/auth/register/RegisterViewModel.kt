@@ -70,7 +70,7 @@ class RegisterViewModel(
     }
 
     private fun isValidPassword(password: String) : Boolean {
-        if (password.length < 12) return false
+        if (password.length < 6) return false
 
         val hasDigit = password.any { it.isDigit() }
 

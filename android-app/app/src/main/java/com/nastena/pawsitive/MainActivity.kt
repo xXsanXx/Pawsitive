@@ -66,17 +66,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                composable("login") {
-                    LoginScreen(
-                        viewModel = loginViewModel,
-                        navController = navController,
-                        tokenManager = tokenManager,
-                        onNavigateToRegister = {
-                            navController.navigate("register")
-                        }
-                    )
-                }
-
                 composable("register") {
                     val registerViewModel: RegisterViewModel = viewModel(
                         factory = RegisterViewModelFactory(repository)
@@ -90,6 +79,17 @@ class MainActivity : ComponentActivity() {
                         },
                         onBack = {
                             navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable("login") {
+                    LoginScreen(
+                        viewModel = loginViewModel,
+                        navController = navController,
+                        tokenManager = tokenManager,
+                        onNavigateToRegister = {
+                            navController.navigate("register")
                         }
                     )
                 }
