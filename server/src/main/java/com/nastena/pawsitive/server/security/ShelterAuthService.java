@@ -4,9 +4,6 @@ import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountRepository;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.server.shelter.ShelterRepository;
-import com.nastena.pawsitive.server.shelter.ShelterService;
-import com.nastena.pawsitive.server.user.User;
-import com.nastena.pawsitive.server.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +25,7 @@ public class ShelterAuthService {
 
     public Shelter getShelterFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        String email = jwtUtils.getEmailFromToken(token);
+        String email = jwtUtils.getEmailFromTokenOrThrow(token);
 
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow();

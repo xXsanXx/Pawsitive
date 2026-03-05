@@ -1,19 +1,17 @@
 package com.nastena.pawsitive.server.account;
 
-import com.nastena.pawsitive.server.account.dto.AccountLoginRequest;
-import com.nastena.pawsitive.server.account.dto.AccountLoginResponse;
+import com.nastena.pawsitive.dto.AccountRole;
+import com.nastena.pawsitive.dto.LoginRequest;
+import com.nastena.pawsitive.dto.LoginResponse;
+import com.nastena.pawsitive.dto.MeResponse;
 import com.nastena.pawsitive.server.account.dto.AccountRegisterRequest;
-import com.nastena.pawsitive.server.account.dto.AccountRole;
 import com.nastena.pawsitive.server.security.JwtUtils;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.UserService;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -50,21 +48,30 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AccountLoginRequest accountLoginRequest) {
-
-        String email = accountLoginRequest.email();
-        String password = accountLoginRequest.password();
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
 
         log.info(" [login] email: {}, password: {}", email, password);
 
-        Account account = accountService.loginOrThrow(email, password);
+        Account account = accountService.getAccountOrThrow(email, password);
 
         String token = jwtUtils.generateToken(
                 account.getEmail(),
                 account.getRole().name()
         );
         return ResponseEntity.ok(
-                new AccountLoginResponse(token, account.getRole().name())
+                new LoginResponse(token, account.getRole())
         );
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MeResponse> me(Authentication authentication) {
+        String role = authentication.getAuthorities()
+                .iterator()
+                .next()
+                .getAuthority()
+                .replace("ROLE_", "");
+        return ResponseEntity.ok(new MeResponse(AccountRole.valueOf(role)));
     }
 }

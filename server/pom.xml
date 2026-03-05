@@ -81,6 +81,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- DTO -->
+        <dependency>
+            <groupId>com.nastena.pawsitive</groupId>
+            <artifactId>dto</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
 	</dependencies>
 

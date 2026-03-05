@@ -1,17 +1,17 @@
 package com.nastena.pawsitive.network
 
-import com.nastena.pawsitive.data.datastore.TokenManager
+import com.nastena.pawsitive.repository.datastores.AuthDataStore
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class AuthInterceptor(
-    private val tokenManager: TokenManager
+    private val authDataStore: AuthDataStore
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
 
         val token = runBlocking {
-            tokenManager.getToken()
+            authDataStore.getToken()
         }
 
         val request = chain.request().newBuilder()

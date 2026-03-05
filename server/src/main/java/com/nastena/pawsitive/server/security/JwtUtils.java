@@ -34,12 +34,12 @@ public class JwtUtils {
                 .getBody();
     }
 
-    public String getEmailFromToken(String token) {
+    public String getEmailFromTokenOrThrow(String token) throws JwtException {
         Claims claims = validateToken(token);
         return claims.getSubject();
     }
 
-    public String getRoleFromToken(String token) {
+    public String getRoleFromTokenOrThrow(String token) throws JwtException {
         Claims claims = validateToken(token);
         return claims.get("role", String.class);
     }

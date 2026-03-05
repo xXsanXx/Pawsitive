@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Pawsitive</string>
+
+    <string name="error_title">Упс.. Ошибка!</string>
+    <string name="error_ok">Ок</string>
+
+    <!-- Login -->
+    <string name="login_title">Вход</string>
+    <string name="login_email_label">Электронная почта</string>
+    <string name="login_password_label">Пароль</string>
+    <string name="login_password_show_description">Показать пароль</string>
+    <string name="login_password_hide_description">Скрыть пароль</string>
+    <string name="login_go_to_register">Нет аккаунта? Зарегистрироваться</string>
+    <string name="login_submit">Войти</string>
 </resources>

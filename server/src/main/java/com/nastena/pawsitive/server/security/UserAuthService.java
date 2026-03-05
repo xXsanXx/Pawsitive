@@ -25,7 +25,7 @@ public class UserAuthService {
 
     public User getUserFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        String email = jwtUtils.getEmailFromToken(token);
+        String email = jwtUtils.getEmailFromTokenOrThrow(token);
 
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow();

@@ -36,30 +36,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-//        String header = request.getHeader("Authorization");
-//
-//        if (header != null && header.startsWith("Bearer ")) {
-//            String token = header.substring(7);
-//
-//            try {
-//                String email = jwtUtils.getEmailFromToken(token);
-//                String role = jwtUtils.getRoleFromToken(token);
-//
-//                SimpleGrantedAuthority authority =
-//                        new SimpleGrantedAuthority("ROLE_" + role);
-//
-//                UsernamePasswordAuthenticationToken authentication =
-//                        new UsernamePasswordAuthenticationToken(
-//                                email,
-//                                null,
-//                                List.of(authority)
-//                        );
-//                SecurityContextHolder.getContext()
-//                        .setAuthentication(authentication);
-//            } catch (JwtException e) {
-//
-//            }
-//        }
+        String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            SecurityContextHolder.clearContext();
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        boolean isValidToken;
+        String email = "";
+        String role = "";
+
+        try {
+            email = jwtUtils.getEmailFromTokenOrThrow(token);
+            role = jwtUtils.getRoleFromTokenOrThrow(token);
+            isValidToken = true;
+        } catch (JwtException e) {
+            isValidToken = false;
+        }
+
+        if (!isValidToken) {
+            SecurityContextHolder.clearContext();
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            email,
+                            null,
+                            List.of(authority)
+                    );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
         filterChain.doFilter(request, response);
     }
 }

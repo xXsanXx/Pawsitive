@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Pawsitive"
 include(":app")
+includeBuild("../dto")

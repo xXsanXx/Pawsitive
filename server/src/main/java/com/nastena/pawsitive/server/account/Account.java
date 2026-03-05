@@ -1,6 +1,6 @@
 package com.nastena.pawsitive.server.account;
 
-import com.nastena.pawsitive.server.account.dto.AccountRole;
+import com.nastena.pawsitive.dto.AccountRole;
 import jakarta.persistence.*;
 import lombok.*;
 

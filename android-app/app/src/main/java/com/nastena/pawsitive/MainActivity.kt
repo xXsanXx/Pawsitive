@@ -3,29 +3,15 @@ package com.nastena.pawsitive
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.nastena.pawsitive.data.datastore.TokenManager
-import com.nastena.pawsitive.data.remote.RetrofitClient
-import com.nastena.pawsitive.data.remote.api.AnimalApi
-import com.nastena.pawsitive.data.remote.api.AuthApi
-import com.nastena.pawsitive.data.repository.AnimalRepository
-import com.nastena.pawsitive.data.repository.AuthRepository
-import com.nastena.pawsitive.ui.home.HomeViewModel
-import com.nastena.pawsitive.ui.home.HomeViewModelFactory
-import com.nastena.pawsitive.ui.auth.login.LoginScreen
-import com.nastena.pawsitive.ui.auth.login.LoginViewModel
-import com.nastena.pawsitive.ui.auth.login.LoginViewModelFactory
-import com.nastena.pawsitive.ui.auth.register.RegisterScreen
-import com.nastena.pawsitive.ui.auth.register.RegisterViewModel
-import com.nastena.pawsitive.ui.auth.register.RegisterViewModelFactory
-import com.nastena.pawsitive.ui.auth.splash.SplashScreen
-import com.nastena.pawsitive.ui.home.ShelterHomeScreen
-import com.nastena.pawsitive.ui.user.home.UserHomeScreen
-import com.nastena.pawsitive.ui.user.home.UserHomeViewModel
-import com.nastena.pawsitive.ui.user.home.UserHomeViewModelFactory
+import androidx.compose.material3.MaterialTheme
+import com.nastena.pawsitive.repository.datastores.AuthDataStore
+import com.nastena.pawsitive.network.RetrofitClient
+import com.nastena.pawsitive.network.api.AnimalApi
+import com.nastena.pawsitive.network.api.AccountApi
+import com.nastena.pawsitive.repository.AnimalRepository
+import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.ui.main.MainContent
+import com.nastena.pawsitive.ui.theme.PawsitiveTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -33,94 +19,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-        val tokenManager = TokenManager(applicationContext)
+        val authDataStore = AuthDataStore(applicationContext)
 
-        val retrofit = RetrofitClient.create(tokenManager)
+        val retrofit = RetrofitClient.create(authDataStore)
 
-        val authApi = retrofit.create(AuthApi::class.java)
+        val accountApi = retrofit.create(AccountApi::class.java)
         val animalApi = retrofit.create(AnimalApi::class.java)
 
-        val repository = AuthRepository(authApi, tokenManager)
+        val accountRepository = AccountRepository(accountApi, authDataStore)
         val animalRepository = AnimalRepository(animalApi)
 
         setContent {
-
-            val navController = rememberNavController()
-
-            val loginViewModel: LoginViewModel = viewModel(
-                factory = LoginViewModelFactory(repository, tokenManager)
-            )
-
-            val homeViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModelFactory(tokenManager)
-            )
-
-            NavHost(
-                navController = navController,
-                startDestination = "splash"
-            ) {
-                composable("splash") {
-                    SplashScreen(
-                        tokenManager = tokenManager,
-                        navController = navController
-                    )
-                }
-
-                composable("register") {
-                    val registerViewModel: RegisterViewModel = viewModel(
-                        factory = RegisterViewModelFactory(repository)
-                    )
-                    RegisterScreen(
-                        viewModel = registerViewModel,
-                        onRegisterSuccess = {
-                            navController.navigate("login") {
-                                popUpTo("register") { inclusive = true }
-                            }
-                        },
-                        onBack = {
-                            navController.popBackStack()
-                        }
-                    )
-                }
-
-                composable("login") {
-                    LoginScreen(
-                        viewModel = loginViewModel,
-                        navController = navController,
-                        tokenManager = tokenManager,
-                        onNavigateToRegister = {
-                            navController.navigate("register")
-                        }
-                    )
-                }
-
-                composable("user_home") {
-
-                    val viewModel: UserHomeViewModel = viewModel(
-                        factory = UserHomeViewModelFactory(animalRepository)
-                    )
-                    UserHomeScreen(
-                        viewModel = viewModel,
-                        onLogout = {
-                            navController.navigate("login") {
-                                popUpTo("user_home") { inclusive = true}
-                            }
-                        }
-                    )
-                }
-
-                composable("shelter_user") {
-                    ShelterHomeScreen(
-                        onLogout = {
-                            navController.navigate("login") {
-                                popUpTo("_home") { inclusive = true}
-                            }
-                        }
-                    )
-                }
-
+            PawsitiveTheme {
+                MainContent(accountRepository, animalRepository)
             }
-
         }
     }
 }

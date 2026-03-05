@@ -12,7 +12,6 @@ spring:
 
 server:
   port: 8080
-  address: 127.0.0.1
   ssl:
     key-store: classpath:keystore.p12
     key-store-password: pawsitive
