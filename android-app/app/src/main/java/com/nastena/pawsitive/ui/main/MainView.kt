@@ -33,6 +33,8 @@ import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginView
 import com.nastena.pawsitive.ui.screens.login.LoginViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginViewModelFactory
+import com.nastena.pawsitive.ui.screens.register.RegisterViewModel
+import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
@@ -67,10 +69,10 @@ fun MainContent(
         factory = LoginViewModelFactory(mainViewModel, accountRepository)
     )
 
-//    val registerViewModel: RegisterViewModel = viewModel(
-//        factory = RegisterViewModelFactory(accountRepository)
-//    )
-//
+    val registerViewModel: RegisterViewModel = viewModel(
+        factory = RegisterViewModelFactory(mainViewModel, accountRepository)
+    )
+
 //    val userHomeViewModel: UserHomeViewModel = viewModel(
 //        factory = UserHomeViewModelFactory(animalRepository)
 //    )
@@ -80,7 +82,7 @@ fun MainContent(
     Navigation(
         navController = navController,
         splashViewModel = splashViewModel,
-//        registerViewModel = registerViewModel,
+        registerViewModel = registerViewModel,
         loginViewModel = loginViewModel
 //        userHomeViewModel = userHomeViewModel
     )
