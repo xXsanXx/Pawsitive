@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
 
@@ -39,12 +41,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
+            log.error("Header is not valid: {}", header);
             SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
             return;
         }
 
+
         String token = header.substring(7);
+        log.error("Token: {}", token);
+
 
         boolean isValidToken;
         String email = "";
@@ -59,12 +65,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (!isValidToken) {
+            log.error("Token is not valid: {}", token);
+
             SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            log.error("Auth is empty");
+
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
@@ -73,6 +83,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             List.of(authority)
                     );
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            log.error("Auth exists");
+
         }
 
         filterChain.doFilter(request, response);

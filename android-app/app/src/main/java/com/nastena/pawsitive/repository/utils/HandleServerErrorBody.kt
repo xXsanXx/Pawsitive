@@ -10,7 +10,7 @@ import retrofit2.Response
 
 inline fun <reified TResponse, reified TResult> handleServerErrorBody(response: Response<TResponse>): Result<TResult> =
     runCatching {
-        Log.e("Server", "Handling error.\n" +
+        Log.i("Server", "Handling error.\n" +
                 "HTTP code: ${response.code()}\n" +
                 "Body: ${response.body()}\n" +
                 "Error body: ${response.errorBody()?.string()}")

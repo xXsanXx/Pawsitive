@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.repository
 
+import android.util.Log
 import com.nastena.pawsitive.common.ServerParsedException
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.dto.ErrorCode
@@ -58,6 +59,7 @@ class AccountRepository(
 
     suspend fun getAuthorizedRole(): Result<AccountRole> = runCatching {
         val token = _authDataStore.getToken();
+        Log.e("test", "save token: $token")
         if (token == null) {
             return Result.failure(ServerParsedException(ErrorCode.UNAUTHORIZED))
         }

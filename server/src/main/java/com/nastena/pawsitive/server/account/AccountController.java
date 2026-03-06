@@ -72,6 +72,9 @@ public class AccountController {
                 .next()
                 .getAuthority()
                 .replace("ROLE_", "");
+
+        log.error("Gor role: {}", role);
+
         return ResponseEntity.ok(new MeResponse(AccountRole.valueOf(role)));
     }
 }
