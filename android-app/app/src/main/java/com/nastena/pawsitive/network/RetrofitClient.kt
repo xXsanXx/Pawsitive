@@ -11,7 +11,6 @@ object RetrofitClient {
     fun create(authDataStore: AuthDataStore): Retrofit {
 
         val okHttpClient = OkHttpClient.Builder()
-//            .hostnameVerifier { _, _ -> true }  // TODO: fix with normal certificate for SSL
             .addInterceptor(AuthInterceptor(authDataStore))
             .build()
 

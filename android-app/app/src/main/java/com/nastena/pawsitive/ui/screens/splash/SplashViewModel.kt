@@ -2,6 +2,7 @@ package com.nastena.pawsitive.ui.screens.splash
 
 import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.common.ServerParsedException
+import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.repository.AccountRepository
@@ -33,6 +34,17 @@ class SplashViewModel(
                     when (throwable) {
                         is ServerParsedException -> {
                             if (throwable.errorCode == ErrorCode.UNAUTHORIZED) {
+                                mainViewModel.navigateTo(
+                                    NavigationRoutes.LOGIN,
+                                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.SPLASH)
+                                )
+                            } else {
+                                mainViewModel.handleError(throwable)
+                            }
+                        }
+
+                        is ServerUnknownErrorCodeException -> {
+                            if (throwable.httpCode == 403) {
                                 mainViewModel.navigateTo(
                                     NavigationRoutes.LOGIN,
                                     popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.SPLASH)
