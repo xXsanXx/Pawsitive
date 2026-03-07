@@ -1,164 +1,160 @@
 package com.nastena.pawsitive.ui.screens.register
 
 import android.util.Patterns
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.ui.main.MainUiEvents
-import com.nastena.pawsitive.ui.main.MainUiEvents.Navigation.To.PopUpType.*
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.main.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.screens.login.LoginTextFieldState
 import com.nastena.pawsitive.ui.screens.login.LoginViewEvents
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class RegisterViewModel(
     mainViewModel: MainViewModel,
-    private val _accountRepository: AccountRepository,
-) : BaseScreenViewModel(mainViewModel){
+    private val _accountRepository: AccountRepository
+) : BaseScreenViewModel(mainViewModel) {
 
-    private val _emailFieldState = MutableStateFlow(
-        RegisterTextFieldState.Email("", isValid = true)
+    private val _emailState = MutableStateFlow(
+        RegisterState.Email(
+            text = "", validation = RegisterState.Email.Validation.Valid
+        )
     )
-    internal val emailFieldState: StateFlow<RegisterTextFieldState.Email> =
-        _emailFieldState.asStateFlow()
+    val emailState: StateFlow<RegisterState.Email> = _emailState.asStateFlow()
 
-    private val _passwordFieldState = MutableStateFlow(
-        RegisterTextFieldState.Password("", isValid = true, isVisible = false)
+    private val _passwordState = MutableStateFlow(
+        RegisterState.Password(
+            "",
+            validation = RegisterState.Password.Validation.Valid
+        )
     )
-    internal val passwordFieldState: StateFlow<RegisterTextFieldState.Password> =
-        _passwordFieldState.asStateFlow()
+    val passwordState: StateFlow<RegisterState.Password> = _passwordState.asStateFlow()
 
-    private val _roleState = MutableStateFlow(
-        AccountRole.USER
+    private val _confirmPasswordState = MutableStateFlow(RegisterState.ConfirmPassword("", true))
+    val confirmPasswordState: StateFlow<RegisterState.ConfirmPassword> =
+        _confirmPasswordState.asStateFlow()
+
+    private val _accountRoleMenuState = MutableStateFlow(
+        RegisterState.AccountRoleMenu(
+            isExpended = false,
+            selected = null,
+            isValid = true
+        )
     )
-    val roleState: StateFlow<AccountRole> = _roleState.asStateFlow()
+    val accountRoleMenuState: StateFlow<RegisterState.AccountRoleMenu> =
+        _accountRoleMenuState.asStateFlow()
 
     override fun onEnter() {
         super.onEnter()
 
-        _emailFieldState.update { it.copy(text = "", isValid = true) }
-        _passwordFieldState.update { it.copy(text = "", isValid = true, isVisible = false) }
+        _emailState.update { it.copy(text = "", validation = RegisterState.Email.Validation.Valid) }
+        _passwordState.update { it.copy(text = "", validation = RegisterState.Password.Validation.Valid) }
+        _confirmPasswordState.update { it.copy(text = "", isValid = true) }
+        _accountRoleMenuState.update { it.copy(isExpended = false, selected = null, isValid = true) }
     }
 
-    internal fun onViewEvent(event: RegisterViewEvents) {
+    fun onViewEvent(event: RegisterViewEvents) {
         when (event) {
             is RegisterViewEvents.Email.TextUpdated -> {
-                updateTextField(event.newText, _emailFieldState)
+                _emailState.update { currentEmailState -> currentEmailState.copy(text = event.newText) }
             }
 
-            is RegisterViewEvents.Password.TextUpdate -> {
-                updateTextField(event.newText, _passwordFieldState)
+            is RegisterViewEvents.Password.TextUpdated -> {
+                _passwordState.update { it.copy(text = event.newText) }
             }
 
-            RegisterViewEvents.Password.EyeClicked -> {
-                _passwordFieldState.update { it.copy(isVisible = !it.isVisible) }
+            is RegisterViewEvents.ConfirmPassword.TextUpdated -> {
+                _confirmPasswordState.update { it.copy(text = event.newText) }
+            }
+
+            RegisterViewEvents.AccountRoleMenu.ClickedMenu -> {
+                _accountRoleMenuState.update { it.copy(isExpended = !it.isExpended) }
+            }
+
+            RegisterViewEvents.AccountRoleMenu.MenuDismissed -> {
+                _accountRoleMenuState.update { it.copy(isExpended = false) }
+            }
+
+            is RegisterViewEvents.AccountRoleMenu.ClickedSelection -> {
+                _accountRoleMenuState.update {
+                    it.copy(
+                        isExpended = false,
+                        selected = event.accountRole
+                    )
+                }
             }
 
             RegisterViewEvents.GoToLoginClicked -> {
                 mainViewModel.navigateTo(
                     NavigationRoutes.LOGIN,
+                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
                 )
             }
 
             RegisterViewEvents.RegisterClicked -> {
-                regiter()
+                register()
+            }
+
+        }
+    }
+
+    private fun register() {
+
+        val trimmedEmail = _emailState.value.text.trim()
+        if (trimmedEmail.isBlank()) {
+            _emailState.update { it.copy(validation = RegisterState.Email.Validation.Empty) }
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+            _emailState.update { it.copy(validation = RegisterState.Email.Validation.InvalidFormat) }
+        } else {
+            _emailState.update {
+                it.copy(validation = RegisterState.Email.Validation.Valid)
             }
         }
-    }
 
-    private inline fun <reified T : RegisterTextFieldState> updateTextField(
-        newText: String,
-        textFieldState: MutableStateFlow<T>
-    ) {
-        var isValid = textFieldState.value.isValid
-        if (!newText.isBlank()) {
-            isValid = true
-        }
-        textFieldState.update { it.copy(text = newText, isValid = isValid) as T }
-    }
-
-    fun register() {
-        val trimmedEmail = email.trim()
-        val trimmedPassword = password.trim()
-
-        if (trimmedEmail.isBlank() || trimmedPassword.isBlank()) {
-            _state.value = RegisterState.Error(RegisterError.EmptyFields)
-            return
+        val trimmedPassword = _passwordState.value.text.trim()
+        if (trimmedPassword.isBlank()) {
+            _passwordState.update { it.copy(validation = RegisterState.Password.Validation.Empty) }
+        } else if (
+            trimmedPassword.length < 12 ||
+            !trimmedPassword.any { symbol -> symbol.isDigit() } ||
+            !trimmedPassword.any { symbol -> symbol.isUpperCase() }
+        ) {
+            _passwordState.update { it.copy(validation = RegisterState.Password.Validation.InvalidFormat) }
+        } else {
+            _passwordState.update {
+                it.copy(validation = RegisterState.Password.Validation.Valid)
+            }
         }
 
-        if (!isValidEmail(trimmedEmail)) {
-            _state.value = RegisterState.Error(RegisterError.InvalidEmail)
-            return
+        val trimmedConfirmPassword = _confirmPasswordState.value.text.trim()
+        _confirmPasswordState.update {
+            it.copy(isValid = trimmedPassword == trimmedConfirmPassword)
         }
 
-        if (!isValidPassword(trimmedPassword)) {
-            _state.value = RegisterState.Error(RegisterError.WeakPassword)
-            return
-        }
+        _accountRoleMenuState.update { it.copy(isValid = it.selected != null) }
 
-        if (role != AccountRole.USER && role != AccountRole.SHELTER) {
-            _state.value = RegisterState.Error(RegisterError.InvalidRole)
-            return
-        }
+        val isAllValid = _emailState.value.validation is RegisterState.Email.Validation.Valid &&
+            _passwordState.value.validation is RegisterState.Password.Validation.Valid &&
+            _confirmPasswordState.value.isValid &&
+            _accountRoleMenuState.value.isValid
 
-        viewModelScope.launch {
-            _state.value = RegisterState.Loading
-
-            val result = repository.register(
-                trimmedEmail,
-                trimmedPassword,
-                role
-            )
-
-            _state.value = result.fold(
-                onSuccess = {
-                    RegisterState.Success
+        if (isAllValid) {
+            launchSave(
+                operation = {
+                    _accountRepository.register(trimmedEmail, trimmedPassword,_accountRoleMenuState.value.selected!!)
                 },
-                onFailure = { throwable ->
-                    handleServerError(throwable)
+                onSuccess = {
+                    mainViewModel.navigateTo(
+                        NavigationRoutes.LOGIN,
+                        popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                    )
                 }
             )
         }
+
+
+
     }
-
-    private fun isValidEmail(email: String) : Boolean {
-        return Patterns.EMAIL_ADDRESS
-            .matcher(email)
-            .matches()
-    }
-
-    private fun isValidPassword(password: String) : Boolean {
-        if (password.length < 12) return false
-
-        val hasDigit = password.any { it.isDigit() }
-
-        val hasLetter = password.any { it.isLetter() }
-
-        return hasDigit && hasLetter
-    }
-
-//    private fun handleServerError(throwable: Throwable): RegisterState {
-//        val message = throwable.message ?: return RegisterState.Error(RegisterError.Unknown)
-//
-//        return when {
-//            message.contains("409") ->
-//                RegisterState.Error(RegisterError.EmailAlreadyExists)
-//
-//            message.contains("400") ->
-//                RegisterState.Error(RegisterError.ServerError("Некорректные данные"))
-//
-//            else ->
-//                RegisterState.Error(RegisterError.ServerError(message))
-//        }
-//    }
-
-
-
 }

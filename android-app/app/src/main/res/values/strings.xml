@@ -6,10 +6,40 @@
 
     <!-- Login -->
     <string name="login_title">Вход</string>
+
     <string name="login_email_label">Электронная почта</string>
+
     <string name="login_password_label">Пароль</string>
     <string name="login_password_show_description">Показать пароль</string>
     <string name="login_password_hide_description">Скрыть пароль</string>
+
     <string name="login_go_to_register">Нет аккаунта? Зарегистрироваться</string>
     <string name="login_submit">Войти</string>
+
+
+    <!-- Register -->
+    <string name="register_title">Регистрация</string>
+
+    <string name="register_email_invalid">Неверная электронная почта</string>
+    <string name="register_email_is_empty">Поле не должно быть пустым</string>
+    <string name="register_email_label">Электронная почта</string>
+
+    <string name="register_password_is_empty">Поле не должно быть пустым</string>
+    <string name="register_password_invalid">Пароль должен содержать минимум 12 символов.\n
+        Должная присутствовать минимум одна заглавная буква\n
+        Должная присутствовать минимум одна цифра</string>
+    <string name="register_password_label">Пароль</string>
+
+
+    <string name="register_confirm_password_invalid">Пароли не совпадают</string>
+    <string name="register_confirm_password_label">Подтвердить пароль</string>
+
+    <string name="register_choose_role_invalid">Выбор обязателен</string>
+    <string name="register_choose_role_label">Выберите роль</string>
+    <string name="register_role_user">Потенциальный владелец</string>
+    <string name="register_role_shelter">Администратор приюта</string>
+
+    <string name="register_go_to_login">Есть аккаунт? Войти</string>
+    <string name="register_submit">Зарегистрироваться</string>
+
 </resources>

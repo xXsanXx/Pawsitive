@@ -20,3 +20,6 @@ server:
 
 jwt:
   secret: pawsitive_super_secret_key_2025_secure
+
+custom:
+  dev-mode: true

@@ -1,10 +1,6 @@
 package com.nastena.pawsitive.server.account;
 
-import com.nastena.pawsitive.dto.AccountRole;
-import com.nastena.pawsitive.dto.LoginRequest;
-import com.nastena.pawsitive.dto.LoginResponse;
-import com.nastena.pawsitive.dto.MeResponse;
-import com.nastena.pawsitive.server.account.dto.AccountRegisterRequest;
+import com.nastena.pawsitive.dto.*;
 import com.nastena.pawsitive.server.security.JwtUtils;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.UserService;
@@ -32,10 +28,10 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AccountRegisterRequest accountRegisterRequest) {
-        String email = accountRegisterRequest.email();
-        String password = accountRegisterRequest.password();
-        AccountRole role = accountRegisterRequest.role();
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        String email = registerRequest.getEmail();
+        String password = registerRequest.getPassword();
+        AccountRole role = registerRequest.getRole();
 
         log.info(" [register] email: {}, password: {}, role: {}", email, password, role.name());
 

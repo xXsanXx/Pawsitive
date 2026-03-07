@@ -28,11 +28,11 @@ import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.repository.AnimalRepository
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginView
 import com.nastena.pawsitive.ui.screens.login.LoginViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginViewModelFactory
+import com.nastena.pawsitive.ui.screens.register.RegisterView
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModel
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.screens.splash.SplashView
@@ -57,7 +57,6 @@ object NavigationRoutes {
 @Composable
 fun MainContent(
     accountRepository: AccountRepository,
-    animalRepository: AnimalRepository
 ) {
     val mainViewModel: MainViewModel = viewModel()
 
@@ -73,10 +72,6 @@ fun MainContent(
         factory = RegisterViewModelFactory(mainViewModel, accountRepository)
     )
 
-//    val userHomeViewModel: UserHomeViewModel = viewModel(
-//        factory = UserHomeViewModelFactory(animalRepository)
-//    )
-
     val navController: NavHostController = rememberNavController()
 
     Navigation(
@@ -84,7 +79,6 @@ fun MainContent(
         splashViewModel = splashViewModel,
         registerViewModel = registerViewModel,
         loginViewModel = loginViewModel
-//        userHomeViewModel = userHomeViewModel
     )
 
     LaunchedEffect(Unit) {
@@ -135,9 +129,8 @@ fun MainContent(
 private fun Navigation(
     navController: NavHostController,
     splashViewModel: SplashViewModel,
-//    registerViewModel: RegisterViewModel,
+    registerViewModel: RegisterViewModel,
     loginViewModel: LoginViewModel
-//    userHomeViewModel: UserHomeViewModel
 ) {
     NavHost(
         navController = navController,
@@ -150,19 +143,9 @@ private fun Navigation(
         }
 
         composable(NavigationRoutes.REGISTER) {
-            Text("Register screen")
-
-//            RegisterScreen(
-//                viewModel = registerViewModel,
-//                onRegisterSuccess = {
-//                    navController.navigate(NavigationRoutes.LOGIN) {
-//                        popUpTo(NavigationRoutes.REGISTER) { inclusive = true }
-//                    }
-//                },
-//                onBack = {
-//                    navController.popBackStack()
-//                }
-//            )
+            ScreenView(registerViewModel) {
+                RegisterView(viewModel = registerViewModel)
+            }
         }
 
         composable(NavigationRoutes.LOGIN) {
@@ -173,27 +156,10 @@ private fun Navigation(
 
         composable(NavigationRoutes.USER_HOME) {
             Text("User home screen")
-
-//            UserHomeScreen(
-//                viewModel = userHomeViewModel,
-//                onLogout = {
-//                    navController.navigate(NavigationRoutes.LOGIN) {
-//                        popUpTo(NavigationRoutes.USER_HOME) { inclusive = true }
-//                    }
-//                }
-//            )
         }
 
         composable(NavigationRoutes.SHELTER_HOME) {
             Text("Shelter home screen")
-
-//            ShelterHomeScreen(
-//                onLogout = {
-//                    navController.navigate(NavigationRoutes.LOGIN) {
-//                        popUpTo(NavigationRoutes.SHELTER_HOME) { inclusive = true }
-//                    }
-//                }
-//            )
         }
 
     }
@@ -237,7 +203,7 @@ private fun ErrorBox(
     modifier: Modifier = Modifier, throwable: Throwable, onEvent: (MainViewEvents) -> Unit
 ) {
     AlertDialog(
-        modifier = Modifier,
+        modifier = modifier,
         onDismissRequest = { onEvent(MainViewEvents.ErrorBox.ClickedOk) },
         title = {
             Text(text = stringResource(R.string.error_title))

@@ -7,6 +7,7 @@ import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.dto.LoginRequest
 import com.nastena.pawsitive.dto.LoginResponse
 import com.nastena.pawsitive.dto.MeResponse
+import com.nastena.pawsitive.dto.RegisterRequest
 import com.nastena.pawsitive.network.api.AccountApi
 import com.nastena.pawsitive.repository.datastores.AuthDataStore
 import com.nastena.pawsitive.repository.utils.handleServerErrorBody
@@ -21,27 +22,23 @@ class AccountRepository(
         email: String,
         password: String,
         role: AccountRole
-    ): Result<Unit> {
-        return Result.failure(NotImplementedError())
-//
-//        return try {
-//            val response = _api.register(
-//                RegisterRequest(email, password, role)
-//            )
-//
-//            _authDataStore.saveToken(response.token)
-//            _authDataStore.saveRole(response.role)
-//            Result.success(Unit)
-//
-//        } catch (e: Exception) {
-//            Result.failure(e)
-//        }
+    ): Result<Unit> = runCatching {
+        Log.i("Account Repository", "[register] email: $email, password: $password, role: $role")
+
+        val response: Response<Unit> = _api.register(RegisterRequest(email, password, role))
+        if (response.isSuccessful) {
+            return Result.success(Unit)
+        } else {
+            return handleServerErrorBody(response)
+        }
     }
 
     suspend fun login(
         email: String,
         password: String
     ): Result<AccountRole> = runCatching {
+        Log.i("Account Repository", "[login] email: $email, password: $password")
+
         val response: Response<LoginResponse> = _api.login(LoginRequest(email, password))
 
         if (response.isSuccessful) {
@@ -59,9 +56,11 @@ class AccountRepository(
 
     suspend fun getAuthorizedRole(): Result<AccountRole> = runCatching {
         val token = _authDataStore.getToken();
-        Log.e("test", "save token: $token")
+
+        Log.i("Account Repository", "[getAuthorizedRole] current token: $token")
+
         if (token == null) {
-            return Result.failure(ServerParsedException(ErrorCode.UNAUTHORIZED))
+            return Result.failure(ServerParsedException("", ErrorCode.UNAUTHORIZED))
         }
 
         val response: Response<MeResponse> = _api.me()

@@ -8,4 +8,10 @@ public class ServerRuntimeException extends RuntimeException {
     public ServerRuntimeException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
+
+    public ServerRuntimeException(String message, ErrorCode errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
 }
