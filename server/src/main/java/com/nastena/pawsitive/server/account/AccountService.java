@@ -28,7 +28,7 @@ public class AccountService {
     }
 
     public Account registerOrThrow(String email, String password, AccountRole role) throws ServerRuntimeException {
-        email = email.trim().toLowerCase();
+        email = email.trim();
         password = password.trim();
 
         checkCredentialsOrThrow(email, password);

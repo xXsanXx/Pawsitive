@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             PawsitiveTheme {
-                MainContent(accountRepository)
+                MainContent(accountRepository = accountRepository)
             }
         }
     }

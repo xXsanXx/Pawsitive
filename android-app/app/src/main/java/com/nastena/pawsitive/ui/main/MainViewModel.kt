@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
+import com.nastena.pawsitive.ui.common.Navigation
+import com.nastena.pawsitive.ui.common.NavigationBars
+import com.nastena.pawsitive.ui.common.NavigationRoutes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,12 +18,22 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val _navigationEvents = MutableSharedFlow<MainUiEvents.Navigation>()
-    internal val navigationEvents: SharedFlow<MainUiEvents.Navigation> =
+    private val _navigationEvents = MutableSharedFlow<Navigation>()
+    internal val navigationEvents: SharedFlow<Navigation> =
         _navigationEvents.asSharedFlow()
 
     private val _mainState = MutableStateFlow<MainState>(MainState.Idle)
     internal val mainState: StateFlow<MainState> = _mainState.asStateFlow()
+
+    private val _navigationBarState = MutableStateFlow(
+        NavigationBarState(
+            isVisible = false,
+            settings = NavigationBars.EMPTY,
+            selected = 0
+        )
+    )
+    internal val navigationBarState: StateFlow<NavigationBarState> =
+        _navigationBarState.asStateFlow()
 
     internal fun onViewEvent(viewEvent: MainViewEvents) {
         when (viewEvent) {
@@ -29,21 +42,18 @@ class MainViewModel : ViewModel() {
                     _mainState.update { MainState.Idle }
                 }
             }
+
+            is MainViewEvents.NavigationBar.ClickedItem -> {
+                _navigationBarState.update { it.copy(selected = viewEvent.index) }
+            }
         }
     }
 
-    fun navigateTo(
-        route: String,
-        popUpType: MainUiEvents.Navigation.To.PopUpType = MainUiEvents.Navigation.To.PopUpType.None
+    fun navigate(
+        navigation: Navigation
     ) {
         viewModelScope.launch {
-            _navigationEvents.emit(MainUiEvents.Navigation.To(route, popUpType))
-        }
-    }
-
-    fun navigateBack() {
-        viewModelScope.launch {
-            _navigationEvents.emit(MainUiEvents.Navigation.Back)
+            _navigationEvents.emit(navigation)
         }
     }
 
@@ -63,14 +73,33 @@ class MainViewModel : ViewModel() {
         when (throwable) {
             is ServerUnknownErrorCodeException -> {
                 if (throwable.httpCode == 403) {
-                    navigateTo(
-                        NavigationRoutes.LOGIN,
-                        MainUiEvents.Navigation.To.PopUpType.Origin
+                    navigate(
+                        Navigation.To(
+                            NavigationRoutes.LOGIN,
+                            Navigation.To.PopUpType.Origin
+                        )
+
+
                     )
                 }
             }
         }
 
         _mainState.update { MainState.Error(throwable) }
+    }
+
+
+    fun hideNavigationBar() {
+        _navigationBarState.update { it.copy(isVisible = false) }
+    }
+
+    fun initializeNavigationBarSettings(settings: NavigationBars.Settings) {
+        _navigationBarState.update {
+            it.copy(isVisible = true, settings = settings, selected = settings.initialSelected)
+        }
+        val initialItem: NavigationBars.Item = settings.items[settings.initialSelected]
+        viewModelScope.launch {
+            _navigationEvents.emit(initialItem.navigation)
+        }
     }
 }

@@ -1,19 +1,16 @@
 package com.nastena.pawsitive.ui.screens.login
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.main.MainUiEvents
+import com.nastena.pawsitive.ui.common.Navigation
+import com.nastena.pawsitive.ui.common.NavigationBars
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.main.NavigationRoutes
+import com.nastena.pawsitive.ui.common.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class LoginViewModel(
     mainViewModel: MainViewModel,
@@ -35,6 +32,8 @@ class LoginViewModel(
     override fun onEnter() {
         super.onEnter()
 
+        mainViewModel.hideNavigationBar()
+
         _emailFieldState.update { it.copy(text = "", isValid = true) }
         _passwordFieldState.update { it.copy(text = "", isValid = true, isVisible = false) }
     }
@@ -54,9 +53,11 @@ class LoginViewModel(
             }
 
             LoginViewEvents.GoToRegistrationClicked -> {
-                mainViewModel.navigateTo(
-                    NavigationRoutes.REGISTER,
-                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.LOGIN)
+                mainViewModel.navigate(
+                    Navigation.To(
+                        NavigationRoutes.REGISTER,
+                        Navigation.To.PopUpType.Route(NavigationRoutes.LOGIN)
+                    )
                 )
             }
 
@@ -95,9 +96,16 @@ class LoginViewModel(
                 _accountRepository.login(trimmedEmail, trimmedPassword)
             },
             onSuccess = { role: AccountRole ->
-                mainViewModel.navigateTo(
-                    NavigationRoutes.fromAccountRole(role),
-                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.LOGIN)
+                mainViewModel.initializeNavigationBarSettings(
+                    NavigationBars.fromAccountRole(
+                        role
+                    )
+                )
+                mainViewModel.navigate(
+                    Navigation.To(
+                        NavigationRoutes.fromAccountRole(role),
+                        Navigation.To.PopUpType.Route(NavigationRoutes.LOGIN)
+                    )
                 )
             }
         )

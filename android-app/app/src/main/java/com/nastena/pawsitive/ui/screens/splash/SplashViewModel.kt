@@ -6,11 +6,11 @@ import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.ui.common.Navigation
+import com.nastena.pawsitive.ui.common.NavigationBars
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.main.NavigationRoutes
+import com.nastena.pawsitive.ui.common.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.main.MainState
-import com.nastena.pawsitive.ui.main.MainUiEvents
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
@@ -21,12 +21,15 @@ class SplashViewModel(
     override fun onEnter() {
         super.onEnter()
 
+        mainViewModel.hideNavigationBar()
+
         viewModelScope.launch {
             _accountRepository.getAuthorizedRole().fold(
                 onSuccess = { role: AccountRole ->
-                    mainViewModel.navigateTo(
-                        NavigationRoutes.fromAccountRole(role),
-                        popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.SPLASH)
+                    mainViewModel.initializeNavigationBarSettings(
+                        NavigationBars.fromAccountRole(
+                            role
+                        )
                     )
                 },
 
@@ -34,9 +37,13 @@ class SplashViewModel(
                     when (throwable) {
                         is ServerParsedException -> {
                             if (throwable.errorCode == ErrorCode.UNAUTHORIZED) {
-                                mainViewModel.navigateTo(
-                                    NavigationRoutes.LOGIN,
-                                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.SPLASH)
+                                mainViewModel.navigate(
+                                    Navigation.To(
+                                        NavigationRoutes.LOGIN,
+                                        Navigation.To.PopUpType.Route(
+                                            NavigationRoutes.SPLASH
+                                        )
+                                    )
                                 )
                             } else {
                                 mainViewModel.handleError(throwable)
@@ -45,9 +52,13 @@ class SplashViewModel(
 
                         is ServerUnknownErrorCodeException -> {
                             if (throwable.httpCode == 403) {
-                                mainViewModel.navigateTo(
-                                    NavigationRoutes.LOGIN,
-                                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.SPLASH)
+                                mainViewModel.navigate(
+                                    Navigation.To(
+                                        NavigationRoutes.LOGIN,
+                                        Navigation.To.PopUpType.Route(
+                                            NavigationRoutes.SPLASH
+                                        )
+                                    )
                                 )
                             } else {
                                 mainViewModel.handleError(throwable)

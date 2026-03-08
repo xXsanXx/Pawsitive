@@ -5,9 +5,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,8 +31,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.R
-import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.ui.common.Navigation
+import com.nastena.pawsitive.ui.common.NavigationBars
+import com.nastena.pawsitive.ui.common.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginView
 import com.nastena.pawsitive.ui.screens.login.LoginViewModel
@@ -39,23 +46,9 @@ import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
 
-object NavigationRoutes {
-    const val SPLASH = "splash"
-    const val LOGIN = "login"
-    const val REGISTER = "register"
-
-    const val USER_HOME = "user_home"
-
-    const val SHELTER_HOME = "shelter_home"
-
-    fun fromAccountRole(role: AccountRole) = when (role) {
-        AccountRole.USER -> USER_HOME
-        AccountRole.SHELTER -> SHELTER_HOME
-    }
-}
-
 @Composable
 fun MainContent(
+    modifier: Modifier = Modifier,
     accountRepository: AccountRepository,
 ) {
     val mainViewModel: MainViewModel = viewModel()
@@ -74,53 +67,56 @@ fun MainContent(
 
     val navController: NavHostController = rememberNavController()
 
-    Navigation(
-        navController = navController,
-        splashViewModel = splashViewModel,
-        registerViewModel = registerViewModel,
-        loginViewModel = loginViewModel
-    )
+    val screenState by mainViewModel.mainState.collectAsState()
+    val navigationBarState by mainViewModel.navigationBarState.collectAsState()
+    val onViewEvent: (MainViewEvents) -> Unit = { event -> mainViewModel.onViewEvent(event) }
 
     LaunchedEffect(Unit) {
-        mainViewModel.navigationEvents.collect { event: MainUiEvents.Navigation ->
-            when (event) {
-                is MainUiEvents.Navigation.To -> {
-                    navController.navigate(event.route) {
-                        when (val popUpType = event.popUpType) {
-                            MainUiEvents.Navigation.To.PopUpType.None -> {}
-                            MainUiEvents.Navigation.To.PopUpType.Origin -> {
-                                popUpTo(0)
-                            }
-                            is MainUiEvents.Navigation.To.PopUpType.Route -> {
-                                popUpTo(popUpType.route) { inclusive = true }
-                            }
-                        }
-                    }
-                }
-
-                MainUiEvents.Navigation.Back -> {
-                    navController.popBackStack()
-                }
-            }
+        mainViewModel.navigationEvents.collect { navigation: Navigation ->
+            navigate(navController, navigation)
         }
     }
 
-    val screenState by mainViewModel.mainState.collectAsState()
+    // --- Content --------
 
-    AnimatedVisibility(
-        visible = screenState is MainState.Loading
-    ) {
-        Loading()
-    }
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
 
-    AnimatedVisibility(
-        visible = screenState is MainState.Error
-    ) {
-        if (screenState is MainState.Error) {
-            val errorState = screenState as MainState.Error
-            ErrorBox(throwable = errorState.throwable, onEvent = { event ->
-                mainViewModel.onViewEvent(event)
-            })
+            bottomBar = {
+                MainNavigationBar(
+                    navigationBarState = navigationBarState,
+                    navController = navController,
+                    onViewEvent = onViewEvent
+                )
+            }
+
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                Navigation(
+                    navController = navController,
+                    splashViewModel = splashViewModel,
+                    registerViewModel = registerViewModel,
+                    loginViewModel = loginViewModel
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = screenState is MainState.Loading
+        ) {
+            Loading()
+        }
+
+        AnimatedVisibility(
+            visible = screenState is MainState.Error
+        ) {
+            if (screenState is MainState.Error) {
+                val errorState = screenState as MainState.Error
+                ErrorBox(throwable = errorState.throwable, onViewEvent = onViewEvent)
+            }
         }
     }
 }
@@ -166,6 +162,64 @@ private fun Navigation(
 }
 
 @Composable
+private fun MainNavigationBar(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    navigationBarState: NavigationBarState,
+    onViewEvent: (MainViewEvents) -> Unit
+) {
+    AnimatedVisibility(
+        visible = navigationBarState.isVisible
+    ) {
+        Box(modifier = modifier) {
+            NavigationBar {
+                navigationBarState.settings.items.forEachIndexed { index: Int, item: NavigationBars.Item ->
+                    NavigationBarItem(
+                        selected = index == navigationBarState.selected,
+                        onClick = {
+                            onViewEvent(MainViewEvents.NavigationBar.ClickedItem(index))
+                            navigate(navController, item.navigation)
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = null // TODO: add content description everywhere
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun navigate(
+    navController: NavHostController,
+    navigation: Navigation
+) {
+    when (navigation) {
+        is Navigation.To -> {
+            navController.navigate(navigation.route) {
+                when (val popUpType = navigation.popUpType) {
+                    Navigation.To.PopUpType.None -> {}
+                    Navigation.To.PopUpType.Origin -> {
+                        popUpTo(0)
+                    }
+
+                    is Navigation.To.PopUpType.Route -> {
+                        popUpTo(popUpType.route) { inclusive = true }
+                    }
+                }
+            }
+        }
+
+        Navigation.Back -> {
+            navController.popBackStack()
+        }
+    }
+}
+
+@Composable
 private fun ScreenView(
     viewModel: BaseScreenViewModel,
     view: @Composable () -> Unit
@@ -191,7 +245,6 @@ private fun Loading(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.primary,
             strokeWidth = 4.dp
         )
@@ -200,11 +253,11 @@ private fun Loading(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ErrorBox(
-    modifier: Modifier = Modifier, throwable: Throwable, onEvent: (MainViewEvents) -> Unit
+    modifier: Modifier = Modifier, throwable: Throwable, onViewEvent: (MainViewEvents) -> Unit
 ) {
     AlertDialog(
         modifier = modifier,
-        onDismissRequest = { onEvent(MainViewEvents.ErrorBox.ClickedOk) },
+        onDismissRequest = { onViewEvent(MainViewEvents.ErrorBox.ClickedOk) },
         title = {
             Text(text = stringResource(R.string.error_title))
         },
@@ -213,7 +266,7 @@ private fun ErrorBox(
         },
         confirmButton = {
             TextButton(
-                onClick = { onEvent(MainViewEvents.ErrorBox.ClickedOk) }
+                onClick = { onViewEvent(MainViewEvents.ErrorBox.ClickedOk) }
             ) {
                 Text(text = stringResource(R.string.error_ok))
             }

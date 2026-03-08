@@ -2,11 +2,10 @@ package com.nastena.pawsitive.ui.screens.register
 
 import android.util.Patterns
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.main.MainUiEvents
+import com.nastena.pawsitive.ui.common.Navigation
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.main.NavigationRoutes
+import com.nastena.pawsitive.ui.common.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.screens.login.LoginViewEvents
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,10 +48,23 @@ class RegisterViewModel(
     override fun onEnter() {
         super.onEnter()
 
+        mainViewModel.hideNavigationBar()
+
         _emailState.update { it.copy(text = "", validation = RegisterState.Email.Validation.Valid) }
-        _passwordState.update { it.copy(text = "", validation = RegisterState.Password.Validation.Valid) }
+        _passwordState.update {
+            it.copy(
+                text = "",
+                validation = RegisterState.Password.Validation.Valid
+            )
+        }
         _confirmPasswordState.update { it.copy(text = "", isValid = true) }
-        _accountRoleMenuState.update { it.copy(isExpended = false, selected = null, isValid = true) }
+        _accountRoleMenuState.update {
+            it.copy(
+                isExpended = false,
+                selected = null,
+                isValid = true
+            )
+        }
     }
 
     fun onViewEvent(event: RegisterViewEvents) {
@@ -87,9 +99,11 @@ class RegisterViewModel(
             }
 
             RegisterViewEvents.GoToLoginClicked -> {
-                mainViewModel.navigateTo(
-                    NavigationRoutes.LOGIN,
-                    popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                mainViewModel.navigate(
+                    Navigation.To(
+                        NavigationRoutes.LOGIN,
+                        Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                    )
                 )
             }
 
@@ -136,24 +150,29 @@ class RegisterViewModel(
         _accountRoleMenuState.update { it.copy(isValid = it.selected != null) }
 
         val isAllValid = _emailState.value.validation is RegisterState.Email.Validation.Valid &&
-            _passwordState.value.validation is RegisterState.Password.Validation.Valid &&
-            _confirmPasswordState.value.isValid &&
-            _accountRoleMenuState.value.isValid
+                _passwordState.value.validation is RegisterState.Password.Validation.Valid &&
+                _confirmPasswordState.value.isValid &&
+                _accountRoleMenuState.value.isValid
 
         if (isAllValid) {
             launchSave(
                 operation = {
-                    _accountRepository.register(trimmedEmail, trimmedPassword,_accountRoleMenuState.value.selected!!)
+                    _accountRepository.register(
+                        trimmedEmail,
+                        trimmedPassword,
+                        _accountRoleMenuState.value.selected!!
+                    )
                 },
                 onSuccess = {
-                    mainViewModel.navigateTo(
-                        NavigationRoutes.LOGIN,
-                        popUpType = MainUiEvents.Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                    mainViewModel.navigate(
+                        Navigation.To(
+                            NavigationRoutes.LOGIN,
+                            Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                        )
                     )
                 }
             )
         }
-
 
 
     }
