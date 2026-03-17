@@ -11,6 +11,8 @@ object NavigationRoutes {
 
     const val USER_PROFILE = "user_profile"
 
+    const val FAVORITE = "favorite"
+
     const val SHELTER_HOME = "shelter_home"
 
     fun fromAccountRole(role: AccountRole) = when (role) {
