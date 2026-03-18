@@ -36,9 +36,9 @@ public class AccountController {
 
         log.info(" [register] name: {}, email: {}, password: {}, role: {}", name, email, password, role.name());
 
-        Account newAccount = accountService.registerOrThrow(name, email, password, role);
+        Account newAccount = accountService.registerOrThrow(email, password, role);
         switch (role) {
-            case USER -> userService.createUser(newAccount, name);
+            case USER -> userService.createUserOrThrow(newAccount, name);
             case SHELTER -> shelterService.createShelter(newAccount);
         }
         return ResponseEntity.ok("Регистрация успешна!");

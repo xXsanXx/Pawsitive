@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(Account account, String name) {
+    public User createUserOrThrow(Account account, String name) {
         validateNameOrThrow(name);
 
         User user = new User();

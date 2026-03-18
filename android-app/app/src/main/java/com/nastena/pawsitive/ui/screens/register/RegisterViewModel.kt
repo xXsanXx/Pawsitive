@@ -12,11 +12,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.regex.Pattern
 
 class RegisterViewModel(
     mainViewModel: MainViewModel,
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
+
+    companion object {
+        private val NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$")
+    }
 
     private val _nameState = MutableStateFlow(
         RegisterState.Name(
@@ -132,7 +137,11 @@ class RegisterViewModel(
         val trimmedName = _nameState.value.text.trim()
         if (trimmedName.isBlank()) {
             _nameState.update { it.copy(validation = RegisterState.Name.Validation.Empty) }
-        } else if (trimmedName.length < 2 || trimmedName.length > 50) {
+        } else if (
+            trimmedName.length < 2 ||
+            trimmedName.length > 50 ||
+            !NAME_REGEX.matcher(trimmedName).matches()
+        ) {
             _nameState.update { it.copy(validation = RegisterState.Name.Validation.InvalidFormat) }
         } else {
             _nameState.update {

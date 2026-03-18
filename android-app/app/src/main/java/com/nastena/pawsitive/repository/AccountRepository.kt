@@ -73,4 +73,6 @@ class AccountRepository(
         val authorizedResponse: MeResponse = response.body()!!
         return Result.success(authorizedResponse.role)
     }
+
+    suspend fun logout()
 }

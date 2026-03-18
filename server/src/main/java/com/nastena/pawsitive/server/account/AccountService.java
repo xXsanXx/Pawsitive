@@ -23,18 +23,16 @@ public class AccountService {
     );
     private final static Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*[A-Z])(?=.*\\d).{12,}$");
 
-    private static final Pattern NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$");
 
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
-    public Account registerOrThrow(String name, String email, String password, AccountRole role) throws ServerRuntimeException {
-        name = name.trim();
+    public Account registerOrThrow(String email, String password, AccountRole role) throws ServerRuntimeException {
         email = email.trim();
         password = password.trim();
 
-        checkCredentialsOrThrow(name, email, password);
+        checkCredentialsOrThrow(email, password);
 
 
         if (accountRepository.findByEmail(email).isPresent()) {
@@ -61,16 +59,7 @@ public class AccountService {
 
 
 
-    private void checkCredentialsOrThrow(String name, String email, String password) throws ServerRuntimeException {
-        String trimmedName = name.trim();
-
-        if (trimmedName.isBlank()) {
-            throw new ServerRuntimeException("Name is blank!", ErrorCode.LOGIN_CREDENTIALS_INVALID);
-        }
-
-        if (!NAME_REGEX.matcher(name).matches()) {
-            throw new ServerRuntimeException("Invalid name format", ErrorCode.REGISTER_CREDENTIALS_INVALID);
-        }
+    private void checkCredentialsOrThrow(String email, String password) throws ServerRuntimeException {
 
         if (!EMAIL_REGEX.matcher(email).matches()) {
             throw new ServerRuntimeException("Invalid email format", ErrorCode.REGISTER_CREDENTIALS_INVALID);

@@ -1,6 +1,9 @@
 package com.nastena.pawsitive.ui.screens.user.profile
 
+import androidx.lifecycle.viewModelScope
+import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.Navigation.To
 import com.nastena.pawsitive.ui.common.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.NavigationRoutes
@@ -10,21 +13,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class UserProfileViewModel(
     mainViewModel: MainViewModel,
-    private val accountRepository: AccountRepository
+    private val _userRepository: UserRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
-    private val _state = MutableStateFlow(UserProfileState.Screen(name = "", email = ""))
-    val state: StateFlow<UserProfileState.Screen> = _state.asStateFlow()
+    private val _state = MutableStateFlow(UserProfileState(name = "", email = ""))
+    val state: StateFlow<UserProfileState> = _state.asStateFlow()
 
     override fun onEnter() {
         super.onEnter()
 
         mainViewModel.hideNavigationBar()
 
-        _state.update { UserProfileState.Screen(name = "", email = "") }
+        launchSave(
+            operation = { _userRepository.getUserProfileData() },
+            onSuccess = { userProfile: UserProfileResponse ->
+                _state.update { it.copy(name = userProfile.name, email = userProfile.email) }
+            }
+        )
     }
 
     fun onViewEvent(event: UserProfileViewEvents) {
