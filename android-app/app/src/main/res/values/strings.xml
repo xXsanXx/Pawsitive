@@ -45,4 +45,9 @@
 
     <string name="register_go_to_login">Есть аккаунт? Войти</string>
     <string name="register_submit">Зарегистрироваться</string>
+
+    <!-- User Profile -->
+    <string name="user_profile_title">Профиль</string>
+    <string name="user_profile_logout_submit">Выйти из профиля</string>
+
 </resources>

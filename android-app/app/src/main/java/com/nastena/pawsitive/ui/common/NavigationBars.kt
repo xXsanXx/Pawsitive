@@ -29,13 +29,14 @@ object NavigationBars {
                 icon = Icons.Default.Home
             ),
             Item(
-                navigation = Navigation.To(NavigationRoutes.USER_PROFILE),
-                icon = Icons.Default.AccountCircle
-            ),
-            Item(
                 navigation = Navigation.To(NavigationRoutes.FAVORITE),
                 icon = Icons.Default.Favorite
+            ),
+            Item(
+                navigation = Navigation.To(NavigationRoutes.USER_PROFILE),
+                icon = Icons.Default.AccountCircle
             )
+
         )
     )
 
