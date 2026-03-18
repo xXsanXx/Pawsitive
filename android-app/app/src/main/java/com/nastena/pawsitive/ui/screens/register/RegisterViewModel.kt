@@ -3,6 +3,8 @@ package com.nastena.pawsitive.ui.screens.register
 import android.util.Patterns
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.ui.common.Navigation
+import com.nastena.pawsitive.ui.common.Navigation.*
+import com.nastena.pawsitive.ui.common.Navigation.To.PopUpType.*
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.common.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -16,6 +18,12 @@ class RegisterViewModel(
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
+    private val _nameState = MutableStateFlow(
+        RegisterState.Name(
+            text = "", validation = RegisterState.Name.Validation.Valid
+        )
+    )
+    val nameState: StateFlow<RegisterState.Name> = _nameState.asStateFlow()
     private val _emailState = MutableStateFlow(
         RegisterState.Email(
             text = "", validation = RegisterState.Email.Validation.Valid
@@ -50,6 +58,7 @@ class RegisterViewModel(
 
         mainViewModel.hideNavigationBar()
 
+        _nameState.update { it.copy(text = "", validation = RegisterState.Name.Validation.Valid) }
         _emailState.update { it.copy(text = "", validation = RegisterState.Email.Validation.Valid) }
         _passwordState.update {
             it.copy(
@@ -69,6 +78,9 @@ class RegisterViewModel(
 
     fun onViewEvent(event: RegisterViewEvents) {
         when (event) {
+            is RegisterViewEvents.Name.TextUpdated ->
+                _nameState.update { it.copy(text = event.newText) }
+
             is RegisterViewEvents.Email.TextUpdated -> {
                 _emailState.update { currentEmailState -> currentEmailState.copy(text = event.newText) }
             }
@@ -100,9 +112,9 @@ class RegisterViewModel(
 
             RegisterViewEvents.GoToLoginClicked -> {
                 mainViewModel.navigate(
-                    Navigation.To(
+                    To(
                         NavigationRoutes.LOGIN,
-                        Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                        Route(NavigationRoutes.REGISTER)
                     )
                 )
             }
@@ -111,10 +123,22 @@ class RegisterViewModel(
                 register()
             }
 
+
         }
     }
 
     private fun register() {
+
+        val trimmedName = _nameState.value.text.trim()
+        if (trimmedName.isBlank()) {
+            _nameState.update { it.copy(validation = RegisterState.Name.Validation.Empty) }
+        } else if (trimmedName.length < 2 || trimmedName.length > 50) {
+            _nameState.update { it.copy(validation = RegisterState.Name.Validation.InvalidFormat) }
+        } else {
+            _nameState.update {
+                it.copy(validation = RegisterState.Name.Validation.Valid)
+            }
+        }
 
         val trimmedEmail = _emailState.value.text.trim()
         if (trimmedEmail.isBlank()) {
@@ -149,7 +173,8 @@ class RegisterViewModel(
 
         _accountRoleMenuState.update { it.copy(isValid = it.selected != null) }
 
-        val isAllValid = _emailState.value.validation is RegisterState.Email.Validation.Valid &&
+        val isAllValid =_nameState.value.validation is RegisterState.Name.Validation.Valid &&
+                _emailState.value.validation is RegisterState.Email.Validation.Valid &&
                 _passwordState.value.validation is RegisterState.Password.Validation.Valid &&
                 _confirmPasswordState.value.isValid &&
                 _accountRoleMenuState.value.isValid
@@ -158,6 +183,7 @@ class RegisterViewModel(
             launchSave(
                 operation = {
                     _accountRepository.register(
+                        trimmedName,
                         trimmedEmail,
                         trimmedPassword,
                         _accountRoleMenuState.value.selected!!

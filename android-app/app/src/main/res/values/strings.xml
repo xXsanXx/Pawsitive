@@ -20,6 +20,10 @@
     <!-- Register -->
     <string name="register_title">Регистрация</string>
 
+    <string name="register_name_invalid">Имя пользователя от 2 до 50 букв</string>
+    <string name="register_name_is_empty">Поле не должно быть пустым</string>
+    <string name="register_name_label">Имя пользователя</string>
+
     <string name="register_email_invalid">Неверная электронная почта</string>
     <string name="register_email_is_empty">Поле не должно быть пустым</string>
     <string name="register_email_label">Электронная почта</string>

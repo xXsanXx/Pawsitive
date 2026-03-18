@@ -2,23 +2,25 @@ package com.nastena.pawsitive.server.user;
 
 import com.nastena.pawsitive.server.account.Account;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
 public class User {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false, unique = true)
     private Account account;
 
-    private String username;
-
-    @Column(length = 1000)
-    private String description;
-
+    @Getter
+    @Setter
+    private String name;
 
     public User() {}
 
@@ -26,23 +28,4 @@ public class User {
         this.account = account;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

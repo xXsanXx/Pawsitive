@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.dto;
 
 public class RegisterRequest {
+    private String name;
     private String email;
     private String password;
     private AccountRole role;
@@ -8,10 +9,16 @@ public class RegisterRequest {
     public RegisterRequest() {
     }
 
-    public RegisterRequest(String email, String password, AccountRole role) {
+    public RegisterRequest(String name, String email, String password, AccountRole role) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+
+    public String getName() {
+        return name;
     }
 
 

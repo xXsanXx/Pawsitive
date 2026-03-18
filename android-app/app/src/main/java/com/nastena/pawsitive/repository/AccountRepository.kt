@@ -19,13 +19,14 @@ class AccountRepository(
 ) {
 
     suspend fun register(
+        name: String,
         email: String,
         password: String,
         role: AccountRole
     ): Result<Unit> = runCatching {
-        Log.i("Account Repository", "[register] email: $email, password: $password, role: $role")
+        Log.i("Account Repository", "[register] name: $name, email: $email, password: $password, role: $role")
 
-        val response: Response<Unit> = _api.register(RegisterRequest(email, password, role))
+        val response: Response<Unit> = _api.register(RegisterRequest(name, email, password, role))
         if (response.isSuccessful) {
             return Result.success(Unit)
         } else {

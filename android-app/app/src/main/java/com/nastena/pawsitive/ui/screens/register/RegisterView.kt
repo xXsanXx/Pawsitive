@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ fun RegisterView(
     viewModel: RegisterViewModel
 ) {
     // ------------- States --------------------
+    val nameState: RegisterState.Name by viewModel.nameState.collectAsState()
     val emailState: RegisterState.Email by viewModel.emailState.collectAsState()
     val passwordState: RegisterState.Password by viewModel.passwordState.collectAsState()
     val confirmPasswordState: RegisterState.ConfirmPassword by viewModel.confirmPasswordState.collectAsState()
@@ -46,6 +48,7 @@ fun RegisterView(
 
     RegisterView(
         modifier = modifier,
+        nameState = nameState,
         emailState = emailState,
         passwordState = passwordState,
         confirmPasswordState = confirmPasswordState,
@@ -57,6 +60,7 @@ fun RegisterView(
 @Composable
 private fun RegisterView(
     modifier: Modifier = Modifier,
+    nameState: RegisterState.Name,
     emailState: RegisterState.Email,
     passwordState: RegisterState.Password,
     confirmPasswordState: RegisterState.ConfirmPassword,
@@ -80,6 +84,40 @@ private fun RegisterView(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            // ------------- Name --------------------
+            AnimatedVisibility(
+                visible = nameState.validation != RegisterState.Name.Validation.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (nameState.validation) {
+                        RegisterState.Name.Validation.Empty -> stringResource(R.string.register_name_is_empty)
+                        RegisterState.Name.Validation.InvalidFormat -> stringResource(R.string.register_name_invalid)
+                        RegisterState.Name.Validation.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = nameState.text,
+                onValueChange = { newText ->
+                    onViewEvent(RegisterViewEvents.Name.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.register_name_label)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = nameState.validation != RegisterState.Name.Validation.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+
 
             // ------------- Email --------------------
             AnimatedVisibility(
@@ -295,12 +333,14 @@ private fun RegisterPreviewLight() {
 
 @Composable
 private fun RegisterPreview() {
+    val nameState = RegisterState.Name("", RegisterState.Name.Validation.Valid)
     val emailState = RegisterState.Email("", RegisterState.Email.Validation.Valid)
     val passwordState = RegisterState.Password("", RegisterState.Password.Validation.Valid)
     val confirmPasswordState = RegisterState.ConfirmPassword("", true)
     val accountRoleMenuState = RegisterState.AccountRoleMenu(false, null, true)
 
     RegisterView(
+        nameState = nameState,
         emailState = emailState,
         passwordState = passwordState,
         confirmPasswordState = confirmPasswordState,

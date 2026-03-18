@@ -29,15 +29,16 @@ public class AccountController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        String name = registerRequest.getName();
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
         AccountRole role = registerRequest.getRole();
 
-        log.info(" [register] email: {}, password: {}, role: {}", email, password, role.name());
+        log.info(" [register] name: {}, email: {}, password: {}, role: {}", name, email, password, role.name());
 
-        Account newAccount = accountService.registerOrThrow(email, password, role);
+        Account newAccount = accountService.registerOrThrow(name, email, password, role);
         switch (role) {
-            case USER -> userService.createUser(newAccount);
+            case USER -> userService.createUser(newAccount, name);
             case SHELTER -> shelterService.createShelter(newAccount);
         }
         return ResponseEntity.ok("Регистрация успешна!");

@@ -4,6 +4,10 @@ import com.nastena.pawsitive.dto.AccountRole
 
 sealed interface RegisterViewEvents {
 
+    sealed interface Name : RegisterViewEvents {
+
+        data class TextUpdated(val newText: String) : Name
+    }
     sealed interface Email : RegisterViewEvents {
 
         data class TextUpdated(val newText: String) : Email
