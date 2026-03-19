@@ -23,3 +23,7 @@ jwt:
 
 custom:
   dev-mode: true
+  dev-mode-user-token: dev-user-token
+  dev-mode-shelter-token: dev-shelter-token
+  dev-mode-user-email: dev@user.com
+  dev-mode-shelter-email: dev@shelter.com

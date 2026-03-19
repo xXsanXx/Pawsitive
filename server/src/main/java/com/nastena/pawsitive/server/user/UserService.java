@@ -24,8 +24,16 @@ public class UserService {
         user.setAccount(account);
         user.setName(name);
 
-
         return userRepository.save(user);
+    }
+
+    public User getUserOrThrow(Account account) {
+        return userRepository
+                .findByAccount(account)
+                .orElseThrow(() -> new ServerRuntimeException(
+                        String.format("No user found for account with email %s", account.getEmail()),
+                        ErrorCode.UNAUTHORIZED
+                ));
     }
 
 
