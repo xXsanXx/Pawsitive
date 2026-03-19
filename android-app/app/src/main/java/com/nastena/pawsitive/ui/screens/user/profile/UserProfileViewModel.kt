@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.screens.user.profile
 
+import android.util.Log
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.UserRepository
@@ -30,8 +31,12 @@ class UserProfileViewModel(
         mainViewModel.hideNavigationBar()
 
         launchSave(
-            operation = { _userRepository.getUserProfileData() },
+            operation = {
+                Log.d("UserProfile", "Loading profile data")
+                _userRepository.getUserProfileData() },
+
             onSuccess = { userProfile: UserProfileResponse ->
+                Log.d("UserProfile", "Success: $userProfile")
                 _state.update { it.copy(name = userProfile.name, email = userProfile.email) }
             }
         )
