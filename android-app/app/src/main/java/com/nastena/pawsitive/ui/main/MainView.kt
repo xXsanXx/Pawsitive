@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.Navigation
 import com.nastena.pawsitive.ui.common.NavigationBars
 import com.nastena.pawsitive.ui.common.NavigationRoutes
@@ -45,11 +46,15 @@ import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
+import com.nastena.pawsitive.ui.screens.user.profile.UserProfileView
+import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModel
+import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModelFactory
 
 @Composable
 fun MainContent(
     modifier: Modifier = Modifier,
     accountRepository: AccountRepository,
+    userRepository: UserRepository
 ) {
     val mainViewModel: MainViewModel = viewModel()
 
@@ -63,6 +68,10 @@ fun MainContent(
 
     val registerViewModel: RegisterViewModel = viewModel(
         factory = RegisterViewModelFactory(mainViewModel, accountRepository)
+    )
+
+    val userProfileViewModel: UserProfileViewModel = viewModel (
+        factory = UserProfileViewModelFactory(mainViewModel, userRepository, accountRepository )
     )
 
     val navController: NavHostController = rememberNavController()
@@ -99,7 +108,8 @@ fun MainContent(
                     navController = navController,
                     splashViewModel = splashViewModel,
                     registerViewModel = registerViewModel,
-                    loginViewModel = loginViewModel
+                    loginViewModel = loginViewModel,
+                    userProfileViewModel = userProfileViewModel
                 )
             }
         }
@@ -126,7 +136,8 @@ private fun Navigation(
     navController: NavHostController,
     splashViewModel: SplashViewModel,
     registerViewModel: RegisterViewModel,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    userProfileViewModel: UserProfileViewModel
 ) {
     NavHost(
         navController = navController,
@@ -151,7 +162,13 @@ private fun Navigation(
         }
 
         composable(NavigationRoutes.USER_HOME) {
-            Text("User home screen")
+            Text("User home")
+        }
+
+        composable(NavigationRoutes.USER_PROFILE) {
+            ScreenView(userProfileViewModel) {
+                UserProfileView(viewModel = userProfileViewModel)
+            }
         }
 
         composable(NavigationRoutes.SHELTER_HOME) {

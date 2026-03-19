@@ -38,7 +38,7 @@ class AuthDataStore(private val context: Context) {
         return prefs[ROLE_KEY]?.let { AccountRole.valueOf(it)}
     }
 
-    suspend fun clearToken() {
+    suspend fun clearAll() {
         context.authDataStore.edit {
            it.clear()
         }

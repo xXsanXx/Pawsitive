@@ -70,7 +70,7 @@ public class AccountController {
                 .getAuthority()
                 .replace("ROLE_", "");
 
-        log.error("Gor role: {}", role);
+        log.error("Got role: {}", role);
 
         return ResponseEntity.ok(new MeResponse(AccountRole.valueOf(role)));
     }

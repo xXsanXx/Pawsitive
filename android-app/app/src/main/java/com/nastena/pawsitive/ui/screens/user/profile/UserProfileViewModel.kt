@@ -1,23 +1,24 @@
 package com.nastena.pawsitive.ui.screens.user.profile
 
-import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.UserRepository
-import com.nastena.pawsitive.ui.common.Navigation.To
-import com.nastena.pawsitive.ui.common.Navigation.To.PopUpType.Route
+import com.nastena.pawsitive.ui.common.Navigation
+import com.nastena.pawsitive.ui.common.Navigation.*
+import com.nastena.pawsitive.ui.common.Navigation.To.PopUpType.*
 import com.nastena.pawsitive.ui.common.NavigationRoutes
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+import com.nastena.pawsitive.ui.screens.register.RegisterViewEvents
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class UserProfileViewModel(
     mainViewModel: MainViewModel,
-    private val _userRepository: UserRepository
+    private val _userRepository: UserRepository,
+    private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
     private val _state = MutableStateFlow(UserProfileState(name = "", email = ""))
@@ -38,15 +39,21 @@ class UserProfileViewModel(
 
     fun onViewEvent(event: UserProfileViewEvents) {
         when (event) {
-            UserProfileViewEvents.LogoutClicked ->
+            UserProfileViewEvents.LogoutClicked -> onLogoutClicked()
+        }
+    }
+
+    fun onLogoutClicked() {
+        launchSave(
+            operation = { _accountRepository.logout() },
+            onSuccess = {
                 mainViewModel.navigate(
                     To(
                         NavigationRoutes.LOGIN,
                         Route(NavigationRoutes.USER_HOME)
                     )
                 )
-        }
+            }
+        )
     }
-
-
 }

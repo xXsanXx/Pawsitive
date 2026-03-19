@@ -50,4 +50,10 @@
     <string name="user_profile_title">Профиль</string>
     <string name="user_profile_logout_submit">Выйти из профиля</string>
 
+    <string name="user_profile_name">Имя пользователя</string>
+    <string name="user_profile_email">Электронная почта</string>
+
+
+
+
 </resources>

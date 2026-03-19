@@ -74,5 +74,7 @@ class AccountRepository(
         return Result.success(authorizedResponse.role)
     }
 
-    suspend fun logout()
+    suspend fun logout(): Result<Unit> = runCatching {
+        _authDataStore.clearAll()
+    }
 }
