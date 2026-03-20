@@ -22,4 +22,7 @@ interface AccountApi {
 
     @GET("api/account/me")
     suspend fun me(): Response<MeResponse>
+
+    @POST("/logout")
+    suspend fun logout(): Response<Unit>
 }

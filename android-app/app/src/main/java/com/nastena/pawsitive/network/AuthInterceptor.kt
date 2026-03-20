@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.network
 
+import android.util.Log
 import com.nastena.pawsitive.repository.datastores.AuthDataStore
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -13,6 +14,8 @@ class AuthInterceptor(
         val token = runBlocking {
             authDataStore.getToken()
         }
+
+        Log.d("AUTH", "Token in interceptor: $token")
 
         val request = chain.request().newBuilder()
 

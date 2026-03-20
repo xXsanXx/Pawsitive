@@ -57,6 +57,19 @@ public class AccountService {
                 .orElseThrow(() -> new ServerRuntimeException("Credentials do not match!", ErrorCode.LOGIN_CREDENTIALS_INVALID));
     }
 
+    public Account getAccountOrThrow(String email) throws ServerRuntimeException {
+        String trimmedEmail = email.trim();
+        if (trimmedEmail.isBlank()) {
+            throw new ServerRuntimeException("Email is blank!", ErrorCode.UNAUTHORIZED);
+        }
+
+        return accountRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ServerRuntimeException(
+                        String.format("No account with email %s", trimmedEmail), ErrorCode.UNAUTHORIZED)
+                );
+    }
+
 
 
     private void checkCredentialsOrThrow(String email, String password) throws ServerRuntimeException {

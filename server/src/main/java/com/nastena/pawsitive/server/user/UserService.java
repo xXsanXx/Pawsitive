@@ -28,6 +28,16 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User getUserOrThrow(Account account) {
+        return userRepository
+                .findByAccount(account)
+                .orElseThrow(() -> new ServerRuntimeException(
+                        String.format("No user found for account with email %s", account.getEmail()),
+                        ErrorCode.UNAUTHORIZED
+                ));
+    }
+
+
 
     private void validateNameOrThrow(String name) throws ServerRuntimeException {
         name = name.trim();
