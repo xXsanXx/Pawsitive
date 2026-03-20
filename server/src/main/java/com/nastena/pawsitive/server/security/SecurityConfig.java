@@ -1,7 +1,6 @@
 package com.nastena.pawsitive.server.security;
 
 
-import com.nastena.pawsitive.server.debug.DevJwtFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,28 +11,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
-    private final JwtUtils jwtUtils;
 
     @Value("${custom.dev-mode}")
     private Boolean isDevMode;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter, JwtUtils jwtUtils) {
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
-        this.jwtUtils = jwtUtils;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
-
-        OncePerRequestFilter jwtFilter = isDevMode ? new DevJwtFilter(this.jwtFilter, jwtUtils) : this.jwtFilter;
 
         http
                 .csrf(csrf -> csrf.disable())
