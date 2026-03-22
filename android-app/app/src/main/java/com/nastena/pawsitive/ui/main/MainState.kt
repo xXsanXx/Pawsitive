@@ -1,6 +1,6 @@
 package com.nastena.pawsitive.ui.main
 
-import com.nastena.pawsitive.ui.common.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 
 sealed interface MainState {
     object Idle : MainState

@@ -6,10 +6,10 @@ import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.common.Navigation
-import com.nastena.pawsitive.ui.common.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.Navigation
+import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.common.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.launch
 

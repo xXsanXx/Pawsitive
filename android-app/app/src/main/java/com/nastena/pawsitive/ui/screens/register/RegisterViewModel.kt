@@ -2,11 +2,11 @@ package com.nastena.pawsitive.ui.screens.register
 
 import android.util.Patterns
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.common.Navigation
-import com.nastena.pawsitive.ui.common.Navigation.*
-import com.nastena.pawsitive.ui.common.Navigation.To.PopUpType.*
+import com.nastena.pawsitive.ui.common.navigation.Navigation.*
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.common.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,13 +25,13 @@ class RegisterViewModel(
 
     private val _nameState = MutableStateFlow(
         RegisterState.Name(
-            text = "", validation = RegisterState.Name.Validation.Valid
+            text = "", validation = ValidationState.Valid
         )
     )
     val nameState: StateFlow<RegisterState.Name> = _nameState.asStateFlow()
     private val _emailState = MutableStateFlow(
         RegisterState.Email(
-            text = "", validation = RegisterState.Email.Validation.Valid
+            text = "", validation = ValidationState.Valid
         )
     )
     val emailState: StateFlow<RegisterState.Email> = _emailState.asStateFlow()
@@ -39,7 +39,7 @@ class RegisterViewModel(
     private val _passwordState = MutableStateFlow(
         RegisterState.Password(
             "",
-            validation = RegisterState.Password.Validation.Valid
+            validation = ValidationState.Valid
         )
     )
     val passwordState: StateFlow<RegisterState.Password> = _passwordState.asStateFlow()
@@ -63,12 +63,12 @@ class RegisterViewModel(
 
         mainViewModel.hideNavigationBar()
 
-        _nameState.update { it.copy(text = "", validation = RegisterState.Name.Validation.Valid) }
-        _emailState.update { it.copy(text = "", validation = RegisterState.Email.Validation.Valid) }
+        _nameState.update { it.copy(text = "", validation = ValidationState.Valid) }
+        _emailState.update { it.copy(text = "", validation = ValidationState.Valid) }
         _passwordState.update {
             it.copy(
                 text = "",
-                validation = RegisterState.Password.Validation.Valid
+                validation = ValidationState.Valid
             )
         }
         _confirmPasswordState.update { it.copy(text = "", isValid = true) }
@@ -136,42 +136,42 @@ class RegisterViewModel(
 
         val trimmedName = _nameState.value.text.trim()
         if (trimmedName.isBlank()) {
-            _nameState.update { it.copy(validation = RegisterState.Name.Validation.Empty) }
+            _nameState.update { it.copy(validation = ValidationState.Empty) }
         } else if (
             trimmedName.length < 2 ||
             trimmedName.length > 50 ||
             !NAME_REGEX.matcher(trimmedName).matches()
         ) {
-            _nameState.update { it.copy(validation = RegisterState.Name.Validation.InvalidFormat) }
+            _nameState.update { it.copy(validation = ValidationState.InvalidFormat) }
         } else {
             _nameState.update {
-                it.copy(validation = RegisterState.Name.Validation.Valid)
+                it.copy(validation = ValidationState.Valid)
             }
         }
 
         val trimmedEmail = _emailState.value.text.trim()
         if (trimmedEmail.isBlank()) {
-            _emailState.update { it.copy(validation = RegisterState.Email.Validation.Empty) }
+            _emailState.update { it.copy(validation = ValidationState.Empty) }
         } else if (!Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
-            _emailState.update { it.copy(validation = RegisterState.Email.Validation.InvalidFormat) }
+            _emailState.update { it.copy(validation = ValidationState.InvalidFormat) }
         } else {
             _emailState.update {
-                it.copy(validation = RegisterState.Email.Validation.Valid)
+                it.copy(validation = ValidationState.Valid)
             }
         }
 
         val trimmedPassword = _passwordState.value.text.trim()
         if (trimmedPassword.isBlank()) {
-            _passwordState.update { it.copy(validation = RegisterState.Password.Validation.Empty) }
+            _passwordState.update { it.copy(validation = ValidationState.Empty) }
         } else if (
             trimmedPassword.length < 12 ||
             !trimmedPassword.any { symbol -> symbol.isDigit() } ||
             !trimmedPassword.any { symbol -> symbol.isUpperCase() }
         ) {
-            _passwordState.update { it.copy(validation = RegisterState.Password.Validation.InvalidFormat) }
+            _passwordState.update { it.copy(validation = ValidationState.InvalidFormat) }
         } else {
             _passwordState.update {
-                it.copy(validation = RegisterState.Password.Validation.Valid)
+                it.copy(validation = ValidationState.Valid)
             }
         }
 
@@ -182,9 +182,9 @@ class RegisterViewModel(
 
         _accountRoleMenuState.update { it.copy(isValid = it.selected != null) }
 
-        val isAllValid =_nameState.value.validation is RegisterState.Name.Validation.Valid &&
-                _emailState.value.validation is RegisterState.Email.Validation.Valid &&
-                _passwordState.value.validation is RegisterState.Password.Validation.Valid &&
+        val isAllValid =_nameState.value.validation is ValidationState.Valid &&
+                _emailState.value.validation is ValidationState.Valid &&
+                _passwordState.value.validation is ValidationState.Valid &&
                 _confirmPasswordState.value.isValid &&
                 _accountRoleMenuState.value.isValid
 
@@ -200,9 +200,9 @@ class RegisterViewModel(
                 },
                 onSuccess = {
                     mainViewModel.navigate(
-                        Navigation.To(
+                        To(
                             NavigationRoutes.LOGIN,
-                            Navigation.To.PopUpType.Route(NavigationRoutes.REGISTER)
+                            Route(NavigationRoutes.REGISTER)
                         )
                     )
                 }

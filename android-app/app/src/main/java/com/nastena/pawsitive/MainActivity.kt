@@ -7,8 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import com.nastena.pawsitive.repository.datastores.AuthDataStore
 import com.nastena.pawsitive.network.RetrofitClient
 import com.nastena.pawsitive.network.api.AccountApi
+import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.network.api.UserApi
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.main.MainContent
 import com.nastena.pawsitive.ui.theme.PawsitiveTheme
@@ -30,9 +32,14 @@ class MainActivity : ComponentActivity() {
 
         val userRepository = UserRepository(userApi)
 
+        val shelterApi = retrofit.create(ShelterApi::class.java)
+
+        val shelterRepository = ShelterRepository(shelterApi)
+
         setContent {
             PawsitiveTheme {
-                MainContent(accountRepository = accountRepository, userRepository = userRepository)
+                MainContent(accountRepository = accountRepository, userRepository = userRepository,
+                    shelterRepository = shelterRepository)
             }
         }
     }

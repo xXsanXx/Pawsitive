@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AccountRole
+import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.theme.PawsitiveTheme
 
 @Composable
@@ -87,13 +88,13 @@ private fun RegisterView(
 
             // ------------- Name --------------------
             AnimatedVisibility(
-                visible = nameState.validation != RegisterState.Name.Validation.Valid
+                visible = nameState.validation != ValidationState.Valid
             ) {
                 OutlinedTextField(
                     value = when (nameState.validation) {
-                        RegisterState.Name.Validation.Empty -> stringResource(R.string.register_name_is_empty)
-                        RegisterState.Name.Validation.InvalidFormat -> stringResource(R.string.register_name_invalid)
-                        RegisterState.Name.Validation.Valid -> ""
+                        ValidationState.Empty -> stringResource(R.string.register_name_is_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.register_name_invalid)
+                        ValidationState.Valid -> ""
                     },
                     onValueChange = {},
                     readOnly = true,
@@ -112,7 +113,7 @@ private fun RegisterView(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = nameState.validation != RegisterState.Name.Validation.Valid
+                isError = nameState.validation != ValidationState.Valid
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -121,13 +122,13 @@ private fun RegisterView(
 
             // ------------- Email --------------------
             AnimatedVisibility(
-                visible = emailState.validation != RegisterState.Email.Validation.Valid
+                visible = emailState.validation != ValidationState.Valid
             ) {
                 OutlinedTextField(
                     value = when (emailState.validation) {
-                        RegisterState.Email.Validation.Empty -> stringResource(R.string.register_email_is_empty)
-                        RegisterState.Email.Validation.InvalidFormat -> stringResource(R.string.register_email_invalid)
-                        RegisterState.Email.Validation.Valid -> ""
+                        ValidationState.Empty -> stringResource(R.string.register_email_is_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.register_email_invalid)
+                        ValidationState.Valid -> ""
                     },
                     onValueChange = {},
                     readOnly = true,
@@ -146,7 +147,7 @@ private fun RegisterView(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                isError = emailState.validation != RegisterState.Email.Validation.Valid
+                isError = emailState.validation != ValidationState.Valid
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -155,13 +156,13 @@ private fun RegisterView(
             // ------------- Password --------------------
 
             AnimatedVisibility(
-                visible = passwordState.validation != RegisterState.Password.Validation.Valid
+                visible = passwordState.validation != ValidationState.Valid
             ) {
                 OutlinedTextField(
                     value = when (passwordState.validation) {
-                        RegisterState.Password.Validation.Empty -> stringResource(R.string.register_password_is_empty)
-                        RegisterState.Password.Validation.InvalidFormat -> stringResource(R.string.register_password_invalid)
-                        RegisterState.Password.Validation.Valid -> ""
+                        ValidationState.Empty -> stringResource(R.string.register_password_is_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.register_password_invalid)
+                        ValidationState.Valid -> ""
                     },
                     onValueChange = {},
                     readOnly = true,
@@ -180,7 +181,7 @@ private fun RegisterView(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = passwordState.validation != RegisterState.Password.Validation.Valid
+                isError = passwordState.validation != ValidationState.Valid
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -333,9 +334,9 @@ private fun RegisterPreviewLight() {
 
 @Composable
 private fun RegisterPreview() {
-    val nameState = RegisterState.Name("", RegisterState.Name.Validation.Valid)
-    val emailState = RegisterState.Email("", RegisterState.Email.Validation.Valid)
-    val passwordState = RegisterState.Password("", RegisterState.Password.Validation.Valid)
+    val nameState = RegisterState.Name("", ValidationState.Valid)
+    val emailState = RegisterState.Email("", ValidationState.Valid)
+    val passwordState = RegisterState.Password("", ValidationState.Valid)
     val confirmPasswordState = RegisterState.ConfirmPassword("", true)
     val accountRoleMenuState = RegisterState.AccountRoleMenu(false, null, true)
 

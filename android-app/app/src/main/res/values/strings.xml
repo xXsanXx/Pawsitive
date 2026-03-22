@@ -53,6 +53,18 @@
     <string name="user_profile_name">Имя пользователя</string>
     <string name="user_profile_email">Электронная почта</string>
 
+    <!-- Shelter Profile -->
+    <string name="shelter_profile_title">Профиль</string>
+    <string name="shelter_profile_logout_submit">Выйти из профиля</string>
+
+    <string name="shelter_profile_name">Имя пользователя</string>
+    <string name="shelter_profile_email">Электронная почта</string>
+    <string name="shelter_profile_address">Адрес</string>
+    <string name="shelter_profile_phone">Номер телефона</string>
+    <string name="shelter_profile_info">Описание</string>
+    <string name="shelter_profile_editing">Редактировать профиль</string>
+
+
 
 
 

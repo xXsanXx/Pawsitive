@@ -4,13 +4,11 @@ import android.util.Log
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.UserRepository
-import com.nastena.pawsitive.ui.common.Navigation
-import com.nastena.pawsitive.ui.common.Navigation.*
-import com.nastena.pawsitive.ui.common.Navigation.To.PopUpType.*
-import com.nastena.pawsitive.ui.common.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.Navigation.*
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.screens.register.RegisterViewEvents
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,8 +20,11 @@ class UserProfileViewModel(
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
-    private val _state = MutableStateFlow(UserProfileState(name = "", email = ""))
-    val state: StateFlow<UserProfileState> = _state.asStateFlow()
+    private val _emailState = MutableStateFlow("")
+    val emailState: StateFlow<String> = _emailState.asStateFlow()
+
+    private val _nameState = MutableStateFlow("")
+    val nameState: StateFlow<String> = _nameState.asStateFlow()
 
     override fun onEnter() {
         super.onEnter()
@@ -37,7 +38,8 @@ class UserProfileViewModel(
 
             onSuccess = { userProfile: UserProfileResponse ->
                 Log.d("UserProfile", "Success: $userProfile")
-                _state.update { it.copy(name = userProfile.name, email = userProfile.email) }
+                _emailState.update { userProfile.email }
+                _nameState.update { userProfile.name }
             }
         )
     }
@@ -55,7 +57,7 @@ class UserProfileViewModel(
                 mainViewModel.navigate(
                     To(
                         NavigationRoutes.LOGIN,
-                        Route(NavigationRoutes.USER_HOME)
+                        To.PopUpType.Origin
                     )
                 )
             }

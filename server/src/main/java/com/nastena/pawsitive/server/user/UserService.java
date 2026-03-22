@@ -18,7 +18,7 @@ public class UserService {
     }
 
     public User createUserOrThrow(Account account, String name) {
-        validateNameOrThrow(name);
+        validateUserNameOrThrow(name);
 
         User user = new User();
         user.setAccount(account);
@@ -37,9 +37,7 @@ public class UserService {
                 ));
     }
 
-
-
-    private void validateNameOrThrow(String name) throws ServerRuntimeException {
+    public void validateUserNameOrThrow(String name) throws ServerRuntimeException {
         name = name.trim();
 
         if (name.isBlank()) {

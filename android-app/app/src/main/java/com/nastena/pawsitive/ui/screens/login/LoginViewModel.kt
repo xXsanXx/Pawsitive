@@ -2,10 +2,10 @@ package com.nastena.pawsitive.ui.screens.login
 
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.common.Navigation
-import com.nastena.pawsitive.ui.common.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.Navigation
+import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.common.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

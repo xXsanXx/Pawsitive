@@ -32,10 +32,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
-import com.nastena.pawsitive.ui.common.Navigation
-import com.nastena.pawsitive.ui.common.NavigationBars
-import com.nastena.pawsitive.ui.common.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.Navigation
+import com.nastena.pawsitive.ui.common.navigation.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginView
 import com.nastena.pawsitive.ui.screens.login.LoginViewModel
@@ -43,6 +44,9 @@ import com.nastena.pawsitive.ui.screens.login.LoginViewModelFactory
 import com.nastena.pawsitive.ui.screens.register.RegisterView
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModel
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
+import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileView
+import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModel
+import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelFactory
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
@@ -54,7 +58,8 @@ import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModelFactory
 fun MainContent(
     modifier: Modifier = Modifier,
     accountRepository: AccountRepository,
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    shelterRepository: ShelterRepository
 ) {
     val mainViewModel: MainViewModel = viewModel()
 
@@ -72,6 +77,10 @@ fun MainContent(
 
     val userProfileViewModel: UserProfileViewModel = viewModel (
         factory = UserProfileViewModelFactory(mainViewModel, userRepository, accountRepository )
+    )
+
+    val shelterProfileViewModel: ShelterProfileViewModel = viewModel (
+        factory = ShelterProfileViewModelFactory(mainViewModel, shelterRepository, accountRepository )
     )
 
     val navController: NavHostController = rememberNavController()
@@ -109,7 +118,8 @@ fun MainContent(
                     splashViewModel = splashViewModel,
                     registerViewModel = registerViewModel,
                     loginViewModel = loginViewModel,
-                    userProfileViewModel = userProfileViewModel
+                    userProfileViewModel = userProfileViewModel,
+                    shelterProfileViewModel = shelterProfileViewModel
                 )
             }
         }
@@ -137,7 +147,8 @@ private fun Navigation(
     splashViewModel: SplashViewModel,
     registerViewModel: RegisterViewModel,
     loginViewModel: LoginViewModel,
-    userProfileViewModel: UserProfileViewModel
+    userProfileViewModel: UserProfileViewModel,
+    shelterProfileViewModel: ShelterProfileViewModel
 ) {
     NavHost(
         navController = navController,
@@ -173,6 +184,12 @@ private fun Navigation(
 
         composable(NavigationRoutes.SHELTER_HOME) {
             Text("Shelter home screen")
+        }
+
+        composable(NavigationRoutes.SHELTER_PROFILE) {
+            ScreenView(shelterProfileViewModel) {
+                ShelterProfileView(viewModel = shelterProfileViewModel)
+            }
         }
 
     }

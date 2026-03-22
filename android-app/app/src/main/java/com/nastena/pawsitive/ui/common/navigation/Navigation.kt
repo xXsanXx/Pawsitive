@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.common
+package com.nastena.pawsitive.ui.common.navigation
 
 sealed interface Navigation {
 

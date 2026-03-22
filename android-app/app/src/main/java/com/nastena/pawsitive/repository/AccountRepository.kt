@@ -75,12 +75,6 @@ class AccountRepository(
     }
 
     suspend fun logout(): Result<Unit> = runCatching {
-        val response: Response<Unit> = _api.logout()
-
-        if (!response.isSuccessful) {
-            return handleServerErrorBody(response)
-        }
-
         Log.i("Account repository", "Logout is successful")
 
         _authDataStore.clearAll()

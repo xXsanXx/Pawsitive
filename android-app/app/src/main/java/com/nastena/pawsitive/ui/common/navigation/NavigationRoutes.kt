@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.common
+package com.nastena.pawsitive.ui.common.navigation
 
 import com.nastena.pawsitive.dto.AccountRole
 
@@ -11,9 +11,13 @@ object NavigationRoutes {
 
     const val USER_PROFILE = "user_profile"
 
+    const val SHELTER_PROFILE = "shelter_profile"
+
     const val FAVORITE = "favorite"
 
     const val SHELTER_HOME = "shelter_home"
+
+    const val SHELTER_PROFILE_EDITING = "shelter_profile_editing"
 
     fun fromAccountRole(role: AccountRole) = when (role) {
         AccountRole.USER -> USER_HOME

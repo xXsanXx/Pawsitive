@@ -71,10 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            log.error("Auth is empty");
-
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(

@@ -1,40 +1,23 @@
 package com.nastena.pawsitive.ui.screens.register
 
 import com.nastena.pawsitive.dto.AccountRole
+import com.nastena.pawsitive.ui.common.validation.ValidationState
 
 object RegisterState {
 
     data class Name(
         val text: String,
-        val validation: Validation
-    ) {
-        sealed interface Validation {
-            object Valid: Validation
-            object InvalidFormat: Validation
-            object Empty: Validation
-        }
-    }
+        val validation: ValidationState
+    )
     data class Email(
         val text: String,
-        val validation: Validation
-    ) {
-        sealed interface Validation {
-            object Valid: Validation
-            object InvalidFormat: Validation
-            object Empty: Validation
-        }
-    }
+        val validation: ValidationState
+    )
 
     data class Password(
         val text: String,
-        val validation: Validation
-    ) {
-        sealed interface Validation {
-            object Valid: Validation
-            object InvalidFormat: Validation
-            object Empty: Validation
-        }
-    }
+        val validation: ValidationState
+    )
 
     data class ConfirmPassword(
         val text: String,

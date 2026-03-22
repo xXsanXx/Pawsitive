@@ -26,9 +26,12 @@ public class UserController {
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
         String email = authentication.getName();
 
+        log.info("[profile] Request profile for: {}", email);
+
         Account account = accountService.getAccountOrThrow(email);
         User user = userService.getUserOrThrow(account);
 
+        log.info("[profile] Successfully: {}", user.getName());
         return ResponseEntity.ok(new UserProfileResponse(user.getName(), account.getEmail()));
     }
 

@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
-import com.nastena.pawsitive.ui.common.Navigation
-import com.nastena.pawsitive.ui.common.NavigationBars
-import com.nastena.pawsitive.ui.common.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.Navigation
+import com.nastena.pawsitive.ui.common.navigation.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow

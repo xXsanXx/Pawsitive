@@ -41,10 +41,15 @@ public class AccountController {
         if (isDevMode)
             log.info(" [register] name: {}, email: {}, password: {}, role: {}", name, email, password, role.name());
 
+        switch (role) {
+            case USER -> userService.validateUserNameOrThrow(name);
+            case SHELTER -> shelterService.validateShelterNameOrThrow(name);
+        }
+
         Account newAccount = accountService.registerOrThrow(email, password, role);
         switch (role) {
             case USER -> userService.createUserOrThrow(newAccount, name);
-            case SHELTER -> shelterService.createShelter(newAccount);
+            case SHELTER -> shelterService.createShelterOrThrow(newAccount, name);
         }
         return ResponseEntity.ok("Регистрация успешна!");
     }
@@ -84,12 +89,6 @@ public class AccountController {
             log.info("[me] Got role: {}", role);
 
         return ResponseEntity.ok(new MeResponse(AccountRole.valueOf(role)));
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        log.info("User logged out successfully");
-        return ResponseEntity.ok("Logout successful!");
     }
 
 }

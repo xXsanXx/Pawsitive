@@ -47,7 +47,7 @@ public class FavoriteService {
                         f.getAnimal().getName(),
                         f.getAnimal().getType(),
                         f.getAnimal().getAge(),
-                        f.getAnimal().getShelter().getShelterName()
+                        f.getAnimal().getShelter().getName()
                 ))
                 .toList();
     }

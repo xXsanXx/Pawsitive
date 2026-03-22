@@ -28,11 +28,13 @@ fun UserProfileView(
     viewModel: UserProfileViewModel
 ) {
 
-    val state: UserProfileState by viewModel.state.collectAsState()
+    val email: String by viewModel.emailState.collectAsState()
+    val name: String by viewModel.nameState.collectAsState()
 
     UserProfileView(
         modifier = modifier,
-        state = state,
+        email = email,
+        name = name,
         onViewEvent = { event -> viewModel.onViewEvent(event) }
     )
 }
@@ -40,7 +42,8 @@ fun UserProfileView(
 @Composable
 private fun UserProfileView(
     modifier: Modifier = Modifier,
-    state: UserProfileState,
+    email: String,
+    name: String,
     onViewEvent: (UserProfileViewEvents) -> Unit
 ) {
     Box(
@@ -65,7 +68,7 @@ private fun UserProfileView(
             // ------------- Name --------------------
 
             OutlinedTextField(
-                value = state.name,
+                value = name,
                 onValueChange = {},
                 label = { Text(stringResource(R.string.user_profile_name)) },
                 readOnly = true,
@@ -78,7 +81,7 @@ private fun UserProfileView(
             // ------------- Email --------------------
 
             OutlinedTextField(
-                value = state.email,
+                value = email,
                 onValueChange = {},
                 label = { Text(stringResource(R.string.user_profile_email)) },
                 readOnly = true,

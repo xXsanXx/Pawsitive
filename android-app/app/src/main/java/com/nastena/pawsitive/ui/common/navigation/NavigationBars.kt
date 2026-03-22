@@ -1,10 +1,9 @@
-package com.nastena.pawsitive.ui.common
+package com.nastena.pawsitive.ui.common.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.NavigationBar
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.nastena.pawsitive.dto.AccountRole
 
@@ -40,9 +39,23 @@ object NavigationBars {
         )
     )
 
+    val SHELTER = Settings(
+        initialSelected = 0,
+        items = listOf(
+            Item(
+                navigation = Navigation.To(NavigationRoutes.SHELTER_HOME),
+                icon = Icons.Default.Home
+            ),
+            Item(
+                navigation = Navigation.To(NavigationRoutes.SHELTER_PROFILE),
+                icon = Icons.Default.AccountCircle
+            )
+        )
+    )
+
     fun fromAccountRole(role: AccountRole) =
         when (role) {
             AccountRole.USER -> USER
-            AccountRole.SHELTER -> TODO()
+            AccountRole.SHELTER -> SHELTER
         }
 }

@@ -21,7 +21,7 @@ public class AnimalResponseDto {
         this.age = animal.getAge();
         this.gender = animal.getGender().name();
         this.healthInfo = animal.getHealthInfo();
-        this.shelterName = animal.getShelter().getShelterName();
+        this.shelterName = animal.getShelter().getName();
     }
 
     public Long getId() {
