@@ -192,6 +192,12 @@ private fun Navigation(
             }
         }
 
+        composable(NavigationRoutes.SHELTER_PROFILE_EDITING) {
+            ScreenView(TODO()) {
+                ShelterProfileView(viewModel = shelterProfileViewModel)
+            }
+        }
+
     }
 }
 

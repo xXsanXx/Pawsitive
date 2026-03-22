@@ -104,7 +104,14 @@ class EditingShelterProfileViewModel(
                 )
             }
 
-            EditingShelterProfileEvents.CancelClicked -> TODO()
+            EditingShelterProfileEvents.CancelClicked -> {
+                mainViewModel.navigate(
+                    To(
+                        NavigationRoutes.SHELTER_PROFILE,
+                        Route(NavigationRoutes.SHELTER_PROFILE_EDITING)
+                    )
+                )
+            }
         }
     }
 
