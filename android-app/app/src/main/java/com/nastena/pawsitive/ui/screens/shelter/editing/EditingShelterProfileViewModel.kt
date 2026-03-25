@@ -56,7 +56,7 @@ class EditingShelterProfileViewModel(
                 _infoState.update { shelterProfile.info }
                 _phoneState.update {
                     it.copy(
-                        text = "",
+                        text = shelterProfile.phone ?: "",
                         validation = ValidationState.Valid
                     )
                 }

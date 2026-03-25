@@ -92,14 +92,15 @@ private fun EditingShelterProfileView(
             OutlinedTextField(
                 value = phone.text,
                 onValueChange = { newText ->
-                    onViewEvent(EditingShelterProfileEvents.Phone.TextUpdated(newText))
-
+                    val digits = newText.filter { it.isDigit() }.take(10)
+                    onViewEvent(EditingShelterProfileEvents.Phone.TextUpdated(digits))
                 },
                 label = { Text(stringResource(R.string.editing_shelter_profile_phone)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                isError = phone.validation != ValidationState.Valid
+                isError = phone.validation != ValidationState.Valid,
+                visualTransformation = PhoneVisualTransformation("+7-000-000-00-00", '0')
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -109,7 +110,6 @@ private fun EditingShelterProfileView(
                 value = address,
                 onValueChange = { newText ->
                     onViewEvent(EditingShelterProfileEvents.Address.TextUpdated(newText))
-
                 },
                 label = { Text(stringResource(R.string.editing_shelter_profile_address)) },
                 modifier = Modifier.fillMaxWidth(),
@@ -124,7 +124,6 @@ private fun EditingShelterProfileView(
                 value = info,
                 onValueChange = { newText ->
                     onViewEvent(EditingShelterProfileEvents.Info.TextUpdated(newText))
-
                 },
                 label = { Text(stringResource(R.string.editing_shelter_profile_info)) },
                 modifier = Modifier.fillMaxWidth(),
