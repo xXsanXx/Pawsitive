@@ -1,13 +1,11 @@
 package com.nastena.pawsitive.ui.screens.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicSecureTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
@@ -81,9 +78,9 @@ fun LoginView(
                     ) {
                         Icon(
                             imageVector = if (passwordState.isVisible) {
-                                Icons.Default.AddCircle
+                                Icons.Default.Visibility
                             } else {
-                                Icons.Default.Add
+                                Icons.Default.VisibilityOff
                             },
                             contentDescription = if (passwordState.isVisible) {
                                 stringResource(R.string.login_password_hide_description)

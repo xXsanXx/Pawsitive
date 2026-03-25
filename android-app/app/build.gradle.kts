@@ -80,4 +80,6 @@ dependencies {
 
     implementation("com.nastena.pawsitive:dto:1.0.0")
 
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
 }
