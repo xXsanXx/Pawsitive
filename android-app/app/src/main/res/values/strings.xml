@@ -64,6 +64,19 @@
     <string name="shelter_profile_info">Описание</string>
     <string name="shelter_profile_editing">Редактировать профиль</string>
 
+    <!-- Editing Shelter Profile -->
+    <string name="editing_shelter_profile_title">Редактирование профиля</string>
+
+    <string name="editing_shelter_phone_invalid">Неверный формат</string>
+    <string name="editing_shelter_phone_empty">Поле не должно быть пустым</string>
+
+    <string name="editing_shelter_profile_phone">Номер телефона</string>
+    <string name="editing_shelter_profile_address">Адрес</string>
+    <string name="editing_shelter_profile_info">Описание</string>
+
+    <string name="editing_shelter_profile_cancel">Отмена</string>
+    <string name="editing_shelter_profile_save">Сохранить</string>
+
 
 
 

@@ -44,6 +44,9 @@ import com.nastena.pawsitive.ui.screens.login.LoginViewModelFactory
 import com.nastena.pawsitive.ui.screens.register.RegisterView
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModel
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
+import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileView
+import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModel
+import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelFactory
@@ -83,6 +86,10 @@ fun MainContent(
         factory = ShelterProfileViewModelFactory(mainViewModel, shelterRepository, accountRepository )
     )
 
+    val editingShelterProfileViewModel: EditingShelterProfileViewModel = viewModel (
+        factory = EditingShelterProfileViewModelFactory(mainViewModel, shelterRepository)
+    )
+
     val navController: NavHostController = rememberNavController()
 
     val screenState by mainViewModel.mainState.collectAsState()
@@ -119,7 +126,8 @@ fun MainContent(
                     registerViewModel = registerViewModel,
                     loginViewModel = loginViewModel,
                     userProfileViewModel = userProfileViewModel,
-                    shelterProfileViewModel = shelterProfileViewModel
+                    shelterProfileViewModel = shelterProfileViewModel,
+                    editingShelterProfileViewModel = editingShelterProfileViewModel
                 )
             }
         }
@@ -148,7 +156,8 @@ private fun Navigation(
     registerViewModel: RegisterViewModel,
     loginViewModel: LoginViewModel,
     userProfileViewModel: UserProfileViewModel,
-    shelterProfileViewModel: ShelterProfileViewModel
+    shelterProfileViewModel: ShelterProfileViewModel,
+    editingShelterProfileViewModel: EditingShelterProfileViewModel
 ) {
     NavHost(
         navController = navController,
@@ -193,8 +202,8 @@ private fun Navigation(
         }
 
         composable(NavigationRoutes.SHELTER_PROFILE_EDITING) {
-            ScreenView(TODO()) {
-                ShelterProfileView(viewModel = shelterProfileViewModel)
+            ScreenView(editingShelterProfileViewModel) {
+                EditingShelterProfileView(viewModel = editingShelterProfileViewModel)
             }
         }
 

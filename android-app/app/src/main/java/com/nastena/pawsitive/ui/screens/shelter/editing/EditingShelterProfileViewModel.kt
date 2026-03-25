@@ -1,7 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.editing
 
 import android.util.Log
-import android.util.Patterns
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
@@ -23,10 +22,12 @@ class EditingShelterProfileViewModel(
 
     companion object {
         private val PHONE_REGEX = Pattern.compile(
-            "^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$")
+            "^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$"
+        )
     }
 
-    private val _phoneState = MutableStateFlow(EditingShelterProfileState.Phone(
+    private val _phoneState = MutableStateFlow(
+        EditingShelterProfileState.Phone(
             text = "", validation = ValidationState.Valid
         )
     )
@@ -74,8 +75,7 @@ class EditingShelterProfileViewModel(
             is EditingShelterProfileEvents.Phone.TextUpdated ->
                 _phoneState.update { it.copy(text = event.newText) }
 
-            EditingShelterProfileEvents.SaveChangedClicked ->
-            {
+            EditingShelterProfileEvents.SaveChangedClicked -> {
                 val trimmedPhone = _phoneState.value.text.trim()
                 if (!PHONE_REGEX.matcher(trimmedPhone).matches()) {
                     _phoneState.update { it.copy(validation = ValidationState.InvalidFormat) }
@@ -114,7 +114,6 @@ class EditingShelterProfileViewModel(
             }
         }
     }
-
 
 
 }
