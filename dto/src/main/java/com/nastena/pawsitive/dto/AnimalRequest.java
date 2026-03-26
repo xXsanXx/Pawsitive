@@ -1,6 +1,6 @@
-package com.nastena.pawsitive.server.animal.dto;
+package com.nastena.pawsitive.dto;
 
-public class AnimalRequestDto {
+public class AnimalRequest {
     private String name;
     private String type;
     private String breed;
@@ -8,13 +8,23 @@ public class AnimalRequestDto {
     private String gender;
     private String healthInfo;
 
+    public AnimalRequest() {}
+
+
+    public AnimalRequest(String name, String type, String breed,
+                         Integer age, String gender, String healthInfo) {
+        this.name = name;
+        this.type = type;
+        this.breed = breed;
+        this.age = age;
+        this.gender = gender;
+        this.healthInfo = healthInfo;
+    }
+
+
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getType() {
@@ -25,11 +35,9 @@ public class AnimalRequestDto {
         return breed;
     }
 
-
     public Integer getAge() {
         return age;
     }
-
 
     public String getGender() {
         return gender;
@@ -38,6 +46,5 @@ public class AnimalRequestDto {
     public String getHealthInfo() {
         return healthInfo;
     }
-
 
 }

@@ -4,14 +4,10 @@ import android.util.Log
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.ShelterRepository
-import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
-import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
-import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.screens.register.RegisterViewEvents
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

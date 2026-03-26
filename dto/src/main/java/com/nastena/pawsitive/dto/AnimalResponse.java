@@ -1,8 +1,6 @@
-package com.nastena.pawsitive.server.animal.dto;
+package com.nastena.pawsitive.dto;
 
-import com.nastena.pawsitive.server.animal.Animal;
-
-public class AnimalResponseDto {
+public class AnimalResponse {
     private Long id;
     private String name;
     private String type;
@@ -12,17 +10,21 @@ public class AnimalResponseDto {
     private String healthInfo;
     private String shelterName;
 
+    public AnimalResponse() {}
 
-    public AnimalResponseDto(Animal animal) {
-        this.id = animal.getId();
-        this.name = animal.getName();
-        this.type = animal.getType();
-        this.breed = animal.getBreed();
-        this.age = animal.getAge();
-        this.gender = animal.getGender().name();
-        this.healthInfo = animal.getHealthInfo();
-        this.shelterName = animal.getShelter().getName();
+
+    public AnimalResponse(Long id, String name, String type, String breed,
+                          Integer age, String gender, String healthInfo, String shelterName) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.breed = breed;
+        this.age = age;
+        this.gender = gender;
+        this.healthInfo = healthInfo;
+        this.shelterName = shelterName;
     }
+
 
     public Long getId() {
         return id;
