@@ -6,7 +6,7 @@ public class AnimalResponse {
     private String type;
     private String breed;
     private Integer age;
-    private String gender;
+    private AnimalGender gender;
     private String healthInfo;
     private String shelterName;
 
@@ -14,7 +14,7 @@ public class AnimalResponse {
 
 
     public AnimalResponse(Long id, String name, String type, String breed,
-                          Integer age, String gender, String healthInfo, String shelterName) {
+                          Integer age, AnimalGender gender, String healthInfo, String shelterName) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -46,7 +46,7 @@ public class AnimalResponse {
         return age;
     }
 
-    public String getGender() {
+    public AnimalGender getGender() {
         return gender;
     }
 

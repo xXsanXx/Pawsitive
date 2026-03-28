@@ -14,7 +14,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "com.nastena.pawsitive"
-            artifactId = "dto"
+            artifactId = "common"
             version = "1.0.0"
 
             from(components["java"])

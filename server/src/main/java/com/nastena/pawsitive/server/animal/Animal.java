@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.animal;
 
+import com.nastena.pawsitive.dto.AnimalGender;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,11 +37,7 @@ public class Animal {
 
     @Setter
     @Enumerated(EnumType.STRING)
-    private Gender gender;
-
-    public enum Gender {
-        MALE, FEMALE
-    }
+    private AnimalGender gender;
 
     public Animal() {}
 

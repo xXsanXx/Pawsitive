@@ -18,6 +18,7 @@ public class UserService {
     }
 
     public User createUserOrThrow(Account account, String name) {
+        name = name.trim();
         validateUserNameOrThrow(name);
 
         User user = new User();

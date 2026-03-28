@@ -1,18 +1,18 @@
 package com.nastena.pawsitive.dto;
 
-public class AnimalRequest {
+public class CreateAnimalRequest {
     private String name;
     private String type;
     private String breed;
     private Integer age;
-    private String gender;
+    private AnimalGender gender;
     private String healthInfo;
 
-    public AnimalRequest() {}
+    public CreateAnimalRequest() {}
 
 
-    public AnimalRequest(String name, String type, String breed,
-                         Integer age, String gender, String healthInfo) {
+    public CreateAnimalRequest(String name, String type, String breed,
+                               Integer age, AnimalGender gender, String healthInfo) {
         this.name = name;
         this.type = type;
         this.breed = breed;
@@ -39,7 +39,7 @@ public class AnimalRequest {
         return age;
     }
 
-    public String getGender() {
+    public AnimalGender getGender() {
         return gender;
     }
 

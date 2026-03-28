@@ -10,16 +10,7 @@ class AnimalRepository (
     private val _api: AnimalApi
 ) {
     suspend fun getAnimalsData(): Result<AnimalResponse> = runCatching {
-        val response: Response<AnimalResponse> = _api.getShelterAnimals()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
-    }
-
-    suspend fun getAnimalData(id: Long): Result<AnimalResponse> = runCatching {
-        val response: Response<AnimalResponse> = _api.getAnimal(id)
+        val response: Response<AnimalResponse> = _api.getAnimals()
         if (response.isSuccessful) {
             return Result.success(response.body()!!)
         } else {

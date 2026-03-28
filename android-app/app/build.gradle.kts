@@ -78,7 +78,7 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
-    implementation("com.nastena.pawsitive:dto:1.0.0")
+    implementation("com.nastena.pawsitive:common:1.0.0")
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
