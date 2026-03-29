@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.server.animal;
 
 import com.nastena.pawsitive.dto.CreateAnimalRequest;
+import com.nastena.pawsitive.dto.UpdateAnimalRequest;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
 import com.nastena.pawsitive.server.shelter.Shelter;
@@ -40,6 +41,22 @@ public class AnimalController {
         Animal animal = animalService.createAnimalOrThrow(shelter, createAnimalRequest);
 
         return ResponseEntity.ok(animal.getId());
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateAnimal(@RequestBody UpdateAnimalRequest updateAnimalRequest) {
+
+        Animal animal = animalService.updateAnimalOrThrow(updateAnimalRequest);
+
+        return ResponseEntity.ok("Animal data updated");
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeAnimal(@RequestBody Long id) {
+
+        animalService.removeAnimalOrThrow(id);
+
+        return ResponseEntity.ok("Animal removed");
     }
 
 

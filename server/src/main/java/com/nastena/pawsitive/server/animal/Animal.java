@@ -1,6 +1,8 @@
 package com.nastena.pawsitive.server.animal;
 
+import com.nastena.pawsitive.dto.AnimalBreed;
 import com.nastena.pawsitive.dto.AnimalGender;
+import com.nastena.pawsitive.dto.AnimalType;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,20 +22,19 @@ public class Animal {
     private Shelter shelter;
 
     @Setter
-    private String animalName;
+    private String name;
 
     @Setter
-    private String type;
+    private AnimalType type;
 
     @Setter
-    private String breed;
+    private AnimalBreed breed;
 
     @Setter
-    private Integer age;
+    private Long birthDate;
 
     @Setter
-    @Column(length = 1000)
-    private String healthInfo;
+    private String description;
 
     @Setter
     @Enumerated(EnumType.STRING)

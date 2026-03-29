@@ -7,9 +7,9 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
-              <build path="$PROJECT_DIR$/dto" name="dto">
+              <build path="$PROJECT_DIR$/common" name="common">
                 <projects>
-                  <project path="$PROJECT_DIR$/dto" />
+                  <project path="$PROJECT_DIR$/common" />
                 </projects>
               </build>
             </builds>
@@ -22,7 +22,7 @@
           <set>
             <option value="$PROJECT_DIR$/android-app" />
             <option value="$PROJECT_DIR$/android-app/app" />
-            <option value="$PROJECT_DIR$/dto" />
+            <option value="$PROJECT_DIR$/common" />
           </set>
         </option>
       </GradleProjectSettings>
