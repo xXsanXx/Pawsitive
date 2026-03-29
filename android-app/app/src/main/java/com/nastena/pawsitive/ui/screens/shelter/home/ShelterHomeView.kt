@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -30,7 +32,7 @@ fun ShelterHomeView(
     val animalsState by viewModel.animalsState.collectAsState()
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         floatingActionButton = {
             IconButton(onClick = { viewModel.onViewEvent(event = ShelterHomeEvents.AddAnimalClicked) }) {
                 Icon(
@@ -41,12 +43,15 @@ fun ShelterHomeView(
         }
     ) { paddingValues: PaddingValues ->
         LazyColumn(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues).fillMaxWidth()
         ) {
             items(animalsState.size) { index: Int ->
                 val animalState: ShelterHomeState.Animal = animalsState[index]
 
-                Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column(
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.Start

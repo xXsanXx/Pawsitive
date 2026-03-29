@@ -11,7 +11,6 @@ import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.network.api.UserApi
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.repository.AnimalRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.main.MainContent
@@ -36,18 +35,14 @@ class MainActivity : ComponentActivity() {
 
         val shelterApi = retrofit.create(ShelterApi::class.java)
 
-        val shelterRepository = ShelterRepository(shelterApi)
-
         val animalApi = retrofit.create(AnimalApi::class.java)
 
-        val animalRepository = AnimalRepository(animalApi)
-
-
+        val shelterRepository = ShelterRepository(shelterApi, _animalsApi = animalApi)
 
         setContent {
             PawsitiveTheme {
                 MainContent(accountRepository = accountRepository, userRepository = userRepository,
-                    shelterRepository = shelterRepository, animalRepository = animalRepository)
+                    shelterRepository = shelterRepository)
             }
         }
     }

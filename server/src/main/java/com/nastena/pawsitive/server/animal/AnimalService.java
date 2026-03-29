@@ -6,6 +6,7 @@ import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.utils.AnimalUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -45,7 +46,7 @@ public class AnimalService {
         return animalRepository.save(animal);
     }
 
-    public Animal updateAnimalOrThrow(UpdateAnimalRequest updateAnimalRequest) {
+    public void updateAnimalOrThrow(UpdateAnimalRequest updateAnimalRequest) {
         Animal animal = animalRepository.findById(updateAnimalRequest.getId()).orElseThrow(() -> new ServerRuntimeException("Can not find animal by id", ErrorCode.INVALID_INPUT));
 
         String name = updateAnimalRequest.getName().trim();
@@ -67,7 +68,11 @@ public class AnimalService {
         animal.setDescription(description);
 
 
-        return animalRepository.save(animal);
+        animalRepository.save(animal);
+    }
+
+    public List<Animal> getShelterAnimals(Shelter shelter) {
+        return animalRepository.findAnimalsByShelter(shelter);
     }
 
     public void removeAnimalOrThrow(Long id) {

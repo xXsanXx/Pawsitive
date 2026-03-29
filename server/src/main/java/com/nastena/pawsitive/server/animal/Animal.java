@@ -25,9 +25,11 @@ public class Animal {
     private String name;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private AnimalType type;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private AnimalBreed breed;
 
     @Setter

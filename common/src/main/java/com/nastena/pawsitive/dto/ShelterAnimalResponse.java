@@ -1,6 +1,6 @@
 package com.nastena.pawsitive.dto;
 
-public class AnimalResponse {
+public class ShelterAnimalResponse {
     private Long id;
     private String name;
     private AnimalType type;
@@ -8,13 +8,12 @@ public class AnimalResponse {
     private Long birthDate;
     private AnimalGender gender;
     private String description;
-    private String shelterName;
 
-    public AnimalResponse() {}
+    public ShelterAnimalResponse() {}
 
 
-    public AnimalResponse(Long id, String name, AnimalType type, AnimalBreed breed,
-                          Long birthDate, AnimalGender gender, String description, String shelterName) {
+    public ShelterAnimalResponse(Long id, String name, AnimalType type, AnimalBreed breed,
+                                 Long birthDate, AnimalGender gender, String description) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -22,7 +21,6 @@ public class AnimalResponse {
         this.birthDate = birthDate;
         this.gender = gender;
         this.description = description;
-        this.shelterName = shelterName;
     }
 
 
@@ -54,7 +52,4 @@ public class AnimalResponse {
         return description;
     }
 
-    public String getShelterName() {
-        return shelterName;
-    }
 }
