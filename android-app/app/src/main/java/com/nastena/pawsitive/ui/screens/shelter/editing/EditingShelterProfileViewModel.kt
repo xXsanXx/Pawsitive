@@ -43,8 +43,6 @@ class EditingShelterProfileViewModel(
     override fun onEnter() {
         super.onEnter()
 
-        mainViewModel.hideNavigationBar()
-
         launchSave(
             operation = {
                 _shelterRepository.getShelterProfileData()

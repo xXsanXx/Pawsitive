@@ -38,8 +38,6 @@ class ShelterProfileViewModel(
     override fun onEnter() {
         super.onEnter()
 
-        mainViewModel.hideNavigationBar()
-
         launchSave(
             operation = {
                 Log.d("ShelterProfile", "Loading profile data")

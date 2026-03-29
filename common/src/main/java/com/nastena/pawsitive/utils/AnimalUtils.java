@@ -2,13 +2,16 @@ package com.nastena.pawsitive.utils;
 
 import com.nastena.pawsitive.dto.AnimalBreed;
 import com.nastena.pawsitive.dto.AnimalType;
+import com.nastena.pawsitive.dto.ErrorCode;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class AnimalUtils {
 
+    private static final Pattern NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$");
     private static final HashMap<AnimalType, Set<AnimalBreed>> hashMap = new HashMap<>();
 
     static {

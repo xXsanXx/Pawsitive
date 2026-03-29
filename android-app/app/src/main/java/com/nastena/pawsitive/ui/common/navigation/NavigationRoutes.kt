@@ -19,6 +19,8 @@ object NavigationRoutes {
 
     const val SHELTER_PROFILE_EDITING = "shelter_profile_editing"
 
+    const val SHELTER_ADD_ANIMAL = "shelter_add_animal"
+
     fun fromAccountRole(role: AccountRole) = when (role) {
         AccountRole.USER -> USER_HOME
         AccountRole.SHELTER -> SHELTER_HOME

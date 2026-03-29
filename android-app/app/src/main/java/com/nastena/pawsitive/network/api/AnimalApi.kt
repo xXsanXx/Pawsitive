@@ -1,6 +1,6 @@
 package com.nastena.pawsitive.network.api
 
-import com.nastena.pawsitive.dto.AnimalResponse
+import com.nastena.pawsitive.dto.AnimalsResponse
 import com.nastena.pawsitive.dto.CreateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import retrofit2.Response
@@ -11,7 +11,7 @@ import retrofit2.http.POST
 interface AnimalApi {
 
     @GET("api/animals")
-    suspend fun getAnimals(): Response<AnimalResponse>
+    suspend fun getAnimals(): Response<AnimalsResponse>
 
     @POST("api/animals/create")
     suspend fun createAnimal(
@@ -21,5 +21,10 @@ interface AnimalApi {
     @POST("api/animals/update")
     suspend fun updateAnimal(
         @Body request: UpdateAnimalRequest
+    ): Response<Unit>
+
+    @POST("api/animals/remove")
+    suspend fun removeAnimal(
+        id: Long
     ): Response<Unit>
 }

@@ -77,6 +77,14 @@
     <string name="editing_shelter_profile_cancel">Отмена</string>
     <string name="editing_shelter_profile_save">Сохранить</string>
 
+    <!-- Animals -->
+    <string name="animal_type_dog">Собака</string>
+    <string name="animal_type_cat">Кошка</string>
+
+    <!-- Common -->
+    <string name="common_years">года</string>
+
+
 
 
 

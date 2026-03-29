@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.AnimalRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
@@ -47,6 +48,9 @@ import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModelFactory
+import com.nastena.pawsitive.ui.screens.shelter.home.ShelterHomeView
+import com.nastena.pawsitive.ui.screens.shelter.home.ShelterHomeViewModel
+import com.nastena.pawsitive.ui.screens.shelter.home.ShelterHomeViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelFactory
@@ -62,7 +66,8 @@ fun MainContent(
     modifier: Modifier = Modifier,
     accountRepository: AccountRepository,
     userRepository: UserRepository,
-    shelterRepository: ShelterRepository
+    shelterRepository: ShelterRepository,
+    animalRepository: AnimalRepository
 ) {
     val mainViewModel: MainViewModel = viewModel()
 
@@ -88,6 +93,10 @@ fun MainContent(
 
     val editingShelterProfileViewModel: EditingShelterProfileViewModel = viewModel (
         factory = EditingShelterProfileViewModelFactory(mainViewModel, shelterRepository)
+    )
+
+    val shelterHomeViewModel: ShelterHomeViewModel = viewModel (
+        factory = ShelterHomeViewModelFactory(mainViewModel, animalRepository)
     )
 
     val navController: NavHostController = rememberNavController()
@@ -127,7 +136,8 @@ fun MainContent(
                     loginViewModel = loginViewModel,
                     userProfileViewModel = userProfileViewModel,
                     shelterProfileViewModel = shelterProfileViewModel,
-                    editingShelterProfileViewModel = editingShelterProfileViewModel
+                    editingShelterProfileViewModel = editingShelterProfileViewModel,
+                    shelterHomeViewModel = shelterHomeViewModel
                 )
             }
         }
@@ -157,7 +167,8 @@ private fun Navigation(
     loginViewModel: LoginViewModel,
     userProfileViewModel: UserProfileViewModel,
     shelterProfileViewModel: ShelterProfileViewModel,
-    editingShelterProfileViewModel: EditingShelterProfileViewModel
+    editingShelterProfileViewModel: EditingShelterProfileViewModel,
+    shelterHomeViewModel: ShelterHomeViewModel
 ) {
     NavHost(
         navController = navController,
@@ -191,8 +202,10 @@ private fun Navigation(
             }
         }
 
-        composable(NavigationRoutes.SHELTER_HOME) {
-            Text("Shelter home screen")
+        composable(NavigationRoutes.SHELTER_HOME){
+            ScreenView(shelterHomeViewModel) {
+                ShelterHomeView(viewModel = shelterHomeViewModel)
+            }
         }
 
         composable(NavigationRoutes.SHELTER_PROFILE) {
@@ -206,7 +219,6 @@ private fun Navigation(
                 EditingShelterProfileView(viewModel = editingShelterProfileViewModel)
             }
         }
-
     }
 }
 
