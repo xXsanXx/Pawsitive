@@ -1,5 +1,13 @@
 package com.nastena.pawsitive.repository
 
+import android.util.Log
+import com.nastena.pawsitive.dto.AccountRole
+import com.nastena.pawsitive.dto.AnimalBreed
+import com.nastena.pawsitive.dto.AnimalGender
+import com.nastena.pawsitive.dto.AnimalType
+import com.nastena.pawsitive.dto.CreateAnimalRequest
+import com.nastena.pawsitive.dto.RegisterRequest
+import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
@@ -43,4 +51,25 @@ class ShelterRepository(
             return handleServerErrorBody(response)
         }
     }
+
+    suspend fun createAnimal(
+        name: String,
+        type: AnimalType,
+        breed: AnimalBreed,
+        gender: AnimalGender,
+        description: String,
+        birthDate: Long
+    ): Result<Unit> = runCatching {
+        Log.i("Shelter Repository", "[create animal] name: $name, type: $type, breed: $breed, " +
+                "gender: $gender, description: $description, birthDate: $birthDate,")
+
+        val response: Response<Long> = _animalsApi.createAnimal(CreateAnimalRequest(name,type, breed,
+            birthDate, gender, description))
+        if (response.isSuccessful) {
+            return Result.success(Unit)
+        } else {
+            return handleServerErrorBody(response)
+        }
+    }
+
 }

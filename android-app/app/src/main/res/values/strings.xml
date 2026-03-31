@@ -85,6 +85,44 @@
     <string name="common_years">года</string>
 
 
+    <!-- Add Shelter Animal -->
+    <string name="add_animal_title">Новое животное</string>
+
+    <string name="add_animal_name_invalid">Имя животного от 2 до 50 букв</string>
+    <string name="add_animal_name_is_empty">Поле не должно быть пустым</string>
+    <string name="add_animal_name_label">Имя животного</string>
+
+    <string name="add_animal_choose_type_invalid">Выбор обязателен</string>
+    <string name="add_animal_choose_type_label">Выберите тип животного</string>
+    <string name="add_animal_type_cat">Кошка</string>
+    <string name="add_animal_type_dog">Собака</string>
+
+    <string name="add_animal_choose_gender_invalid">Выбор обязателен</string>
+    <string name="add_animal_choose_gender_label">Выберите пол животного</string>
+    <string name="add_animal_gender_male">Мужской</string>
+    <string name="add_animal_gender_female">Женский</string>
+
+    <string name="add_animal_choose_breed_invalid">Выбор обязателен</string>
+    <string name="add_animal_choose_breed_label">Выберите породу животного</string>
+    <string name="add_animal_breed_dog_LABRADOR_RETRIEVER">Лабрадор ретривер</string>
+    <string name="add_animal_breed_dog_DACHSHUND">Такса</string>
+    <string name="add_animal_breed_cat_METIS">Метис</string>
+    <string name="add_animal_breed_cat_SIAMESE">Сиамская</string>
+
+    <string name="add_animal_description_invalid">Добавьте описание</string>
+    <string name="add_animal_description_is_empty">Поле не должно быть пустым</string>
+    <string name="add_animal_description_label">Описание животного</string>
+
+    <string name="add_animal_clicked">Добавить животное</string>
+    <string name="add_animal_cancel_clicked">Отмена</string>
+
+
+    <string name="add_animal_birth_date_invalid">Добавьте дату рождения</string>
+
+
+
+
+
 
 
 

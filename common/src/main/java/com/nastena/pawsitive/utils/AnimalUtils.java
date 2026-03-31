@@ -17,12 +17,10 @@ public class AnimalUtils {
     static {
         hashMap.put(AnimalType.DOG, EnumSet.of(
                 AnimalBreed.LABRADOR_RETRIEVER,
-                AnimalBreed.GOLDEN_RETRIEVER,
                 AnimalBreed.DACHSHUND
         ));
 
         hashMap.put(AnimalType.CAT, EnumSet.of(
-                AnimalBreed.SPHYNX,
                 AnimalBreed.SIAMESE,
                 AnimalBreed.METIS
         ));

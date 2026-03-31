@@ -1,4 +1,17 @@
 package com.nastena.pawsitive.ui.screens.shelter.animal.add
 
-class ShelterAddAnimalViewModelFactory {
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.nastena.pawsitive.repository.ShelterRepository
+import com.nastena.pawsitive.ui.main.MainViewModel
+import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModel
+
+class ShelterAddAnimalViewModelFactory(
+    private val _mainViewModel: MainViewModel,
+    private val _shelterRepository: ShelterRepository,
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return ShelterAddAnimalViewModel(_mainViewModel, _shelterRepository) as T
+    }
 }
