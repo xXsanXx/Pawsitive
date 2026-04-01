@@ -1,5 +1,7 @@
 package com.nastena.pawsitive.dto;
 
+import java.util.List;
+
 public class CreateAnimalRequest {
     private String name;
     private AnimalType type;
@@ -7,6 +9,7 @@ public class CreateAnimalRequest {
     private Long birthDate;
     private AnimalGender gender;
     private String description;
+
 
     public CreateAnimalRequest() {}
 
@@ -19,6 +22,7 @@ public class CreateAnimalRequest {
         this.birthDate = birthDate;
         this.gender = gender;
         this.description = description;
+
     }
 
 

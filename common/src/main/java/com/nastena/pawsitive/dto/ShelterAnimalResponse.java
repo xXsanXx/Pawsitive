@@ -1,5 +1,7 @@
 package com.nastena.pawsitive.dto;
 
+import java.util.List;
+
 public class ShelterAnimalResponse {
     private Long id;
     private String name;
@@ -9,7 +11,9 @@ public class ShelterAnimalResponse {
     private AnimalGender gender;
     private String description;
 
-    public ShelterAnimalResponse() {}
+
+    public ShelterAnimalResponse() {
+    }
 
 
     public ShelterAnimalResponse(Long id, String name, AnimalType type, AnimalBreed breed,

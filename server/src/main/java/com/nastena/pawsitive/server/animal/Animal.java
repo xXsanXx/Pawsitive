@@ -8,6 +8,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "animals")
@@ -41,6 +44,19 @@ public class Animal {
     @Setter
     @Enumerated(EnumType.STRING)
     private AnimalGender gender;
+
+    // ------PHOTOS------
+    @Setter
+    @ElementCollection
+    @CollectionTable(name = "animal_photos", joinColumns = @JoinColumn(name = "animal_id"))
+    @Column(name = "photo_url")
+    private List<String> photoUrls = new ArrayList<>();
+
+    @Setter
+    @ElementCollection
+    @CollectionTable(name = "animal_vet_passports", joinColumns = @JoinColumn(name = "animal_id"))
+    @Column(name = "vet_passport_url")
+    private List<String> vetPassportUrls = new ArrayList<>();
 
     public Animal() {}
 

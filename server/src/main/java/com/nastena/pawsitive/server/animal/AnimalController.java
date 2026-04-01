@@ -7,9 +7,11 @@ import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +31,7 @@ public class AnimalController {
     @Autowired
     private AnimalService animalService;
 
+    /**
     @PostMapping("/create")
     public ResponseEntity<Long> createAnimal(@RequestBody CreateAnimalRequest createAnimalRequest, Authentication authentication) {
         String email = authentication.getName();
@@ -39,6 +42,32 @@ public class AnimalController {
         Shelter shelter = shelterService.getShelterOrThrow(account);
 
         Animal animal = animalService.createAnimalOrThrow(shelter, createAnimalRequest);
+
+        return ResponseEntity.ok(animal.getId());
+    }
+    **/
+
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
+    public ResponseEntity<Long> createAnimal(
+
+            @RequestPart("data") @RequestBody CreateAnimalRequest request,
+            @RequestPart(value = "photos", required = false) List<MultipartFile> photos,
+            @RequestPart(value = "vetPassports", required = false) List<MultipartFile> vetPassports,
+            Authentication authentication
+
+    ) {
+
+        String email = authentication.getName();
+
+        Account account = accountService.getAccountOrThrow(email);
+        Shelter shelter = shelterService.getShelterOrThrow(account);
+
+        Animal animal = animalService.createAnimalOrThrow(
+                shelter,
+                request,
+                photos,
+                vetPassports
+        );
 
         return ResponseEntity.ok(animal.getId());
     }
@@ -89,6 +118,7 @@ public class AnimalController {
 
         return ResponseEntity.ok(new ShelterAnimalsResponse(animalResponses));
     }
+
 
 
 }

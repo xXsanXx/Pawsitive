@@ -2,10 +2,13 @@ package com.nastena.pawsitive.server.animal;
 
 import com.nastena.pawsitive.dto.*;
 import com.nastena.pawsitive.server.exceptions.ServerRuntimeException;
+import com.nastena.pawsitive.server.files.FileStorageService;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.utils.AnimalUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -13,15 +16,22 @@ import java.util.regex.Pattern;
 @Service
 public class AnimalService {
     private final AnimalRepository animalRepository;
+    private final FileStorageService fileStorageService;
 
     private static final Pattern NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$");
 
 
-    public AnimalService(AnimalRepository animalRepository) {
+    public AnimalService(AnimalRepository animalRepository, FileStorageService fileStorageService) {
         this.animalRepository = animalRepository;
+        this.fileStorageService = fileStorageService;
     }
 
-    public Animal createAnimalOrThrow(Shelter shelter, CreateAnimalRequest createAnimalRequest) {
+    public Animal createAnimalOrThrow(
+            Shelter shelter,
+            CreateAnimalRequest createAnimalRequest,
+            List<MultipartFile> photos,
+            List<MultipartFile> vetPassports) {
+
         String name = createAnimalRequest.getName().trim();
         validateNameOrThrow(name);
 
@@ -36,12 +46,31 @@ public class AnimalService {
         String description = createAnimalRequest.getDescription();
 
         Animal animal = new Animal(shelter);
+
         animal.setName(name);
         animal.setType(type);
         animal.setBreed(breed);
         animal.setBirthDate(birthDate);
         animal.setGender(gender);
         animal.setDescription(description);
+
+        if (photos != null) {
+            List<String> photoUrls = new ArrayList<>();
+            for (MultipartFile file : photos) {
+                String url = fileStorageService.saveFile(file);
+                photoUrls.add(url);
+            }
+            animal.setPhotoUrls(photoUrls);
+        }
+
+        if (vetPassports != null) {
+            List<String> passportUrls = new ArrayList<>();
+            for (MultipartFile file : vetPassports) {
+                String url = fileStorageService.saveFile(file);
+                passportUrls.add(url);
+            }
+            animal.setVetPassportUrls(passportUrls);
+        }
 
         return animalRepository.save(animal);
     }
