@@ -1,5 +1,7 @@
 package com.nastena.pawsitive.network.api
 
+import com.nastena.pawsitive.dto.AnimalBreed
+import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.dto.CreateAnimalRequest
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
@@ -7,6 +9,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface AnimalApi {
 

@@ -238,6 +238,7 @@ private fun ShelterAddAnimalView(
                     onViewEvent(ShelterAddAnimalEvents.Type.MenuDismissed)
                 }
             ) {
+
                 // ------------- CAT --------------------
                 DropdownMenuItem(
                     text = {
@@ -391,6 +392,18 @@ private fun ShelterAddAnimalView(
                 )
             }
 
+            val breeds = when (typeState.selected) {
+                AnimalType.DOG -> listOf(
+                    AnimalBreed.LABRADOR_RETRIEVER,
+                    AnimalBreed.DACHSHUND
+                )
+                AnimalType.CAT -> listOf(
+                    AnimalBreed.SIAMESE,
+                    AnimalBreed.METIS
+                )
+                else -> emptyList()
+            }
+
             DropdownMenu(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = breedState.isExpended,
@@ -398,73 +411,44 @@ private fun ShelterAddAnimalView(
                     onViewEvent(ShelterAddAnimalEvents.Breed.MenuDismissed)
                 }
             ) {
-                // ------------- LABRADOR_RETRIEVER --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAddAnimalEvents.Breed.BreedSelected(
-                                AnimalBreed.LABRADOR_RETRIEVER
-                            )
-                        )
+                DropdownMenu(
+                    modifier = Modifier.fillMaxWidth(),
+                    expanded = breedState.isExpended,
+                    onDismissRequest = {
+                        onViewEvent(ShelterAddAnimalEvents.Breed.MenuDismissed)
                     }
-                )
+                ) {
 
-                // ------------- DACHSHUND --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_breed_dog_DACHSHUND),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAddAnimalEvents.Breed.BreedSelected(
-                                AnimalBreed.DACHSHUND
-                            )
-                        )
-                    }
-                )
+                    breeds.forEach { breed ->
 
-                // ------------- METIS --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_breed_cat_METIS),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAddAnimalEvents.Breed.BreedSelected(
-                                AnimalBreed.METIS
-                            )
-                        )
-                    }
-                )
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = when (breed) {
+                                        AnimalBreed.LABRADOR_RETRIEVER ->
+                                            stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
 
-                // ------------- SIAMESE --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_breed_cat_SIAMESE),
-                            style = MaterialTheme.typography.bodyMedium
+                                        AnimalBreed.DACHSHUND ->
+                                            stringResource(R.string.add_animal_breed_dog_DACHSHUND)
+
+                                        AnimalBreed.METIS ->
+                                            stringResource(R.string.add_animal_breed_cat_METIS)
+
+                                        AnimalBreed.SIAMESE ->
+                                            stringResource(R.string.add_animal_breed_cat_SIAMESE)
+                                    }
+                                )
+                            },
+                            onClick = {
+                                onViewEvent(
+                                    ShelterAddAnimalEvents.Breed.BreedSelected(breed)
+                                )
+                            }
                         )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAddAnimalEvents.Breed.BreedSelected(
-                                AnimalBreed.SIAMESE
-                            )
-                        )
+
                     }
-                )
+
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -496,7 +480,7 @@ private fun ShelterAddAnimalView(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = nameState.validation != ValidationState.Valid
+                isError = descriptionState.validation != ValidationState.Valid
             )
 
             Spacer(modifier = Modifier.height(12.dp))

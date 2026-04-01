@@ -158,6 +158,9 @@ class ShelterAddAnimalViewModel(
                         selected = event.type
                     )
                 }
+                _breedState.update {
+                    it.copy(selected = null)
+                }
             }
 
             is ShelterAddAnimalEvents.Description.TextUpdated ->
