@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,31 +32,16 @@ public class AnimalController {
     @Autowired
     private AnimalService animalService;
 
-    /**
+
     @PostMapping("/create")
-    public ResponseEntity<Long> createAnimal(@RequestBody CreateAnimalRequest createAnimalRequest, Authentication authentication) {
-        String email = authentication.getName();
-        log.info("[create] email {}, name {}, type {}", email, createAnimalRequest.getName(), createAnimalRequest.getType());
-
-        Account account = accountService.getAccountOrThrow(email);
-
-        Shelter shelter = shelterService.getShelterOrThrow(account);
-
-        Animal animal = animalService.createAnimalOrThrow(shelter, createAnimalRequest);
-
-        return ResponseEntity.ok(animal.getId());
-    }
-    **/
-
-    @PostMapping(value = "/create", consumes = "multipart/form-data")
     public ResponseEntity<Long> createAnimal(
 
-            @RequestPart("data") @RequestBody CreateAnimalRequest request,
-            @RequestPart(value = "photos", required = false) List<MultipartFile> photos,
-            @RequestPart(value = "vetPassports", required = false) List<MultipartFile> vetPassports,
+            @RequestPart("data") CreateAnimalRequest data,
+            @RequestParam(value = "photos", required = false) List<MultipartFile> photos,
+            @RequestParam(value = "vetPassports", required = false) List<MultipartFile> vetPassports,
             Authentication authentication
 
-    ) {
+    ) throws Exception {
 
         String email = authentication.getName();
 
@@ -64,7 +50,7 @@ public class AnimalController {
 
         Animal animal = animalService.createAnimalOrThrow(
                 shelter,
-                request,
+                data,
                 photos,
                 vetPassports
         );
