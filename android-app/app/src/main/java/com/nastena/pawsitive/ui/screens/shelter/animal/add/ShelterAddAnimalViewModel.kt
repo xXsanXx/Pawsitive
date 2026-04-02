@@ -20,8 +20,9 @@ class ShelterAddAnimalViewModel(
 
     companion object {
         private val NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$")
+        private const val MAX_ANIMAL_PHOTOS = 3
+        private const val MAX_PASSPORT_ANIMAL_PHOTOS = 15
     }
-
 
     private val _nameState = MutableStateFlow(
         ShelterAddAnimalState.Name(
@@ -71,6 +72,12 @@ class ShelterAddAnimalViewModel(
     val descriptionState: StateFlow<ShelterAddAnimalState.Description> =
         _descriptionState.asStateFlow()
 
+    private val _animalPhotosState = MutableStateFlow(ShelterAddAnimalState.Photos())
+    val animalPhotosState: StateFlow<ShelterAddAnimalState.Photos> = _animalPhotosState.asStateFlow()
+
+    private val _animalPassportPhotosState = MutableStateFlow(ShelterAddAnimalState.Photos())
+    val animalPassportPhotosState: StateFlow<ShelterAddAnimalState.Photos> = _animalPassportPhotosState.asStateFlow()
+
     override fun onEnter() {
         super.onEnter()
 
@@ -100,6 +107,12 @@ class ShelterAddAnimalViewModel(
         _descriptionState.update { it.copy(text = "", validation = ValidationState.Valid) }
 
         _birthDateState.update { it.copy(date = null, isValid = true) }
+
+
+        _animalPhotosState.update { it.copy(animalPhotos = emptyList()) }
+
+        _animalPassportPhotosState.update { it.copy(animalPassportPhotos = emptyList()) }
+
     }
 
     fun onViewEvent(event: ShelterAddAnimalEvents) {
@@ -182,6 +195,14 @@ class ShelterAddAnimalViewModel(
                 create()
             }
 
+            is ShelterAddAnimalEvents.Photos.AddAnimalPhotos -> {
+                addAnimalPhoto(event.uri)
+            }
+
+            is ShelterAddAnimalEvents.Photos.AddPassportAnimalPhotos -> {
+                addPassportPhoto(event.uri)
+            }
+
         }
     }
 
@@ -232,7 +253,9 @@ class ShelterAddAnimalViewModel(
                         breed = _breedState.value.selected!!,
                         gender = _genderState.value.selected!!,
                         description = trimmedDescription,
-                        birthDate = birthDate!!
+                        birthDate = birthDate!!,
+                        photoPaths = emptyList(),
+                        passportPaths = emptyList()
                     )
                 },
                 onSuccess = {
@@ -247,6 +270,25 @@ class ShelterAddAnimalViewModel(
         }
 
     }
+
+    private fun addAnimalPhoto(uri: String) {
+        val currentPhotos = _animalPhotosState.value.animalPhotos
+        if (currentPhotos.size < MAX_ANIMAL_PHOTOS) {
+            _animalPhotosState.update {
+                it.copy(animalPhotos = currentPhotos + uri)
+            }
+        }
+    }
+
+    private fun addPassportPhoto(uri: String) {
+        val currentPhotos = _animalPassportPhotosState.value.animalPassportPhotos
+        if (currentPhotos.size < MAX_PASSPORT_ANIMAL_PHOTOS) {
+            _animalPassportPhotosState.update {
+                it.copy(animalPassportPhotos = currentPhotos + uri)
+            }
+        }
+    }
+
 
 
 

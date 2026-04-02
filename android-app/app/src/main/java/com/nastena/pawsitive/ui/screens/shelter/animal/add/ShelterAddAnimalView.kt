@@ -1,13 +1,21 @@
 package com.nastena.pawsitive.ui.screens.shelter.animal.add
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -33,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
@@ -53,6 +62,9 @@ fun ShelterAddAnimalView(
     val birthDateState: ShelterAddAnimalState.BirthDate by viewModel.birthDateState.collectAsState()
     val descriptionState: ShelterAddAnimalState.Description by viewModel.descriptionState.collectAsState()
 
+    val animalPhotosState: ShelterAddAnimalState.Photos by viewModel.animalPhotosState.collectAsState()
+    val animalPassportPhotosState: ShelterAddAnimalState.Photos by viewModel.animalPassportPhotosState.collectAsState()
+
     ShelterAddAnimalView(
         modifier = modifier,
         nameState = nameState,
@@ -61,6 +73,8 @@ fun ShelterAddAnimalView(
         genderState = genderState,
         birthDateState = birthDateState,
         descriptionState = descriptionState,
+        animalPhotosState = animalPhotosState,
+        animalPassportPhotosState = animalPassportPhotosState,
         onViewEvent = { event -> viewModel.onViewEvent(event) }
     )
 }
@@ -123,6 +137,7 @@ private fun BirthDatePicker(
     }
 }
 
+
 @Composable
 private fun ShelterAddAnimalView(
     modifier: Modifier = Modifier,
@@ -132,6 +147,8 @@ private fun ShelterAddAnimalView(
     genderState: ShelterAddAnimalState.Gender,
     birthDateState: ShelterAddAnimalState.BirthDate,
     descriptionState: ShelterAddAnimalState.Description,
+    animalPhotosState: ShelterAddAnimalState.Photos,
+    animalPassportPhotosState: ShelterAddAnimalState.Photos,
     onViewEvent: (ShelterAddAnimalEvents) -> Unit
 ) {
     Box(
@@ -176,7 +193,7 @@ private fun ShelterAddAnimalView(
                     onViewEvent(ShelterAddAnimalEvents.Name.TextUpdated(newText))
 
                 },
-                label = { Text(stringResource(R.string.add_animal_title)) },
+                label = { Text(stringResource(R.string.add_animal_name_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -364,7 +381,7 @@ private fun ShelterAddAnimalView(
                     value = if (breedState.isValid) {
                         ""
                     } else {
-                        stringResource(R.string.add_animal_choose_gender_invalid)
+                        stringResource(R.string.add_animal_choose_breed_invalid)
                     },
                     onValueChange = {},
                     readOnly = true,
@@ -397,10 +414,12 @@ private fun ShelterAddAnimalView(
                     AnimalBreed.LABRADOR_RETRIEVER,
                     AnimalBreed.DACHSHUND
                 )
+
                 AnimalType.CAT -> listOf(
                     AnimalBreed.SIAMESE,
                     AnimalBreed.METIS
                 )
+
                 else -> emptyList()
             }
 
@@ -411,45 +430,37 @@ private fun ShelterAddAnimalView(
                     onViewEvent(ShelterAddAnimalEvents.Breed.MenuDismissed)
                 }
             ) {
-                DropdownMenu(
-                    modifier = Modifier.fillMaxWidth(),
-                    expanded = breedState.isExpended,
-                    onDismissRequest = {
-                        onViewEvent(ShelterAddAnimalEvents.Breed.MenuDismissed)
-                    }
-                ) {
+                breeds.forEach { breed ->
 
-                    breeds.forEach { breed ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = when (breed) {
+                                    AnimalBreed.LABRADOR_RETRIEVER ->
+                                        stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
 
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = when (breed) {
-                                        AnimalBreed.LABRADOR_RETRIEVER ->
-                                            stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
+                                    AnimalBreed.DACHSHUND ->
+                                        stringResource(R.string.add_animal_breed_dog_DACHSHUND)
 
-                                        AnimalBreed.DACHSHUND ->
-                                            stringResource(R.string.add_animal_breed_dog_DACHSHUND)
+                                    AnimalBreed.METIS ->
+                                        stringResource(R.string.add_animal_breed_cat_METIS)
 
-                                        AnimalBreed.METIS ->
-                                            stringResource(R.string.add_animal_breed_cat_METIS)
-
-                                        AnimalBreed.SIAMESE ->
-                                            stringResource(R.string.add_animal_breed_cat_SIAMESE)
-                                    }
-                                )
-                            },
-                            onClick = {
-                                onViewEvent(
-                                    ShelterAddAnimalEvents.Breed.BreedSelected(breed)
-                                )
-                            }
-                        )
-
-                    }
+                                    AnimalBreed.SIAMESE ->
+                                        stringResource(R.string.add_animal_breed_cat_SIAMESE)
+                                }
+                            )
+                        },
+                        onClick = {
+                            onViewEvent(
+                                ShelterAddAnimalEvents.Breed.BreedSelected(breed)
+                            )
+                        }
+                    )
 
                 }
+
             }
+
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -485,6 +496,28 @@ private fun ShelterAddAnimalView(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // ------------- PHOTOS --------------------
+            AnimalPhotosSection(
+                title = "Фотографии животного",
+                photos = animalPhotosState.animalPhotos,
+                maxPhotos = 3,
+                onAddPhoto = { uri ->
+                    onViewEvent(ShelterAddAnimalEvents.Photos.AddAnimalPhotos(uri))
+                }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            AnimalPhotosSection(
+                title = "Фотографии паспорта",
+                photos = animalPassportPhotosState.animalPassportPhotos,
+                maxPhotos = 15,
+                onAddPhoto = { uri ->
+                    onViewEvent(ShelterAddAnimalEvents.Photos.AddPassportAnimalPhotos(uri))
+                }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             // ------------- Buttons --------------------
             Button(
@@ -501,12 +534,63 @@ private fun ShelterAddAnimalView(
             ) {
                 Text(stringResource(R.string.add_animal_cancel_clicked))
             }
-
         }
 
     }
 
 }
+
+@Composable
+private fun AnimalPhotosSection(
+    title: String,
+    photos: List<String>,
+    maxPhotos: Int,
+    onAddPhoto: (String) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(title, style = MaterialTheme.typography.bodyLarge)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                onAddPhoto(it.toString())
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            photos.forEach { uri ->
+                Image(
+                    painter = rememberAsyncImagePainter(uri),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(end = 8.dp)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                            shape = MaterialTheme.shapes.small
+                        )
+                )
+            }
+
+            if (photos.size < maxPhotos) {
+                OutlinedButton(
+                    onClick = { launcher.launch("image/*") },
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(end = 8.dp)
+                ) {
+                    Text("+", style = MaterialTheme.typography.headlineSmall)
+                }
+            }
+        }
+    }
+}
+
+
 
 
 

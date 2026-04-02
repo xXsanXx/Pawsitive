@@ -1,24 +1,27 @@
 package com.nastena.pawsitive.network.api
 
-import com.nastena.pawsitive.dto.AnimalBreed
-import com.nastena.pawsitive.dto.AnimalType
-import com.nastena.pawsitive.dto.CreateAnimalRequest
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.Part
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
-import retrofit2.http.Query
 
 interface AnimalApi {
 
     @GET("api/animals/shelters")
     suspend fun getShelterAnimals(): Response<ShelterAnimalsResponse>
 
+    @Multipart
     @POST("api/animals/create")
     suspend fun createAnimal(
-        @Body request: CreateAnimalRequest
+        @Part("data") data: RequestBody,
+        @Part photos: List<MultipartBody.Part>?,
+        @Part vetPassports: List<MultipartBody.Part>?
     ): Response<Long>
 
     @POST("api/animals/update")
@@ -28,6 +31,6 @@ interface AnimalApi {
 
     @POST("api/animals/remove")
     suspend fun removeAnimal(
-        id: Long
+        @Body id: Long
     ): Response<Unit>
 }

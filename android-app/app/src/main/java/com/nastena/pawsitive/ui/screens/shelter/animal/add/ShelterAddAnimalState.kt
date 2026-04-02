@@ -40,4 +40,9 @@ object ShelterAddAnimalState {
         val text: String,
         val validation: ValidationState
     )
+
+    data class Photos(
+        val animalPhotos: List<String> = emptyList(),
+        val animalPassportPhotos: List<String> = emptyList()
+    )
 }

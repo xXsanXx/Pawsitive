@@ -1,18 +1,19 @@
 package com.nastena.pawsitive.server.animal;
 
-import com.nastena.pawsitive.dto.*;
+import com.nastena.pawsitive.dto.CreateAnimalRequest;
+import com.nastena.pawsitive.dto.ShelterAnimalResponse;
+import com.nastena.pawsitive.dto.ShelterAnimalsResponse;
+import com.nastena.pawsitive.dto.UpdateAnimalRequest;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -94,7 +95,8 @@ public class AnimalController {
         List<ShelterAnimalResponse> animalResponses = animals.stream()
                 .map(animal -> new ShelterAnimalResponse(
                                 animal.getId(), animal.getName(), animal.getType(),
-                                animal.getBreed(), animal.getBirthDate(), animal.getGender(), animal.getDescription()
+                                animal.getBreed(), animal.getBirthDate(), animal.getGender(),
+                                animal.getDescription(), animal.getPhotoUrls()
                         )
                 ).toList();
 

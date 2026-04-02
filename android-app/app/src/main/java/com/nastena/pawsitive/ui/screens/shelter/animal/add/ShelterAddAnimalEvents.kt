@@ -3,6 +3,7 @@ package com.nastena.pawsitive.ui.screens.shelter.animal.add
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
+import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileEvents
 
 sealed interface ShelterAddAnimalEvents {
 
@@ -43,6 +44,11 @@ sealed interface ShelterAddAnimalEvents {
     sealed interface BirthDate : ShelterAddAnimalEvents {
 
         data class DateSelected(val date: Long) : BirthDate
+    }
+
+    sealed interface Photos: ShelterAddAnimalEvents {
+        data class AddAnimalPhotos(val uri: String) : Photos
+        data class AddPassportAnimalPhotos(val uri: String) : Photos
     }
 
     object AddClicked : ShelterAddAnimalEvents

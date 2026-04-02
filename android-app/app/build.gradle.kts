@@ -82,4 +82,7 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
+        // Coil для Jetpack Compose
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
 }
