@@ -96,6 +96,8 @@
     <string name="add_animal_choose_type_label">Выберите тип животного</string>
     <string name="add_animal_type_cat">Кошка</string>
     <string name="add_animal_type_dog">Собака</string>
+    <string name="add_animal_photo_title">Фото животного</string>
+    <string name="add_animal_passport_title">Фото паспорта животного</string>
 
     <string name="add_animal_choose_gender_invalid">Выбор обязателен</string>
     <string name="add_animal_choose_gender_label">Выберите пол животного</string>

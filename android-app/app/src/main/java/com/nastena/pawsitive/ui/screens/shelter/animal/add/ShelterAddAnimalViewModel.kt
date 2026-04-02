@@ -7,6 +7,7 @@ import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+import com.nastena.pawsitive.utils.AnimalUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,7 +45,9 @@ class ShelterAddAnimalViewModel(
     private val _breedState = MutableStateFlow(
         ShelterAddAnimalState.Breed(
             selected = null,
-            isExpended = false, isValid = true
+            options = emptySet(),
+            isExpended = false,
+            isValid = true
         )
     )
 
@@ -172,7 +175,10 @@ class ShelterAddAnimalViewModel(
                     )
                 }
                 _breedState.update {
-                    it.copy(selected = null)
+                    it.copy(
+                        selected = null,
+                        options = AnimalUtils.getBreedForAnimalType(event.type) ?: emptySet()
+                    )
                 }
             }
 
@@ -253,7 +259,7 @@ class ShelterAddAnimalViewModel(
                         breed = _breedState.value.selected!!,
                         gender = _genderState.value.selected!!,
                         description = trimmedDescription,
-                        birthDate = birthDate!!,
+                        birthDate = birthDate,
                         photoPaths = _animalPhotosState.value.animalPhotos,
                         passportPaths = _animalPassportPhotosState.value.animalPassportPhotos
                     )

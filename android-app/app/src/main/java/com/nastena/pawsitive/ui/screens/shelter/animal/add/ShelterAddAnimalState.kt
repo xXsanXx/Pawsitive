@@ -21,6 +21,7 @@ object ShelterAddAnimalState {
 
     data class Breed(
         val selected: AnimalBreed?,
+        val options: Set<AnimalBreed>,
         val isExpended: Boolean,
         val isValid: Boolean,
     )

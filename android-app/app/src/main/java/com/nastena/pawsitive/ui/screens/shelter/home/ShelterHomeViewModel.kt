@@ -49,8 +49,10 @@ class ShelterHomeViewModel(
                             val birthYear = Instant.ofEpochMilli(animalResponse.birthDate)
                                 .atZone(ZoneId.systemDefault()).year
                             val currentYear = LocalDate.now().year
+
                             ShelterHomeState.Animal(name = animalResponse.name,
-                                type = animalResponse.type, age = currentYear - birthYear)
+                                type = animalResponse.type,
+                                age = currentYear - birthYear)
 
                         }
                     }

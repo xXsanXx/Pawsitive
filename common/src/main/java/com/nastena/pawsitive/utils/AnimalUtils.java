@@ -26,7 +26,7 @@ public class AnimalUtils {
         ));
     }
 
-    public Set<AnimalBreed> getBreedForAnimalType(AnimalType type) {
+    public static Set<AnimalBreed> getBreedForAnimalType(AnimalType type) {
         return hashMap.get(type);
     }
 

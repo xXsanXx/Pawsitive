@@ -255,40 +255,26 @@ private fun ShelterAddAnimalView(
                     onViewEvent(ShelterAddAnimalEvents.Type.MenuDismissed)
                 }
             ) {
-
-                // ------------- CAT --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_type_cat),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAddAnimalEvents.Type.TypeSelected(
-                                AnimalType.CAT
+                AnimalType.entries.forEach { animalType: AnimalType ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = when(animalType) {
+                                    AnimalType.DOG -> stringResource(R.string.add_animal_type_dog)
+                                    AnimalType.CAT -> stringResource(R.string.add_animal_type_cat)
+                                },
+                                style = MaterialTheme.typography.bodyMedium
                             )
-                        )
-                    }
-                )
-
-                // ------------- DOG --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_type_dog),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAddAnimalEvents.Type.TypeSelected(
-                                AnimalType.DOG
+                        },
+                        onClick = {
+                            onViewEvent(
+                                ShelterAddAnimalEvents.Type.TypeSelected(
+                                    animalType
+                                )
                             )
-                        )
-                    }
-                )
+                        }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -409,20 +395,6 @@ private fun ShelterAddAnimalView(
                 )
             }
 
-            val breeds = when (typeState.selected) {
-                AnimalType.DOG -> listOf(
-                    AnimalBreed.LABRADOR_RETRIEVER,
-                    AnimalBreed.DACHSHUND
-                )
-
-                AnimalType.CAT -> listOf(
-                    AnimalBreed.SIAMESE,
-                    AnimalBreed.METIS
-                )
-
-                else -> emptyList()
-            }
-
             DropdownMenu(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = breedState.isExpended,
@@ -430,7 +402,7 @@ private fun ShelterAddAnimalView(
                     onViewEvent(ShelterAddAnimalEvents.Breed.MenuDismissed)
                 }
             ) {
-                breeds.forEach { breed ->
+                breedState.options.forEach { breed ->
 
                     DropdownMenuItem(
                         text = {
@@ -498,7 +470,7 @@ private fun ShelterAddAnimalView(
 
             // ------------- PHOTOS --------------------
             AnimalPhotosSection(
-                title = "Фотографии животного",
+                title = stringResource(R.string.add_animal_photo_title),
                 photos = animalPhotosState.animalPhotos,
                 maxPhotos = 3,
                 onAddPhoto = { uri ->
@@ -509,7 +481,7 @@ private fun ShelterAddAnimalView(
             Spacer(modifier = Modifier.height(12.dp))
 
             AnimalPhotosSection(
-                title = "Фотографии паспорта",
+                title = stringResource(R.string.add_animal_passport_title),
                 photos = animalPassportPhotosState.animalPassportPhotos,
                 maxPhotos = 15,
                 onAddPhoto = { uri ->

@@ -7,7 +7,7 @@ object ShelterHomeState {
     data class Animal(
         val name: String,
         val type: AnimalType,
-        val age: Int
+        val age: Int,
     )
 
 }
