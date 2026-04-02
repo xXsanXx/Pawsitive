@@ -254,8 +254,8 @@ class ShelterAddAnimalViewModel(
                         gender = _genderState.value.selected!!,
                         description = trimmedDescription,
                         birthDate = birthDate!!,
-                        photoPaths = emptyList(),
-                        passportPaths = emptyList()
+                        photoPaths = _animalPhotosState.value.animalPhotos,
+                        passportPaths = _animalPassportPhotosState.value.animalPassportPhotos
                     )
                 },
                 onSuccess = {
