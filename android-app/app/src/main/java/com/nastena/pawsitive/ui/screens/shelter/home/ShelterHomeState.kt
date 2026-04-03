@@ -8,6 +8,7 @@ object ShelterHomeState {
         val name: String,
         val type: AnimalType,
         val age: Int,
+        val photoUrls: List<String> = emptyList()
     )
 
 }

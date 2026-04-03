@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -475,6 +477,9 @@ private fun ShelterAddAnimalView(
                 maxPhotos = 3,
                 onAddPhoto = { uri ->
                     onViewEvent(ShelterAddAnimalEvents.Photos.AddAnimalPhotos(uri))
+                },
+                onRemovePhoto = { uri ->
+                    onViewEvent(ShelterAddAnimalEvents.Photos.RemoveAnimalPhotos(uri))
                 }
             )
 
@@ -486,6 +491,9 @@ private fun ShelterAddAnimalView(
                 maxPhotos = 15,
                 onAddPhoto = { uri ->
                     onViewEvent(ShelterAddAnimalEvents.Photos.AddPassportAnimalPhotos(uri))
+                },
+                onRemovePhoto = { uri ->
+                    onViewEvent(ShelterAddAnimalEvents.Photos.RemovePassportAnimalPhotos(uri))
                 }
             )
 
@@ -517,8 +525,11 @@ private fun AnimalPhotosSection(
     title: String,
     photos: List<String>,
     maxPhotos: Int,
-    onAddPhoto: (String) -> Unit
+    onAddPhoto: (String) -> Unit,
+    onRemovePhoto: (String) -> Unit
 ) {
+    var photoToDelete by remember { mutableStateOf<String?>(null) }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(title, style = MaterialTheme.typography.bodyLarge)
 
@@ -534,18 +545,35 @@ private fun AnimalPhotosSection(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             photos.forEach { uri ->
-                Image(
-                    painter = rememberAsyncImagePainter(uri),
-                    contentDescription = null,
+                Box(
                     modifier = Modifier
                         .size(80.dp)
                         .padding(end = 8.dp)
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                            shape = MaterialTheme.shapes.small
-                        )
-                )
+                ) {
+
+                    Image(
+                        painter = rememberAsyncImagePainter(uri),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .matchParentSize()
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                shape = MaterialTheme.shapes.small
+                            )
+                    )
+
+                    Text(
+                        text = "✕",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .clickable {
+                                photoToDelete = uri
+                            },
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
 
             if (photos.size < maxPhotos) {
@@ -557,6 +585,31 @@ private fun AnimalPhotosSection(
                 ) {
                     Text("+", style = MaterialTheme.typography.headlineSmall)
                 }
+            }
+
+            if (photoToDelete != null) {
+                androidx.compose.material3.AlertDialog(
+                    onDismissRequest = { photoToDelete = null },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                onRemovePhoto(photoToDelete!!)
+                                photoToDelete = null
+                            }
+                        ) {
+                            Text(stringResource(R.string.remove_animal_photo))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { photoToDelete = null }
+                        ) {
+                            Text(stringResource(R.string.cancel_remove_animal_photo))
+                        }
+                    },
+                    title = { Text(stringResource(R.string.question_remove_animal_photo)) },
+                    text = { Text(stringResource(R.string.warning_remove_animal_photo)) }
+                )
             }
         }
     }

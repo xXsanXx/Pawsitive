@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.animal.add
 
+import android.content.ContentResolver
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
@@ -16,7 +17,8 @@ import java.util.regex.Pattern
 
 class ShelterAddAnimalViewModel(
     mainViewModel: MainViewModel,
-    private val _shelterRepository: ShelterRepository
+    private val _shelterRepository: ShelterRepository,
+    private val _contentResolver: ContentResolver
 ) : BaseScreenViewModel(mainViewModel) {
 
     companion object {
@@ -209,6 +211,12 @@ class ShelterAddAnimalViewModel(
                 addPassportPhoto(event.uri)
             }
 
+            is ShelterAddAnimalEvents.Photos.RemoveAnimalPhotos -> {
+                removeAnimalPhoto(event.uri)
+            }
+            is ShelterAddAnimalEvents.Photos.RemovePassportAnimalPhotos -> {
+                removePassportPhoto(event.uri)
+            }
         }
     }
 
@@ -260,8 +268,9 @@ class ShelterAddAnimalViewModel(
                         gender = _genderState.value.selected!!,
                         description = trimmedDescription,
                         birthDate = birthDate,
-                        photoPaths = _animalPhotosState.value.animalPhotos,
-                        passportPaths = _animalPassportPhotosState.value.animalPassportPhotos
+                        photoUris = _animalPhotosState.value.animalPhotos,
+                        passportUris = _animalPassportPhotosState.value.animalPassportPhotos,
+                        contentResolver = _contentResolver
                     )
                 },
                 onSuccess = {
@@ -295,7 +304,16 @@ class ShelterAddAnimalViewModel(
         }
     }
 
+    private fun removeAnimalPhoto(uri: String) {
+        _animalPhotosState.update {
+            it.copy(animalPhotos = it.animalPhotos.filter { photo -> photo != uri })
+        }
+    }
 
+        private fun removePassportPhoto(uri: String) {
+            _animalPassportPhotosState.update {
+                it.copy(animalPassportPhotos = it.animalPassportPhotos.filter { photo -> photo != uri })
+            }
+        }
+    }
 
-
-}

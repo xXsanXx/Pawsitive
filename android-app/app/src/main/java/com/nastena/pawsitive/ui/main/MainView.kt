@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,6 +71,10 @@ fun MainContent(
     userRepository: UserRepository,
     shelterRepository: ShelterRepository,
 ) {
+
+    val context = LocalContext.current
+    val contentResolver = context.contentResolver
+
     val mainViewModel: MainViewModel = viewModel()
 
     val splashViewModel: SplashViewModel = viewModel(
@@ -101,7 +106,7 @@ fun MainContent(
     )
 
     val shelterAddAnimalViewModel: ShelterAddAnimalViewModel = viewModel (
-        factory = ShelterAddAnimalViewModelFactory(mainViewModel, shelterRepository)
+        factory = ShelterAddAnimalViewModelFactory(mainViewModel, shelterRepository, _contentResolver = contentResolver )
     )
 
     val navController: NavHostController = rememberNavController()

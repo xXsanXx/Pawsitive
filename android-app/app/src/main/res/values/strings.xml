@@ -99,6 +99,11 @@
     <string name="add_animal_photo_title">Фото животного</string>
     <string name="add_animal_passport_title">Фото паспорта животного</string>
 
+    <string name="remove_animal_photo">Удалить</string>
+    <string name="cancel_remove_animal_photo">Отмена</string>
+    <string name="question_remove_animal_photo">Удалить фото?</string>
+    <string name="warning_remove_animal_photo">Это действие нельзя отменить.</string>
+
     <string name="add_animal_choose_gender_invalid">Выбор обязателен</string>
     <string name="add_animal_choose_gender_label">Выберите пол животного</string>
     <string name="add_animal_gender_male">Мужской</string>

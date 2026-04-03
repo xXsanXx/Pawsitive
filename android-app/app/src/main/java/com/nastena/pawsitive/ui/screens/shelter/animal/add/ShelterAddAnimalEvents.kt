@@ -49,6 +49,10 @@ sealed interface ShelterAddAnimalEvents {
     sealed interface Photos: ShelterAddAnimalEvents {
         data class AddAnimalPhotos(val uri: String) : Photos
         data class AddPassportAnimalPhotos(val uri: String) : Photos
+
+        data class RemoveAnimalPhotos(val uri: String) : Photos
+
+        data class RemovePassportAnimalPhotos(val uri: String) : Photos
     }
 
     object AddClicked : ShelterAddAnimalEvents

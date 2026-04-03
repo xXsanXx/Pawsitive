@@ -52,7 +52,8 @@ class ShelterHomeViewModel(
 
                             ShelterHomeState.Animal(name = animalResponse.name,
                                 type = animalResponse.type,
-                                age = currentYear - birthYear)
+                                age = currentYear - birthYear,
+                                photoUrls = animalResponse.photoUrls ?: emptyList())
 
                         }
                     }
