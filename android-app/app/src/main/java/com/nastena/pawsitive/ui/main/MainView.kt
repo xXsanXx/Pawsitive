@@ -33,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
@@ -70,6 +71,7 @@ fun MainContent(
     accountRepository: AccountRepository,
     userRepository: UserRepository,
     shelterRepository: ShelterRepository,
+    filesRepository: FilesRepository,
 ) {
 
     val context = LocalContext.current
@@ -102,7 +104,7 @@ fun MainContent(
     )
 
     val shelterHomeViewModel: ShelterHomeViewModel = viewModel (
-        factory = ShelterHomeViewModelFactory(mainViewModel, shelterRepository)
+        factory = ShelterHomeViewModelFactory(mainViewModel, shelterRepository, filesRepository)
     )
 
     val shelterAddAnimalViewModel: ShelterAddAnimalViewModel = viewModel (

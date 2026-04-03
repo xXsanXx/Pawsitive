@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.files;
 
+import com.nastena.pawsitive.utils.FileUtils;
 import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -11,16 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping(FileUtils.MAPPING)
 @RequiredArgsConstructor
 public class FileController {
 
     private final FileStorageService fileStorageService;
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<Resource> getFile(@PathVariable String fileName) {
+    @GetMapping(FileUtils.ENDPOINT + "/{filename}")
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
 
-        Resource file = fileStorageService.loadAsResource(fileName);
+        Resource file = fileStorageService.loadAsResource(filename);
 
         return ResponseEntity.ok()
                 .contentType(MediaTypeFactory

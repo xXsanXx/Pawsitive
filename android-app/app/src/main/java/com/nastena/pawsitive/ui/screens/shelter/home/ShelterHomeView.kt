@@ -23,9 +23,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 
@@ -57,23 +62,23 @@ fun ShelterHomeView(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
                 ) {
+                    if (animalState.photoUrls.isNotEmpty()) {
+                        Log.i("ShelterHome", animalState.photoUrls[0])
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(animalState.photoUrls[0])
+                                .transformations(CircleCropTransformation())
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp),
+                            error = painterResource(R.drawable.ic_image_error)
+                        )
+                    }
+
                     Column(
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.Start
                     ) {
-                        if (animalState.photoUrls.isNotEmpty()) {
-                            val fullUrl = "http://10.0.2.2:8080${animalState.photoUrls[0]}"
-                            val painter = rememberAsyncImagePainter(
-                                model = fullUrl,
-                                onError = { error -> Log.e("ShelterHome", "Image load error: $error for URL $fullUrl") }
-                            )
-                            Image(
-                                painter = rememberAsyncImagePainter(fullUrl),
-                                contentDescription = animalState.name,
-                                modifier = Modifier.size(80.dp)
-                            )
-                        }
-
                         Text(text = animalState.name)
                         Text(text = stringResource(LocalizationUtils.getAnimalTypeStringId(animalState.type)))
                         Text(text = "${animalState.age} ${stringResource(R.string.common_years)}")

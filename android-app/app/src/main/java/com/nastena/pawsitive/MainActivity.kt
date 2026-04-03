@@ -3,12 +3,14 @@ package com.nastena.pawsitive
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.nastena.pawsitive.network.OkHttpClient
 import com.nastena.pawsitive.network.RetrofitClient
 import com.nastena.pawsitive.network.api.AccountApi
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.network.api.UserApi
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.repository.datastores.AuthDataStore
@@ -21,27 +23,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val authDataStore = AuthDataStore(applicationContext)
-
-        val retrofit = RetrofitClient.create(authDataStore)
+        val okHttpClient = OkHttpClient.get(authDataStore)
+        val retrofit = RetrofitClient.create(okHttpClient)
 
         val accountApi = retrofit.create(AccountApi::class.java)
-
-        val accountRepository = AccountRepository(accountApi, authDataStore)
-
         val userApi = retrofit.create(UserApi::class.java)
-
-        val userRepository = UserRepository(userApi)
-
         val shelterApi = retrofit.create(ShelterApi::class.java)
-
         val animalApi = retrofit.create(AnimalApi::class.java)
 
+        val accountRepository = AccountRepository(accountApi, authDataStore)
+        val userRepository = UserRepository(userApi)
         val shelterRepository = ShelterRepository(shelterApi, _animalsApi = animalApi)
+        val filesRepository = FilesRepository()
 
         setContent {
             PawsitiveTheme {
-                MainContent(accountRepository = accountRepository, userRepository = userRepository,
-                    shelterRepository = shelterRepository)
+                MainContent(
+                    accountRepository = accountRepository,
+                    userRepository = userRepository,
+                    shelterRepository = shelterRepository,
+                    filesRepository = filesRepository,
+                )
             }
         }
     }

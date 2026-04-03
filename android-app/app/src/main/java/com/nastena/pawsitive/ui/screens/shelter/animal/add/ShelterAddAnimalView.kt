@@ -40,9 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AnimalBreed
@@ -551,8 +553,8 @@ private fun AnimalPhotosSection(
                         .padding(end = 8.dp)
                 ) {
 
-                    Image(
-                        painter = rememberAsyncImagePainter(uri),
+                    AsyncImage(
+                        model = uri,
                         contentDescription = null,
                         modifier = Modifier
                             .matchParentSize()
@@ -560,7 +562,8 @@ private fun AnimalPhotosSection(
                                 1.dp,
                                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                                 shape = MaterialTheme.shapes.small
-                            )
+                            ),
+                        error = painterResource(R.drawable.ic_image_error)
                     )
 
                     Text(

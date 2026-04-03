@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.files;
 
+import com.nastena.pawsitive.utils.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,15 @@ public class FileStorageService {
 
         try {
 
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-            Path path = Paths.get(UPLOAD_DIR).resolve(fileName);
+            Path path = Paths.get(UPLOAD_DIR).resolve(filename);
 
             Files.createDirectories(path.getParent());
 
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-            return fileName;
+            return FileUtils.getLocalFileUrl(filename);
 
         } catch (IOException e) {
             throw new RuntimeException("File upload failed");

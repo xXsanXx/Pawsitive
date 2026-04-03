@@ -3,6 +3,7 @@ package com.nastena.pawsitive.ui.screens.shelter.home
 import android.util.Log
 import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
+import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
@@ -15,11 +16,11 @@ import kotlinx.coroutines.flow.update
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.math.log
 
 class ShelterHomeViewModel(
     mainViewModel: MainViewModel,
-    private val _shelterRepository: ShelterRepository
+    private val _shelterRepository: ShelterRepository,
+    private val _filesRepository: FilesRepository,
 ) : BaseScreenViewModel(mainViewModel) {
 
     private val _animalsState: MutableStateFlow<List<ShelterHomeState.Animal>> = MutableStateFlow(emptyList())
@@ -53,7 +54,11 @@ class ShelterHomeViewModel(
                             ShelterHomeState.Animal(name = animalResponse.name,
                                 type = animalResponse.type,
                                 age = currentYear - birthYear,
-                                photoUrls = animalResponse.photoUrls ?: emptyList())
+                                photoUrls = animalResponse.photoUrls.map { url ->
+                                    Log.i("ShelterHome", "~~~~~~~~ Received $url -> ${_filesRepository.getAbsoluteFileUrl(url)}");
+                                    _filesRepository.getAbsoluteFileUrl(url)
+                                }
+                            )
 
                         }
                     }

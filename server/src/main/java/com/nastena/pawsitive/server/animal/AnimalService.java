@@ -58,7 +58,7 @@ public class AnimalService {
             List<String> photoUrls = new ArrayList<>();
             for (MultipartFile file : photos) {
                 String url = fileStorageService.saveFile(file);
-                photoUrls.add("/files/" + url);
+                photoUrls.add(url);
             }
             animal.setPhotoUrls(photoUrls);
         }
