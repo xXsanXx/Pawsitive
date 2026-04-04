@@ -1,10 +1,10 @@
-package com.nastena.pawsitive.ui.screens.shelter.animal.add
+package com.nastena.pawsitive.ui.screens.shelter.animal
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -40,37 +41,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.ui.common.validation.ValidationState
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
-fun ShelterAddAnimalView(
+fun ShelterAnimalView(
     modifier: Modifier = Modifier,
-    viewModel: ShelterAddAnimalViewModel
+    viewModel: ShelterAnimalViewModel
 ) {
 
     // ------------- States --------------------
-    val nameState: ShelterAddAnimalState.Name by viewModel.nameState.collectAsState()
-    val typeState: ShelterAddAnimalState.Type by viewModel.typeState.collectAsState()
-    val breedState: ShelterAddAnimalState.Breed by viewModel.breedState.collectAsState()
-    val genderState: ShelterAddAnimalState.Gender by viewModel.genderState.collectAsState()
-    val birthDateState: ShelterAddAnimalState.BirthDate by viewModel.birthDateState.collectAsState()
-    val descriptionState: ShelterAddAnimalState.Description by viewModel.descriptionState.collectAsState()
+    val modeState: ShelterAnimalState.Mode by viewModel.mode.collectAsState()
+    val nameState: ShelterAnimalState.Name by viewModel.nameState.collectAsState()
+    val typeState: ShelterAnimalState.Type by viewModel.typeState.collectAsState()
+    val breedState: ShelterAnimalState.Breed by viewModel.breedState.collectAsState()
+    val genderState: ShelterAnimalState.Gender by viewModel.genderState.collectAsState()
+    val birthDateState: ShelterAnimalState.BirthDate by viewModel.birthDateState.collectAsState()
+    val descriptionState: ShelterAnimalState.Description by viewModel.descriptionState.collectAsState()
+    val animalPhotosState: ShelterAnimalState.Photos by viewModel.animalPhotosState.collectAsState()
 
-    val animalPhotosState: ShelterAddAnimalState.Photos by viewModel.animalPhotosState.collectAsState()
-    val animalPassportPhotosState: ShelterAddAnimalState.Photos by viewModel.animalPassportPhotosState.collectAsState()
-
-    ShelterAddAnimalView(
+    ShelterAnimalView(
         modifier = modifier,
+        modeState = modeState,
         nameState = nameState,
         typeState = typeState,
         breedState = breedState,
@@ -78,7 +83,6 @@ fun ShelterAddAnimalView(
         birthDateState = birthDateState,
         descriptionState = descriptionState,
         animalPhotosState = animalPhotosState,
-        animalPassportPhotosState = animalPassportPhotosState,
         onViewEvent = { event -> viewModel.onViewEvent(event) }
     )
 }
@@ -86,7 +90,7 @@ fun ShelterAddAnimalView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BirthDatePicker(
-    birthDateState: ShelterAddAnimalState.BirthDate,
+    birthDateState: ShelterAnimalState.BirthDate,
     onDateSelected: (Long) -> Unit
 ) {
     val openDialog = remember { mutableStateOf(false) }
@@ -111,7 +115,7 @@ private fun BirthDatePicker(
         ) {
             Text(
                 text = birthDateState.date?.let {
-                    java.text.SimpleDateFormat("dd.MM.yyyy").format(java.util.Date(it))
+                    SimpleDateFormat("dd.MM.yyyy").format(Date(it))
                 } ?: "Выберите дату рождения"
             )
         }
@@ -143,17 +147,17 @@ private fun BirthDatePicker(
 
 
 @Composable
-private fun ShelterAddAnimalView(
+private fun ShelterAnimalView(
     modifier: Modifier = Modifier,
-    nameState: ShelterAddAnimalState.Name,
-    typeState: ShelterAddAnimalState.Type,
-    breedState: ShelterAddAnimalState.Breed,
-    genderState: ShelterAddAnimalState.Gender,
-    birthDateState: ShelterAddAnimalState.BirthDate,
-    descriptionState: ShelterAddAnimalState.Description,
-    animalPhotosState: ShelterAddAnimalState.Photos,
-    animalPassportPhotosState: ShelterAddAnimalState.Photos,
-    onViewEvent: (ShelterAddAnimalEvents) -> Unit
+    modeState: ShelterAnimalState.Mode,
+    nameState: ShelterAnimalState.Name,
+    typeState: ShelterAnimalState.Type,
+    breedState: ShelterAnimalState.Breed,
+    genderState: ShelterAnimalState.Gender,
+    birthDateState: ShelterAnimalState.BirthDate,
+    descriptionState: ShelterAnimalState.Description,
+    animalPhotosState: ShelterAnimalState.Photos,
+    onViewEvent: (ShelterAnimalEvents) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -167,7 +171,10 @@ private fun ShelterAddAnimalView(
         ) {
             // ------------- Title --------------------
             Text(
-                text = stringResource(R.string.add_animal_title),
+                text = when (modeState) {
+                    ShelterAnimalState.Mode.Add -> stringResource(R.string.add_animal_title)
+                    is ShelterAnimalState.Mode.Edit -> stringResource(R.string.edit_animal_title)
+                },
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -194,7 +201,7 @@ private fun ShelterAddAnimalView(
             OutlinedTextField(
                 value = nameState.text,
                 onValueChange = { newText ->
-                    onViewEvent(ShelterAddAnimalEvents.Name.TextUpdated(newText))
+                    onViewEvent(ShelterAnimalEvents.Name.TextUpdated(newText))
 
                 },
                 label = { Text(stringResource(R.string.add_animal_name_label)) },
@@ -211,7 +218,7 @@ private fun ShelterAddAnimalView(
             BirthDatePicker(
                 birthDateState = birthDateState,
                 onDateSelected = { selectedDate ->
-                    onViewEvent(ShelterAddAnimalEvents.BirthDate.DateSelected(selectedDate))
+                    onViewEvent(ShelterAnimalEvents.BirthDate.DateSelected(selectedDate))
                 }
             )
 
@@ -238,7 +245,7 @@ private fun ShelterAddAnimalView(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onViewEvent(ShelterAddAnimalEvents.Type.ClickedType)
+                    onViewEvent(ShelterAnimalEvents.Type.ClickedType)
                 }
             ) {
                 val selectedTypeText: String = when (typeState.selected) {
@@ -256,7 +263,7 @@ private fun ShelterAddAnimalView(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = typeState.isExpended,
                 onDismissRequest = {
-                    onViewEvent(ShelterAddAnimalEvents.Type.MenuDismissed)
+                    onViewEvent(ShelterAnimalEvents.Type.MenuDismissed)
                 }
             ) {
                 AnimalType.entries.forEach { animalType: AnimalType ->
@@ -272,7 +279,7 @@ private fun ShelterAddAnimalView(
                         },
                         onClick = {
                             onViewEvent(
-                                ShelterAddAnimalEvents.Type.TypeSelected(
+                                ShelterAnimalEvents.Type.TypeSelected(
                                     animalType
                                 )
                             )
@@ -304,7 +311,7 @@ private fun ShelterAddAnimalView(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onViewEvent(ShelterAddAnimalEvents.Gender.ClickedGender)
+                    onViewEvent(ShelterAnimalEvents.Gender.ClickedGender)
                 }
             ) {
                 val selectedGenderText: String = when (genderState.selected) {
@@ -322,7 +329,7 @@ private fun ShelterAddAnimalView(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = genderState.isExpended,
                 onDismissRequest = {
-                    onViewEvent(ShelterAddAnimalEvents.Gender.MenuDismissed)
+                    onViewEvent(ShelterAnimalEvents.Gender.MenuDismissed)
                 }
             ) {
                 // ------------- FEMALE --------------------
@@ -335,7 +342,7 @@ private fun ShelterAddAnimalView(
                     },
                     onClick = {
                         onViewEvent(
-                            ShelterAddAnimalEvents.Gender.GenderSelected(
+                            ShelterAnimalEvents.Gender.GenderSelected(
                                 AnimalGender.FEMALE
                             )
                         )
@@ -352,7 +359,7 @@ private fun ShelterAddAnimalView(
                     },
                     onClick = {
                         onViewEvent(
-                            ShelterAddAnimalEvents.Gender.GenderSelected(
+                            ShelterAnimalEvents.Gender.GenderSelected(
                                 AnimalGender.MALE
                             )
                         )
@@ -383,7 +390,7 @@ private fun ShelterAddAnimalView(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onViewEvent(ShelterAddAnimalEvents.Breed.ClickedBreed)
+                    onViewEvent(ShelterAnimalEvents.Breed.ClickedBreed)
                 }
             ) {
                 val selectedBreedText: String = when (breedState.selected) {
@@ -403,7 +410,7 @@ private fun ShelterAddAnimalView(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = breedState.isExpended,
                 onDismissRequest = {
-                    onViewEvent(ShelterAddAnimalEvents.Breed.MenuDismissed)
+                    onViewEvent(ShelterAnimalEvents.Breed.MenuDismissed)
                 }
             ) {
                 breedState.options.forEach { breed ->
@@ -428,7 +435,7 @@ private fun ShelterAddAnimalView(
                         },
                         onClick = {
                             onViewEvent(
-                                ShelterAddAnimalEvents.Breed.BreedSelected(breed)
+                                ShelterAnimalEvents.Breed.BreedSelected(breed)
                             )
                         }
                     )
@@ -460,7 +467,7 @@ private fun ShelterAddAnimalView(
             OutlinedTextField(
                 value = descriptionState.text,
                 onValueChange = { newText ->
-                    onViewEvent(ShelterAddAnimalEvents.Description.TextUpdated(newText))
+                    onViewEvent(ShelterAnimalEvents.Description.TextUpdated(newText))
 
                 },
                 label = { Text(stringResource(R.string.add_animal_description_label)) },
@@ -475,13 +482,13 @@ private fun ShelterAddAnimalView(
             // ------------- PHOTOS --------------------
             AnimalPhotosSection(
                 title = stringResource(R.string.add_animal_photo_title),
-                photos = animalPhotosState.animalPhotos,
+                photos = animalPhotosState.animal,
                 maxPhotos = 3,
                 onAddPhoto = { uri ->
-                    onViewEvent(ShelterAddAnimalEvents.Photos.AddAnimalPhotos(uri))
+                    onViewEvent(ShelterAnimalEvents.Photos.AddAnimalPhotos(uri))
                 },
                 onRemovePhoto = { uri ->
-                    onViewEvent(ShelterAddAnimalEvents.Photos.RemoveAnimalPhotos(uri))
+                    onViewEvent(ShelterAnimalEvents.Photos.RemoveAnimalPhotos(uri))
                 }
             )
 
@@ -489,13 +496,13 @@ private fun ShelterAddAnimalView(
 
             AnimalPhotosSection(
                 title = stringResource(R.string.add_animal_passport_title),
-                photos = animalPassportPhotosState.animalPassportPhotos,
+                photos = animalPhotosState.passport,
                 maxPhotos = 15,
                 onAddPhoto = { uri ->
-                    onViewEvent(ShelterAddAnimalEvents.Photos.AddPassportAnimalPhotos(uri))
+                    onViewEvent(ShelterAnimalEvents.Photos.AddPassportAnimalPhotos(uri))
                 },
                 onRemovePhoto = { uri ->
-                    onViewEvent(ShelterAddAnimalEvents.Photos.RemovePassportAnimalPhotos(uri))
+                    onViewEvent(ShelterAnimalEvents.Photos.RemovePassportAnimalPhotos(uri))
                 }
             )
 
@@ -503,16 +510,18 @@ private fun ShelterAddAnimalView(
 
             // ------------- Buttons --------------------
             Button(
-                onClick = { onViewEvent(ShelterAddAnimalEvents.AddClicked) },
+                onClick = { onViewEvent(ShelterAnimalEvents.SaveChangeClicked) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.add_animal_clicked))
+                Text(
+                    stringResource(R.string.save_animal_clicked)
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             TextButton(
-                onClick = { onViewEvent(ShelterAddAnimalEvents.CancelClicked) },
+                onClick = { onViewEvent(ShelterAnimalEvents.CancelClicked) },
             ) {
                 Text(stringResource(R.string.add_animal_cancel_clicked))
             }
@@ -552,9 +561,10 @@ private fun AnimalPhotosSection(
                         .size(80.dp)
                         .padding(end = 8.dp)
                 ) {
-
                     AsyncImage(
-                        model = uri,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(uri)
+                            .build(),
                         contentDescription = null,
                         modifier = Modifier
                             .matchParentSize()
@@ -591,7 +601,7 @@ private fun AnimalPhotosSection(
             }
 
             if (photoToDelete != null) {
-                androidx.compose.material3.AlertDialog(
+                AlertDialog(
                     onDismissRequest = { photoToDelete = null },
                     confirmButton = {
                         TextButton(

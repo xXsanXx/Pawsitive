@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -60,12 +59,18 @@ public class AnimalController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateAnimal(@RequestBody UpdateAnimalRequest updateAnimalRequest) {
+    public ResponseEntity<?> updateAnimal(
+            @RequestPart("data") UpdateAnimalRequest data,
+            @RequestParam(value = "newPhotos", required = false) List<MultipartFile> newPhotos,
+            @RequestParam(value = "newPassportPhotos", required = false) List<MultipartFile> newPassportPhotos) {
 
-        log.info("[update] name {}, breed {}", updateAnimalRequest.getName(), updateAnimalRequest.getBreed());
+        log.info("[update] name {}, breed {}", data.getName(), data.getBreed());
 
-        animalService.updateAnimalOrThrow(updateAnimalRequest);
-
+        animalService.updateAnimalOrThrow(
+                data,
+                newPhotos,
+                newPassportPhotos
+        );
 
         return ResponseEntity.ok("Animal data updated");
     }
@@ -96,17 +101,37 @@ public class AnimalController {
                 .map(animal -> new ShelterAnimalResponse(
                                 animal.getId(), animal.getName(), animal.getType(),
                                 animal.getBreed(), animal.getBirthDate(), animal.getGender(),
-                                animal.getDescription(), animal.getPhotoUrls()
+                                animal.getDescription(), animal.getPhotoUrls(), animal.getVetPassportUrls()
                         )
                 ).toList();
 
-        log.info("[shelter animals] sending {} animals :: year {}",
-                animalResponses.size(), LocalDate.now().getYear()
+        log.info("[shelter animals] sending {} animals",
+                animalResponses.size()
         );
 
         return ResponseEntity.ok(new ShelterAnimalsResponse(animalResponses));
     }
 
+
+    @PostMapping("/shelters/id")
+    public ResponseEntity<ShelterAnimalResponse> getSheltersAnimal(@RequestBody Long id, Authentication authentication) {
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+
+        log.info("[shelter animals] email {}", authentication.getName());
+
+        Shelter shelter = shelterService.getShelterOrThrow(account);
+
+        Animal animal = animalService.getShelterAnimalOrThrow(shelter, id);
+
+        ShelterAnimalResponse shelterAnimalResponse = new ShelterAnimalResponse(
+                animal.getId(), animal.getName(), animal.getType(),
+                animal.getBreed(), animal.getBirthDate(), animal.getGender(),
+                animal.getDescription(), animal.getPhotoUrls(), animal.getVetPassportUrls()
+        );
+
+
+        return ResponseEntity.ok(shelterAnimalResponse);
+    }
 
 
 }

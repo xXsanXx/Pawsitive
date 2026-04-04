@@ -5,7 +5,7 @@ import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -14,11 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.regex.Pattern
+import kotlin.reflect.KClass
 
 class EditingShelterProfileViewModel(
     mainViewModel: MainViewModel,
     private val _shelterRepository: ShelterRepository,
 ) : BaseScreenViewModel(mainViewModel) {
+
+    override val expectedRouteType: KClass<*> = NavigationRoute.EditingShelterProfile::class
 
     companion object {
         private val PHONE_REGEX = Pattern.compile(
@@ -40,8 +43,8 @@ class EditingShelterProfileViewModel(
     val infoState: StateFlow<String> = _infoState.asStateFlow()
 
 
-    override fun onEnter() {
-        super.onEnter()
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         launchSave(
             operation = {
@@ -94,8 +97,8 @@ class EditingShelterProfileViewModel(
                     onSuccess = {
                         mainViewModel.navigate(
                             To(
-                                NavigationRoutes.SHELTER_PROFILE,
-                                Route(NavigationRoutes.SHELTER_PROFILE_EDITING)
+                                NavigationRoute.ShelterProfile,
+                                Route(NavigationRoute.EditingShelterProfile::class)
                             )
                         )
                     }
@@ -105,8 +108,8 @@ class EditingShelterProfileViewModel(
             EditingShelterProfileEvents.CancelClicked -> {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoutes.SHELTER_PROFILE,
-                        Route(NavigationRoutes.SHELTER_PROFILE_EDITING)
+                        NavigationRoute.ShelterProfile,
+                        Route(NavigationRoute.EditingShelterProfile::class)
                     )
                 )
             }

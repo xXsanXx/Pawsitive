@@ -1,7 +1,7 @@
 package com.nastena.pawsitive.network.api
 
+import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
-import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Part
@@ -16,6 +16,9 @@ interface AnimalApi {
     @GET("api/animals/shelters")
     suspend fun getShelterAnimals(): Response<ShelterAnimalsResponse>
 
+    @POST("api/animals/shelters/id")
+    suspend fun getShelterAnimal(@Body id: Long): Response<ShelterAnimalResponse>
+
     @Multipart
     @POST("api/animals/create")
     suspend fun createAnimal(
@@ -24,9 +27,12 @@ interface AnimalApi {
         @Part vetPassports: List<MultipartBody.Part>?
     ): Response<Long>
 
+    @Multipart
     @POST("api/animals/update")
     suspend fun updateAnimal(
-        @Body request: UpdateAnimalRequest
+        @Part("data") data: RequestBody,
+        @Part newPhotos: List<MultipartBody.Part>?,
+        @Part newPassportPhotos: List<MultipartBody.Part>?
     ): Response<Unit>
 
     @POST("api/animals/remove")

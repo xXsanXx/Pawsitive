@@ -63,7 +63,6 @@ fun ShelterHomeView(
                     horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (animalState.photoUrls.isNotEmpty()) {
-                        Log.i("ShelterHome", animalState.photoUrls[0])
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(animalState.photoUrls[0])

@@ -27,10 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.FilesRepository
@@ -38,7 +40,7 @@ import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import com.nastena.pawsitive.ui.screens.login.LoginView
 import com.nastena.pawsitive.ui.screens.login.LoginViewModel
@@ -46,9 +48,9 @@ import com.nastena.pawsitive.ui.screens.login.LoginViewModelFactory
 import com.nastena.pawsitive.ui.screens.register.RegisterView
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModel
 import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
-import com.nastena.pawsitive.ui.screens.shelter.animal.add.ShelterAddAnimalView
-import com.nastena.pawsitive.ui.screens.shelter.animal.add.ShelterAddAnimalViewModel
-import com.nastena.pawsitive.ui.screens.shelter.animal.add.ShelterAddAnimalViewModelFactory
+import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalView
+import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalViewModel
+import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModelFactory
@@ -107,8 +109,8 @@ fun MainContent(
         factory = ShelterHomeViewModelFactory(mainViewModel, shelterRepository, filesRepository)
     )
 
-    val shelterAddAnimalViewModel: ShelterAddAnimalViewModel = viewModel (
-        factory = ShelterAddAnimalViewModelFactory(mainViewModel, shelterRepository, _contentResolver = contentResolver )
+    val shelterAnimalViewModel: ShelterAnimalViewModel = viewModel (
+        factory = ShelterAnimalViewModelFactory(mainViewModel, shelterRepository, filesRepository)
     )
 
     val navController: NavHostController = rememberNavController()
@@ -150,7 +152,7 @@ fun MainContent(
                     shelterProfileViewModel = shelterProfileViewModel,
                     editingShelterProfileViewModel = editingShelterProfileViewModel,
                     shelterHomeViewModel = shelterHomeViewModel,
-                    shelterAddAnimalViewModel = shelterAddAnimalViewModel
+                    shelterAnimalViewModel = shelterAnimalViewModel
                 )
             }
         }
@@ -182,63 +184,65 @@ private fun Navigation(
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
     shelterHomeViewModel: ShelterHomeViewModel,
-    shelterAddAnimalViewModel: ShelterAddAnimalViewModel
+    shelterAnimalViewModel: ShelterAnimalViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.SPLASH
+        startDestination = NavigationRoute.Splash
     ) {
-        composable(NavigationRoutes.SPLASH) {
-            ScreenView(splashViewModel) {
+
+        composable<NavigationRoute.Splash> { backStackEntry: NavBackStackEntry ->
+            ScreenView(splashViewModel, backStackEntry.toRoute<NavigationRoute.Splash>()) {
                 SplashView(viewModel = splashViewModel)
             }
         }
 
-        composable(NavigationRoutes.REGISTER) {
-            ScreenView(registerViewModel) {
+        composable<NavigationRoute.Register> { backStackEntry : NavBackStackEntry ->
+            ScreenView(registerViewModel, backStackEntry.toRoute<NavigationRoute.Register>()) {
                 RegisterView(viewModel = registerViewModel)
             }
         }
 
-        composable(NavigationRoutes.LOGIN) {
-            ScreenView(loginViewModel) {
+        composable<NavigationRoute.Login> { backStackEntry : NavBackStackEntry ->
+            ScreenView(loginViewModel, backStackEntry.toRoute<NavigationRoute.Login>()) {
                 LoginView(viewModel = loginViewModel)
             }
         }
 
-        composable(NavigationRoutes.USER_HOME) {
+        composable<NavigationRoute.UserHome> { backStackEntry : NavBackStackEntry ->
             Text("User home")
         }
 
-        composable(NavigationRoutes.USER_PROFILE) {
-            ScreenView(userProfileViewModel) {
+        composable<NavigationRoute.UserProfile> { backStackEntry : NavBackStackEntry ->
+            ScreenView(userProfileViewModel, backStackEntry.toRoute<NavigationRoute.UserProfile>()) {
                 UserProfileView(viewModel = userProfileViewModel)
             }
         }
 
-        composable(NavigationRoutes.SHELTER_HOME){
-            ScreenView(shelterHomeViewModel) {
+        composable<NavigationRoute.ShelterHome> { backStackEntry : NavBackStackEntry ->
+            ScreenView(shelterHomeViewModel, backStackEntry.toRoute<NavigationRoute.ShelterHome>()) {
                 ShelterHomeView(viewModel = shelterHomeViewModel)
             }
         }
 
-        composable(NavigationRoutes.SHELTER_PROFILE) {
-            ScreenView(shelterProfileViewModel) {
+        composable<NavigationRoute.ShelterProfile> { backStackEntry : NavBackStackEntry ->
+            ScreenView(shelterProfileViewModel, backStackEntry.toRoute<NavigationRoute.ShelterProfile>()) {
                 ShelterProfileView(viewModel = shelterProfileViewModel)
             }
         }
 
-        composable(NavigationRoutes.SHELTER_PROFILE_EDITING) {
-            ScreenView(editingShelterProfileViewModel) {
-                EditingShelterProfileView(viewModel = editingShelterProfileViewModel)
+        composable<NavigationRoute.Shelter.Animal.Add> { backStackEntry: NavBackStackEntry ->
+            ScreenView(shelterAnimalViewModel, backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Add>()) {
+                ShelterAnimalView(viewModel = shelterAnimalViewModel)
             }
         }
 
-        composable(NavigationRoutes.SHELTER_ADD_ANIMAL) {
-            ScreenView(shelterAddAnimalViewModel) {
-                ShelterAddAnimalView(viewModel = shelterAddAnimalViewModel)
+        composable<NavigationRoute.Shelter.Animal.Edit> { backStackEntry: NavBackStackEntry ->
+            ScreenView(shelterAnimalViewModel, backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Edit>()) {
+                ShelterAnimalView(viewModel = shelterAnimalViewModel)
             }
         }
+
     }
 }
 
@@ -303,12 +307,13 @@ private fun navigate(
 @Composable
 private fun ScreenView(
     viewModel: BaseScreenViewModel,
+    route: NavigationRoute,
     view: @Composable () -> Unit
 ) {
     println("Navigating to ${viewModel::class.simpleName}")
 
     LaunchedEffect(Unit) {
-        viewModel.onEnter()
+        viewModel.onEnter(route)
     }
 
     view()

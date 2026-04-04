@@ -1,23 +1,22 @@
-package com.nastena.pawsitive.ui.screens.shelter.animal.add
+package com.nastena.pawsitive.ui.screens.shelter.animal
 
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
-import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileEvents
 
-sealed interface ShelterAddAnimalEvents {
+sealed interface ShelterAnimalEvents {
 
-    sealed interface Name : ShelterAddAnimalEvents {
+    sealed interface Name : ShelterAnimalEvents {
 
         data class TextUpdated(val newText: String) : Name
     }
 
-    sealed interface Description : ShelterAddAnimalEvents {
+    sealed interface Description : ShelterAnimalEvents {
 
         data class TextUpdated(val newText: String) : Description
     }
 
-    sealed interface Type : ShelterAddAnimalEvents {
+    sealed interface Type : ShelterAnimalEvents {
 
         object ClickedType : Type
         object MenuDismissed : Type
@@ -25,7 +24,7 @@ sealed interface ShelterAddAnimalEvents {
         data class TypeSelected(val type: AnimalType) : Type
     }
 
-    sealed interface Breed : ShelterAddAnimalEvents {
+    sealed interface Breed : ShelterAnimalEvents {
 
         object ClickedBreed : Breed
         object MenuDismissed : Breed
@@ -33,7 +32,7 @@ sealed interface ShelterAddAnimalEvents {
         data class BreedSelected(val breed: AnimalBreed) : Breed
     }
 
-    sealed interface Gender : ShelterAddAnimalEvents {
+    sealed interface Gender : ShelterAnimalEvents {
 
         object ClickedGender : Gender
         object MenuDismissed : Gender
@@ -41,12 +40,12 @@ sealed interface ShelterAddAnimalEvents {
         data class GenderSelected(val gender: AnimalGender) : Gender
     }
 
-    sealed interface BirthDate : ShelterAddAnimalEvents {
+    sealed interface BirthDate : ShelterAnimalEvents {
 
         data class DateSelected(val date: Long) : BirthDate
     }
 
-    sealed interface Photos: ShelterAddAnimalEvents {
+    sealed interface Photos: ShelterAnimalEvents {
         data class AddAnimalPhotos(val uri: String) : Photos
         data class AddPassportAnimalPhotos(val uri: String) : Photos
 
@@ -55,7 +54,7 @@ sealed interface ShelterAddAnimalEvents {
         data class RemovePassportAnimalPhotos(val uri: String) : Photos
     }
 
-    object AddClicked : ShelterAddAnimalEvents
+    object CancelClicked : ShelterAnimalEvents
 
-    object CancelClicked : ShelterAddAnimalEvents
+    object SaveChangeClicked : ShelterAnimalEvents
 }

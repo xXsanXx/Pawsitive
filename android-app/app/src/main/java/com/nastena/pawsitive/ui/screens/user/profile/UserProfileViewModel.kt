@@ -6,13 +6,14 @@ import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.*
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.reflect.KClass
 
 class UserProfileViewModel(
     mainViewModel: MainViewModel,
@@ -20,14 +21,16 @@ class UserProfileViewModel(
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
+
+    override val expectedRouteType: KClass<*> = NavigationRoute.UserProfile::class
     private val _emailState = MutableStateFlow("")
     val emailState: StateFlow<String> = _emailState.asStateFlow()
 
     private val _nameState = MutableStateFlow("")
     val nameState: StateFlow<String> = _nameState.asStateFlow()
 
-    override fun onEnter() {
-        super.onEnter()
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         mainViewModel.hideNavigationBar()
 
@@ -56,7 +59,7 @@ class UserProfileViewModel(
             onSuccess = {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoutes.LOGIN,
+                        NavigationRoute.Login,
                         To.PopUpType.Origin
                     )
                 )

@@ -87,6 +87,7 @@
 
     <!-- Add Shelter Animal -->
     <string name="add_animal_title">Новое животное</string>
+    <string name="edit_animal_title">Редактирование животного</string>
 
     <string name="add_animal_name_invalid">Имя животного от 2 до 50 букв</string>
     <string name="add_animal_name_is_empty">Поле не должно быть пустым</string>
@@ -120,7 +121,7 @@
     <string name="add_animal_description_is_empty">Поле не должно быть пустым</string>
     <string name="add_animal_description_label">Описание животного</string>
 
-    <string name="add_animal_clicked">Добавить животное</string>
+    <string name="save_animal_clicked">Сохранить</string>
     <string name="add_animal_cancel_clicked">Отмена</string>
 
 

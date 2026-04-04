@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -75,7 +75,7 @@ class MainViewModel : ViewModel() {
                 if (throwable.httpCode == 403) {
                     navigate(
                         Navigation.To(
-                            NavigationRoutes.LOGIN,
+                            NavigationRoute.Login,
                             Navigation.To.PopUpType.Origin
                         )
 

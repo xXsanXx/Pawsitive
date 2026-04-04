@@ -1,28 +1,54 @@
 package com.nastena.pawsitive.ui.common.navigation
 
 import com.nastena.pawsitive.dto.AccountRole
+import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalState
+import kotlinx.serialization.Serializable
 
-object NavigationRoutes {
-    const val SPLASH = "splash"
-    const val LOGIN = "login"
-    const val REGISTER = "register"
+sealed interface NavigationRoute {
 
-    const val USER_HOME = "user_home"
+    @Serializable
+    object Splash : NavigationRoute
 
-    const val USER_PROFILE = "user_profile"
+    @Serializable
+    object Login : NavigationRoute
 
-    const val SHELTER_PROFILE = "shelter_profile"
+    @Serializable
+    object Register : NavigationRoute
 
-    const val FAVORITE = "favorite"
+    @Serializable
+    object UserHome : NavigationRoute
 
-    const val SHELTER_HOME = "shelter_home"
+    @Serializable
+    object UserProfile : NavigationRoute
 
-    const val SHELTER_PROFILE_EDITING = "shelter_profile_editing"
+    @Serializable
+    object Favorite : NavigationRoute
 
-    const val SHELTER_ADD_ANIMAL = "shelter_add_animal"
+    @Serializable
+    object ShelterProfile : NavigationRoute
 
-    fun fromAccountRole(role: AccountRole) = when (role) {
-        AccountRole.USER -> USER_HOME
-        AccountRole.SHELTER -> SHELTER_HOME
+    @Serializable
+    object EditingShelterProfile : NavigationRoute
+    @Serializable
+    object ShelterHome : NavigationRoute
+
+    sealed interface Shelter : NavigationRoute {
+
+        sealed interface Animal : Shelter {
+            @Serializable
+            object Add : Animal
+
+            @Serializable
+            data class Edit(val animalId: Long) : Animal
+        }
+
+    }
+
+    companion object {
+        fun fromAccountRole(role: AccountRole) = when (role) {
+            AccountRole.USER -> NavigationRoute.UserHome
+            AccountRole.SHELTER -> NavigationRoute.ShelterHome
+        }
     }
 }
+

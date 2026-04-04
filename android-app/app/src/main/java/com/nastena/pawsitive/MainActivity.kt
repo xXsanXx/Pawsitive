@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
         val accountRepository = AccountRepository(accountApi, authDataStore)
         val userRepository = UserRepository(userApi)
-        val shelterRepository = ShelterRepository(shelterApi, _animalsApi = animalApi)
+        val shelterRepository = ShelterRepository(shelterApi, _animalsApi = animalApi, _contentResolver = contentResolver)
         val filesRepository = FilesRepository()
 
         setContent {

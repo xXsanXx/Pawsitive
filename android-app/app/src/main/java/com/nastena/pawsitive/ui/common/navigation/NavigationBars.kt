@@ -24,15 +24,15 @@ object NavigationBars {
         initialSelected = 0,
         items = listOf(
             Item(
-                navigation = Navigation.To(NavigationRoutes.USER_HOME),
+                navigation = Navigation.To(NavigationRoute.UserHome),
                 icon = Icons.Default.Home
             ),
             Item(
-                navigation = Navigation.To(NavigationRoutes.FAVORITE),
+                navigation = Navigation.To(NavigationRoute.Favorite),
                 icon = Icons.Default.Favorite
             ),
             Item(
-                navigation = Navigation.To(NavigationRoutes.USER_PROFILE),
+                navigation = Navigation.To(NavigationRoute.UserProfile),
                 icon = Icons.Default.AccountCircle
             )
 
@@ -43,11 +43,11 @@ object NavigationBars {
         initialSelected = 0,
         items = listOf(
             Item(
-                navigation = Navigation.To(NavigationRoutes.SHELTER_HOME),
+                navigation = Navigation.To(NavigationRoute.ShelterHome),
                 icon = Icons.Default.Home
             ),
             Item(
-                navigation = Navigation.To(NavigationRoutes.SHELTER_PROFILE),
+                navigation = Navigation.To(NavigationRoute.ShelterProfile),
                 icon = Icons.Default.AccountCircle
             )
         )

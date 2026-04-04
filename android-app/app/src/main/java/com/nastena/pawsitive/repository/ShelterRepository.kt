@@ -2,14 +2,15 @@ package com.nastena.pawsitive.repository
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import com.google.gson.Gson
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.dto.CreateAnimalRequest
+import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
+import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
@@ -23,7 +24,8 @@ import java.io.File
 
 class ShelterRepository(
     private val _api: ShelterApi,
-    private val _animalsApi: AnimalApi
+    private val _animalsApi: AnimalApi,
+    private val _contentResolver: ContentResolver
 ) {
     suspend fun getShelterProfileData(): Result<ShelterProfileResponse> = runCatching {
         val response: Response<ShelterProfileResponse> = _api.getShelterProfile()
@@ -57,6 +59,15 @@ class ShelterRepository(
         }
     }
 
+    suspend fun getShelterAnimal(animalId: Long): Result<ShelterAnimalResponse> {
+        val response: Response<ShelterAnimalResponse> = _animalsApi.getShelterAnimal(animalId)
+        if (response.isSuccessful) {
+            return Result.success(response.body()!!)
+        } else {
+            return handleServerErrorBody(response)
+        }
+    }
+
     suspend fun createAnimal(
         name: String,
         type: AnimalType,
@@ -66,7 +77,6 @@ class ShelterRepository(
         birthDate: Long,
         photoUris: List<String>,
         passportUris: List<String>,
-        contentResolver: ContentResolver
     ): Result<Unit> = runCatching {
 
         val request = CreateAnimalRequest(
@@ -79,7 +89,7 @@ class ShelterRepository(
 
         val photos = photoUris.mapNotNull { uriString ->
             val uri = Uri.parse(uriString)
-            getFileFromContentUri(uri, contentResolver)?.let { file ->
+            getFileFromContentUri(uri, _contentResolver)?.let { file ->
                 val requestFile = file.asRequestBody("image/*".toMediaType())
                 MultipartBody.Part.createFormData("photos", file.name, requestFile)
             }
@@ -87,7 +97,7 @@ class ShelterRepository(
 
         val passports = passportUris.mapNotNull { uriString ->
             val uri = Uri.parse(uriString)
-            getFileFromContentUri(uri, contentResolver)?.let { file ->
+            getFileFromContentUri(uri, _contentResolver)?.let { file ->
                 val requestFile = file.asRequestBody("image/*".toMediaType())
                 MultipartBody.Part.createFormData("vetPassports", file.name, requestFile)
             }
@@ -102,22 +112,71 @@ class ShelterRepository(
         }
     }
 
-    // Вспомогательная функция для конвертации content URI в File
-    private fun getFileFromContentUri(uri: Uri, contentResolver: ContentResolver): File? {
-        return try {
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-            val tempFile = File.createTempFile("temp_image_", ".jpg")
+    suspend fun updateAnimal(
+        id: Long,
+        name: String,
+        type: AnimalType,
+        breed: AnimalBreed,
+        gender: AnimalGender,
+        description: String,
+        birthDate: Long,
+        removedPhotoUris: List<String>,
+        newPhotoUris: List<String>,
+        removedPassportUris: List<String>,
+        newPassportUris: List<String>,
+    ): Result<Unit> = runCatching {
 
-            tempFile.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
+        val request = UpdateAnimalRequest(
+            id, name, type, breed, birthDate, gender, description, removedPhotoUris, removedPassportUris
+        )
+
+        val gson = Gson()
+        val json = gson.toJson(request)
+        val data = json.toRequestBody("application/json".toMediaType())
+
+        val photos = newPhotoUris.mapNotNull { uriString ->
+            val uri = Uri.parse(uriString)
+            getFileFromContentUri(uri, _contentResolver)?.let { file ->
+                val requestFile = file.asRequestBody("image/*".toMediaType())
+                MultipartBody.Part.createFormData("newPhotos", file.name, requestFile)
             }
+        }
 
-            inputStream.close()
-            tempFile
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+        val passports = newPassportUris.mapNotNull { uriString ->
+            val uri = Uri.parse(uriString)
+            getFileFromContentUri(uri, _contentResolver)?.let { file ->
+                val requestFile = file.asRequestBody("image/*".toMediaType())
+                MultipartBody.Part.createFormData("newPassportPhotos", file.name, requestFile)
+            }
+        }
+
+        val response = _animalsApi.updateAnimal(data, photos, passports)
+
+        if (response.isSuccessful) {
+            Result.success(Unit)
+        } else {
+            handleServerErrorBody(response)
         }
     }
 
+
 }
+
+// Вспомогательная функция для конвертации content URI в File
+private fun getFileFromContentUri(uri: Uri, contentResolver: ContentResolver): File? {
+    return try {
+        val inputStream = contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File.createTempFile("temp_image_", ".jpg")
+
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+
+        inputStream.close()
+        tempFile
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+

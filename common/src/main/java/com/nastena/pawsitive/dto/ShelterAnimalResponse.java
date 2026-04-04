@@ -13,13 +13,16 @@ public class ShelterAnimalResponse {
 
     private List<String> photoUrls;
 
+    private List<String> passportPhotoUrls;
+
 
     public ShelterAnimalResponse() {
     }
 
 
     public ShelterAnimalResponse(Long id, String name, AnimalType type, AnimalBreed breed,
-                                 Long birthDate, AnimalGender gender, String description, List<String> photoUrls) {
+                                 Long birthDate, AnimalGender gender, String description, List<String> photoUrls,
+                                 List<String> passportPhotoUrls) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -28,6 +31,7 @@ public class ShelterAnimalResponse {
         this.gender = gender;
         this.description = description;
         this.photoUrls = photoUrls;
+        this.passportPhotoUrls = passportPhotoUrls;
     }
 
 
@@ -61,5 +65,9 @@ public class ShelterAnimalResponse {
 
     public List<String> getPhotoUrls() {
         return photoUrls;
+    }
+
+    public List<String> getPassportPhotoUrls() {
+        return passportPhotoUrls;
     }
 }

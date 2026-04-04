@@ -3,19 +3,24 @@ package com.nastena.pawsitive.ui.screens.login
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
+import com.nastena.pawsitive.ui.common.navigation.Navigation.*
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.reflect.KClass
 
 class LoginViewModel(
     mainViewModel: MainViewModel,
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
+
+    override val expectedRouteType: KClass<*> = NavigationRoute.Login::class
 
     private val _emailFieldState = MutableStateFlow(
         LoginTextFieldState.Email("", isValid = true)
@@ -29,8 +34,8 @@ class LoginViewModel(
     internal val passwordFieldState: StateFlow<LoginTextFieldState.Password> =
         _passwordFieldState.asStateFlow()
 
-    override fun onEnter() {
-        super.onEnter()
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         mainViewModel.hideNavigationBar()
 
@@ -54,9 +59,9 @@ class LoginViewModel(
 
             LoginViewEvents.GoToRegistrationClicked -> {
                 mainViewModel.navigate(
-                    Navigation.To(
-                        NavigationRoutes.REGISTER,
-                        Navigation.To.PopUpType.Route(NavigationRoutes.LOGIN)
+                    To(
+                        NavigationRoute.Register,
+                        Route(NavigationRoute.Login::class)
                     )
                 )
             }
@@ -103,8 +108,8 @@ class LoginViewModel(
                 )
                 mainViewModel.navigate(
                     Navigation.To(
-                        NavigationRoutes.fromAccountRole(role),
-                        Navigation.To.PopUpType.Route(NavigationRoutes.LOGIN)
+                        NavigationRoute.fromAccountRole(role),
+                        Navigation.To.PopUpType.Route(NavigationRoute.Login::class)
                     )
                 )
             }

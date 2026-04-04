@@ -5,13 +5,14 @@ import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.reflect.KClass
 
 class ShelterProfileViewModel(
     mainViewModel: MainViewModel,
@@ -19,6 +20,7 @@ class ShelterProfileViewModel(
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
+    override val expectedRouteType: KClass<*> = NavigationRoute.ShelterProfile::class
     private val _emailState = MutableStateFlow("")
     val emailState: StateFlow<String> = _emailState.asStateFlow()
 
@@ -35,8 +37,8 @@ class ShelterProfileViewModel(
     val phoneState: StateFlow<String> = _phoneState.asStateFlow()
 
 
-    override fun onEnter() {
-        super.onEnter()
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         launchSave(
             operation = {
@@ -60,7 +62,7 @@ class ShelterProfileViewModel(
             ShelterProfileEvents.EditingClicked -> {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoutes.SHELTER_PROFILE_EDITING
+                        NavigationRoute.EditingShelterProfile
                     ),
                 )
             }
@@ -75,7 +77,7 @@ class ShelterProfileViewModel(
             onSuccess = {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoutes.LOGIN,
+                        NavigationRoute.Login,
                         To.PopUpType.Origin
                     )
                 )

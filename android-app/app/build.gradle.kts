@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.3.20"
 }
 
 android {
@@ -33,8 +36,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true
@@ -76,7 +81,7 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
 
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose.v285)
 
     implementation("com.nastena.pawsitive:common:1.0.0")
 
@@ -84,5 +89,7 @@ dependencies {
 
         // Coil для Jetpack Compose
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation(libs.kotlinx.serialization.json)
 
 }

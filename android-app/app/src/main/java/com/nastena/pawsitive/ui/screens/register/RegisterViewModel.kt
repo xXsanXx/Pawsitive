@@ -2,23 +2,25 @@ package com.nastena.pawsitive.ui.screens.register
 
 import android.util.Patterns
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.common.navigation.Navigation.*
-import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
-import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.common.validation.ValidationState
+import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.regex.Pattern
+import kotlin.reflect.KClass
 
 class RegisterViewModel(
     mainViewModel: MainViewModel,
     private val _accountRepository: AccountRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
+    override val expectedRouteType: KClass<*> = NavigationRoute.Register::class
     companion object {
         private val NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$")
     }
@@ -58,8 +60,8 @@ class RegisterViewModel(
     val accountRoleMenuState: StateFlow<RegisterState.AccountRoleMenu> =
         _accountRoleMenuState.asStateFlow()
 
-    override fun onEnter() {
-        super.onEnter()
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         mainViewModel.hideNavigationBar()
 
@@ -118,8 +120,8 @@ class RegisterViewModel(
             RegisterViewEvents.GoToLoginClicked -> {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoutes.LOGIN,
-                        Route(NavigationRoutes.REGISTER)
+                        NavigationRoute.Login,
+                        Route(NavigationRoute.Register::class)
                     )
                 )
             }
@@ -201,8 +203,8 @@ class RegisterViewModel(
                 onSuccess = {
                     mainViewModel.navigate(
                         To(
-                            NavigationRoutes.LOGIN,
-                            Route(NavigationRoutes.REGISTER)
+                            NavigationRoute.Login,
+                            Route(NavigationRoute.Register::class)
                         )
                     )
                 }
@@ -211,4 +213,6 @@ class RegisterViewModel(
 
 
     }
+
+
 }

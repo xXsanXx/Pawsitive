@@ -8,18 +8,21 @@ import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 class SplashViewModel(
     private val _accountRepository: AccountRepository,
     mainViewModel: MainViewModel
 ) : BaseScreenViewModel(mainViewModel) {
 
-    override fun onEnter() {
-        super.onEnter()
+    override val expectedRouteType: KClass<*> = NavigationRoute.Splash::class
+
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         mainViewModel.hideNavigationBar()
 
@@ -39,9 +42,9 @@ class SplashViewModel(
                             if (throwable.errorCode == ErrorCode.UNAUTHORIZED) {
                                 mainViewModel.navigate(
                                     Navigation.To(
-                                        NavigationRoutes.LOGIN,
+                                        NavigationRoute.Login,
                                         Navigation.To.PopUpType.Route(
-                                            NavigationRoutes.SPLASH
+                                            NavigationRoute.Splash::class
                                         )
                                     )
                                 )
@@ -54,9 +57,9 @@ class SplashViewModel(
                             if (throwable.httpCode == 403) {
                                 mainViewModel.navigate(
                                     Navigation.To(
-                                        NavigationRoutes.LOGIN,
+                                        NavigationRoute.Login,
                                         Navigation.To.PopUpType.Route(
-                                            NavigationRoutes.SPLASH
+                                            NavigationRoute.Splash::class
                                         )
                                     )
                                 )

@@ -1,12 +1,23 @@
-package com.nastena.pawsitive.ui.screens.shelter.animal.add
+package com.nastena.pawsitive.ui.screens.shelter.animal
 
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.ui.common.validation.ValidationState
+import kotlinx.serialization.Serializable
 
 
-object ShelterAddAnimalState {
+object ShelterAnimalState {
+
+    sealed interface Mode {
+        object Add : Mode
+
+        data class Edit(
+            val idAnimal: Long,
+            val originalAnimalPhotos: List<String>,
+            val originalPassportPhotos: List<String>,
+        ) : Mode
+    }
 
     data class Name(
         val text: String,
@@ -43,7 +54,7 @@ object ShelterAddAnimalState {
     )
 
     data class Photos(
-        val animalPhotos: List<String> = emptyList(),
-        val animalPassportPhotos: List<String> = emptyList()
+        val animal: List<String> = emptyList(),
+        val passport: List<String> = emptyList()
     )
 }

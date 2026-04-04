@@ -6,9 +6,10 @@ import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
-import com.nastena.pawsitive.ui.common.navigation.NavigationRoutes
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,11 +17,13 @@ import kotlinx.coroutines.flow.update
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlin.reflect.KClass
 
 class ShelterHomeViewModel(
     mainViewModel: MainViewModel,
     private val _shelterRepository: ShelterRepository,
     private val _filesRepository: FilesRepository,
+    override val expectedRouteType: KClass<*> = NavigationRoute.ShelterHome::class,
 ) : BaseScreenViewModel(mainViewModel) {
 
     private val _animalsState: MutableStateFlow<List<ShelterHomeState.Animal>> = MutableStateFlow(emptyList())
@@ -28,8 +31,8 @@ class ShelterHomeViewModel(
 
     private val _animalIds: MutableList<Long> = mutableListOf()
 
-    override fun onEnter() {
-        super.onEnter()
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
 
         _animalIds.clear()
 
@@ -55,7 +58,6 @@ class ShelterHomeViewModel(
                                 type = animalResponse.type,
                                 age = currentYear - birthYear,
                                 photoUrls = animalResponse.photoUrls.map { url ->
-                                    Log.i("ShelterHome", "~~~~~~~~ Received $url -> ${_filesRepository.getAbsoluteFileUrl(url)}");
                                     _filesRepository.getAbsoluteFileUrl(url)
                                 }
                             )
@@ -74,10 +76,16 @@ class ShelterHomeViewModel(
             ShelterHomeEvents.AddAnimalClicked ->
                 mainViewModel.navigate(
                     To(
-                        NavigationRoutes.SHELTER_ADD_ANIMAL
+                        NavigationRoute.Shelter.Animal.Add
                     ),
                 )
-            is ShelterHomeEvents.EditingClicked -> TODO()
+            is ShelterHomeEvents.EditingClicked -> {
+                mainViewModel.navigate(
+                    To(
+                        NavigationRoute.Shelter.Animal.Edit(animalId = _animalIds[event.index])
+                    )
+                )
+            }
         }
     }
 }
