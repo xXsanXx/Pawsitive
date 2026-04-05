@@ -4,7 +4,6 @@ import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.ui.common.validation.ValidationState
-import kotlinx.serialization.Serializable
 
 
 object ShelterAnimalState {
@@ -14,9 +13,14 @@ object ShelterAnimalState {
 
         data class Edit(
             val idAnimal: Long,
-            val originalAnimalPhotos: List<String>,
-            val originalPassportPhotos: List<String>,
-        ) : Mode
+            val originalAnimalPhotos: OriginalPhotos,
+            val originalPassportPhotos: OriginalPhotos,
+        ) : Mode {
+            data class OriginalPhotos(
+                val filenames: List<String>,
+                val filepath: List<String>
+            )
+        }
     }
 
     data class Name(

@@ -1,8 +1,6 @@
 package com.nastena.pawsitive.repository
 
 import android.content.ContentResolver
-import android.net.Uri
-import com.google.gson.Gson
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
@@ -12,15 +10,14 @@ import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
+import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.repository.utils.handleServerErrorBody
-import okhttp3.MediaType.Companion.toMediaType
+import com.nastena.pawsitive.utils.AnimalUtils
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody
 import retrofit2.Response
-import java.io.File
 
 class ShelterRepository(
     private val _api: ShelterApi,
@@ -75,35 +72,29 @@ class ShelterRepository(
         gender: AnimalGender,
         description: String,
         birthDate: Long,
-        photoUris: List<String>,
-        passportUris: List<String>,
+        animalPhotoUris: List<String>,
+        passportPhotoUris: List<String>,
     ): Result<Unit> = runCatching {
 
         val request = CreateAnimalRequest(
             name, type, breed, birthDate, gender, description
         )
 
-        val gson = Gson()
-        val json = gson.toJson(request)
-        val data = json.toRequestBody("application/json".toMediaType())
+        val data: RequestBody = NetworkUtils.dtoToRequestBody(request)
 
-        val photos = photoUris.mapNotNull { uriString ->
-            val uri = Uri.parse(uriString)
-            getFileFromContentUri(uri, _contentResolver)?.let { file ->
-                val requestFile = file.asRequestBody("image/*".toMediaType())
-                MultipartBody.Part.createFormData("photos", file.name, requestFile)
-            }
+        val photos: List<MultipartBody.Part> = animalPhotoUris.map { uriString ->
+            NetworkUtils.photoUriToMultipart(
+                uriString, AnimalUtils.RequestParams.ANIMAL_PHOTOS, _contentResolver
+            )
         }
 
-        val passports = passportUris.mapNotNull { uriString ->
-            val uri = Uri.parse(uriString)
-            getFileFromContentUri(uri, _contentResolver)?.let { file ->
-                val requestFile = file.asRequestBody("image/*".toMediaType())
-                MultipartBody.Part.createFormData("vetPassports", file.name, requestFile)
-            }
+        val passports: List<MultipartBody.Part> = passportPhotoUris.map { uriString ->
+            NetworkUtils.photoUriToMultipart(
+                uriString, AnimalUtils.RequestParams.PASSPORT_PHOTOS, _contentResolver
+            )
         }
 
-        val response = _animalsApi.createAnimal(data, photos, passports)
+        val response: Response<Long> = _animalsApi.createAnimal(data, photos, passports)
 
         if (response.isSuccessful) {
             Result.success(Unit)
@@ -120,37 +111,39 @@ class ShelterRepository(
         gender: AnimalGender,
         description: String,
         birthDate: Long,
-        removedPhotoUris: List<String>,
+        removedAnimalPhotos: List<String>,
         newPhotoUris: List<String>,
-        removedPassportUris: List<String>,
+        removedPassportPhotos: List<String>,
         newPassportUris: List<String>,
     ): Result<Unit> = runCatching {
 
         val request = UpdateAnimalRequest(
-            id, name, type, breed, birthDate, gender, description, removedPhotoUris, removedPassportUris
+            id,
+            name,
+            type,
+            breed,
+            birthDate,
+            gender,
+            description,
+            removedAnimalPhotos,
+            removedPassportPhotos
         )
 
-        val gson = Gson()
-        val json = gson.toJson(request)
-        val data = json.toRequestBody("application/json".toMediaType())
+        val data: RequestBody = NetworkUtils.dtoToRequestBody(request)
 
-        val photos = newPhotoUris.mapNotNull { uriString ->
-            val uri = Uri.parse(uriString)
-            getFileFromContentUri(uri, _contentResolver)?.let { file ->
-                val requestFile = file.asRequestBody("image/*".toMediaType())
-                MultipartBody.Part.createFormData("newPhotos", file.name, requestFile)
-            }
+        val photos: List<MultipartBody.Part> = newPhotoUris.map { uriString ->
+            NetworkUtils.photoUriToMultipart(
+                uriString, AnimalUtils.RequestParams.ANIMAL_PHOTOS, _contentResolver
+            )
         }
 
-        val passports = newPassportUris.mapNotNull { uriString ->
-            val uri = Uri.parse(uriString)
-            getFileFromContentUri(uri, _contentResolver)?.let { file ->
-                val requestFile = file.asRequestBody("image/*".toMediaType())
-                MultipartBody.Part.createFormData("newPassportPhotos", file.name, requestFile)
-            }
+        val passports: List<MultipartBody.Part> = newPassportUris.map { uriString ->
+            NetworkUtils.photoUriToMultipart(
+                uriString, AnimalUtils.RequestParams.PASSPORT_PHOTOS, _contentResolver
+            )
         }
 
-        val response = _animalsApi.updateAnimal(data, photos, passports)
+        val response: Response<Unit> = _animalsApi.updateAnimal(data, photos, passports)
 
         if (response.isSuccessful) {
             Result.success(Unit)
@@ -162,21 +155,4 @@ class ShelterRepository(
 
 }
 
-// Вспомогательная функция для конвертации content URI в File
-private fun getFileFromContentUri(uri: Uri, contentResolver: ContentResolver): File? {
-    return try {
-        val inputStream = contentResolver.openInputStream(uri) ?: return null
-        val tempFile = File.createTempFile("temp_image_", ".jpg")
-
-        tempFile.outputStream().use { outputStream ->
-            inputStream.copyTo(outputStream)
-        }
-
-        inputStream.close()
-        tempFile
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}
 

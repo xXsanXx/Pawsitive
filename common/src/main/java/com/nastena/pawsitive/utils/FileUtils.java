@@ -6,14 +6,10 @@ public class FileUtils {
 
     private static final String FILES_URI_PATH = MAPPING + ENDPOINT + "/";
 
-    public static String getAbsoluteFileUrl(String baseServerUrl, String localFileUrl) {
+    public static String getAbsoluteFileUrl(String baseServerUrl, String filename) {
         baseServerUrl = baseServerUrl.charAt(baseServerUrl.length() - 1) == '/'
                 ? baseServerUrl.substring(0, baseServerUrl.length() - 1)
                 : baseServerUrl;
-        return baseServerUrl + localFileUrl;
-    }
-
-    public static String getLocalFileUrl(String filename) {
-        return FILES_URI_PATH + filename;
+        return baseServerUrl + FILES_URI_PATH + filename.trim();
     }
 }

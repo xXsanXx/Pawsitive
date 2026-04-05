@@ -49,14 +49,14 @@ public class Animal {
     @Setter
     @ElementCollection
     @CollectionTable(name = "animal_photos", joinColumns = @JoinColumn(name = "animal_id"))
-    @Column(name = "photo_url")
-    private List<String> photoUrls = new ArrayList<>();
+    @Column(name = "animal_photos")
+    private List<String> animalPhotos = new ArrayList<>();
 
     @Setter
     @ElementCollection
-    @CollectionTable(name = "animal_vet_passports", joinColumns = @JoinColumn(name = "animal_id"))
-    @Column(name = "vet_passport_url")
-    private List<String> vetPassportUrls = new ArrayList<>();
+    @CollectionTable(name = "animal_passport_photos", joinColumns = @JoinColumn(name = "animal_id"))
+    @Column(name = "passport_photos")
+    private List<String> passportPhotos = new ArrayList<>();
 
     public Animal() {}
 

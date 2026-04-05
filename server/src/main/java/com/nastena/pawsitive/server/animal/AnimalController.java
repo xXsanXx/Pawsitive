@@ -8,6 +8,7 @@ import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.server.shelter.ShelterService;
+import com.nastena.pawsitive.utils.AnimalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +36,9 @@ public class AnimalController {
 
     @PostMapping("/create")
     public ResponseEntity<Long> createAnimal(
-
             @RequestPart("data") CreateAnimalRequest data,
-            @RequestParam(value = "photos", required = false) List<MultipartFile> photos,
-            @RequestParam(value = "vetPassports", required = false) List<MultipartFile> vetPassports,
+            @RequestParam(value = AnimalUtils.RequestParams.ANIMAL_PHOTOS, required = false) List<MultipartFile> photos,
+            @RequestParam(value = AnimalUtils.RequestParams.PASSPORT_PHOTOS, required = false) List<MultipartFile> vetPassports,
             Authentication authentication
 
     ) throws Exception {
@@ -61,8 +61,8 @@ public class AnimalController {
     @PostMapping("/update")
     public ResponseEntity<?> updateAnimal(
             @RequestPart("data") UpdateAnimalRequest data,
-            @RequestParam(value = "newPhotos", required = false) List<MultipartFile> newPhotos,
-            @RequestParam(value = "newPassportPhotos", required = false) List<MultipartFile> newPassportPhotos) {
+            @RequestParam(value = AnimalUtils.RequestParams.ANIMAL_PHOTOS, required = false) List<MultipartFile> newPhotos,
+            @RequestParam(value = AnimalUtils.RequestParams.PASSPORT_PHOTOS, required = false) List<MultipartFile> newPassportPhotos) {
 
         log.info("[update] name {}, breed {}", data.getName(), data.getBreed());
 
@@ -101,7 +101,7 @@ public class AnimalController {
                 .map(animal -> new ShelterAnimalResponse(
                                 animal.getId(), animal.getName(), animal.getType(),
                                 animal.getBreed(), animal.getBirthDate(), animal.getGender(),
-                                animal.getDescription(), animal.getPhotoUrls(), animal.getVetPassportUrls()
+                                animal.getDescription(), animal.getAnimalPhotos(), animal.getPassportPhotos()
                         )
                 ).toList();
 
@@ -126,7 +126,7 @@ public class AnimalController {
         ShelterAnimalResponse shelterAnimalResponse = new ShelterAnimalResponse(
                 animal.getId(), animal.getName(), animal.getType(),
                 animal.getBreed(), animal.getBirthDate(), animal.getGender(),
-                animal.getDescription(), animal.getPhotoUrls(), animal.getVetPassportUrls()
+                animal.getDescription(), animal.getAnimalPhotos(), animal.getPassportPhotos()
         );
 
 

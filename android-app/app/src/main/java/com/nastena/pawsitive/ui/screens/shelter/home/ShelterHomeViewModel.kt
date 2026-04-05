@@ -57,7 +57,7 @@ class ShelterHomeViewModel(
                             ShelterHomeState.Animal(name = animalResponse.name,
                                 type = animalResponse.type,
                                 age = currentYear - birthYear,
-                                photoUrls = animalResponse.photoUrls.map { url ->
+                                photoUrls = animalResponse.animalPhotos.map { url ->
                                     _filesRepository.getAbsoluteFileUrl(url)
                                 }
                             )

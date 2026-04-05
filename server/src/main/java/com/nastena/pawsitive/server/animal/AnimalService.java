@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -32,8 +33,8 @@ public class AnimalService {
     public Animal createAnimalOrThrow(
             Shelter shelter,
             CreateAnimalRequest createAnimalRequest,
-            List<MultipartFile> photos,
-            List<MultipartFile> vetPassports) {
+            List<MultipartFile> animalPhotos,
+            List<MultipartFile> passportPhotos) {
 
         String name = createAnimalRequest.getName().trim();
         validateNameOrThrow(name);
@@ -57,29 +58,29 @@ public class AnimalService {
         animal.setGender(gender);
         animal.setDescription(description);
 
-        if (photos != null) {
-            List<String> photoUrls = new ArrayList<>();
-            for (MultipartFile file : photos) {
-                String url = fileStorageService.saveFile(file);
-                photoUrls.add(url);
+        if (animalPhotos != null) {
+            List<String> photos = new ArrayList<>();
+            for (MultipartFile file : animalPhotos) {
+                String filename = fileStorageService.saveFile(file);
+                photos.add(filename);
             }
-            animal.setPhotoUrls(photoUrls);
+            animal.setAnimalPhotos(photos);
         }
 
-        if (vetPassports != null) {
-            List<String> passportUrls = new ArrayList<>();
-            for (MultipartFile file : vetPassports) {
-                String url = fileStorageService.saveFile(file);
-                passportUrls.add(url);
+        if (passportPhotos != null) {
+            List<String> photos = new ArrayList<>();
+            for (MultipartFile file : passportPhotos) {
+                String filename = fileStorageService.saveFile(file);
+                photos.add(filename);
             }
-            animal.setVetPassportUrls(passportUrls);
+            animal.setPassportPhotos(photos);
         }
 
         return animalRepository.save(animal);
     }
 
     public void updateAnimalOrThrow(UpdateAnimalRequest updateAnimalRequest,
-                                    List<MultipartFile> newPhotos,
+                                    List<MultipartFile> newAnimalPhotos,
                                     List<MultipartFile> newPassportPhotos
     ) {
         Animal animal = animalRepository.findById(updateAnimalRequest.getId()).orElseThrow(() -> new ServerRuntimeException("Can not find animal by id", ErrorCode.INVALID_INPUT));
@@ -105,30 +106,37 @@ public class AnimalService {
         animal.setGender(gender);
         animal.setDescription(description);
 
-        ArrayList<String> photoUrls = animal.getPhotoUrls().stream().filter(
-                (uri) -> !updateAnimalRequest.getRemovedAnimalPhotos().contains(uri)
-        ).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<String> animalPhotos = animal.getAnimalPhotos().stream()
+                .filter(
+                        (filename) -> !updateAnimalRequest.getRemovedAnimalPhotos().contains(filename)
+                ).collect(Collectors.toCollection(ArrayList::new));
 
-        if (newPhotos != null) {
-            log.info("New photos: {}", newPhotos.size());
-            for (MultipartFile file : newPhotos) {
-                String url = fileStorageService.saveFile(file);
-                photoUrls.add(url);
+
+        if (newAnimalPhotos != null) {
+            for (MultipartFile file : newAnimalPhotos) {
+                String filename = fileStorageService.saveFile(file);
+                animalPhotos.add(filename);
             }
         }
-        animal.setPhotoUrls(photoUrls);
+        animal.setAnimalPhotos(animalPhotos);
 
-        ArrayList<String> passportPhotoUrls = animal.getVetPassportUrls().stream().filter(
-                (uri) -> !updateAnimalRequest.getRemovedPassportPhotos().contains(uri)
+        ArrayList<String> passportPhotos = animal.getPassportPhotos().stream().filter(
+                (filename) -> !updateAnimalRequest.getRemovedPassportPhotos().contains(filename)
         ).collect(Collectors.toCollection(ArrayList::new));
 
         if (newPassportPhotos != null) {
             for (MultipartFile file : newPassportPhotos) {
-                String url = fileStorageService.saveFile(file);
-                passportPhotoUrls.add(url);
+                String filename = fileStorageService.saveFile(file);
+                passportPhotos.add(filename);
             }
         }
-        animal.setVetPassportUrls(passportPhotoUrls);
+        animal.setPassportPhotos(passportPhotos);
+
+        Stream.concat(
+                        updateAnimalRequest.getRemovedAnimalPhotos().stream(),
+                        updateAnimalRequest.getRemovedPassportPhotos().stream()
+                )
+                .forEach(fileStorageService::deleteFile);
 
         animalRepository.save(animal);
     }

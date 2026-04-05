@@ -1,6 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.animal
 
-import android.content.ContentResolver
+import android.util.Log
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
@@ -118,15 +118,32 @@ class ShelterAnimalViewModel(
             NavigationRoute.Shelter.Animal.Add -> {
                 _mode.update { ShelterAnimalState.Mode.Add }
             }
+
             is NavigationRoute.Shelter.Animal.Edit -> {
                 launchSave(
-                    operation = {_shelterRepository.getShelterAnimal(animalId = route.animalId) },
+                    operation = { _shelterRepository.getShelterAnimal(animalId = route.animalId) },
                     onSuccess = { animalResponse ->
-                        _mode.update { ShelterAnimalState.Mode.Edit(
-                            idAnimal = animalResponse.id,
-                            originalAnimalPhotos = animalResponse.photoUrls,
-                            originalPassportPhotos = animalResponse.passportPhotoUrls
-                        ) }
+                        val originalAnimalPhotos = ShelterAnimalState.Mode.Edit.OriginalPhotos(
+                            filenames = animalResponse.animalPhotos ?: emptyList(),
+                            filepath = animalResponse.animalPhotos?.map { filename: String ->
+                                _filesRepository.getAbsoluteFileUrl(filename)
+                            } ?: emptyList()
+                        )
+
+                        val originalPassportPhotos = ShelterAnimalState.Mode.Edit.OriginalPhotos(
+                            filenames = animalResponse.passportPhotos ?: emptyList(),
+                            filepath = animalResponse.passportPhotos?.map { filename: String ->
+                                _filesRepository.getAbsoluteFileUrl(filename)
+                            } ?: emptyList()
+                        )
+
+                        _mode.update {
+                            ShelterAnimalState.Mode.Edit(
+                                idAnimal = animalResponse.id,
+                                originalAnimalPhotos = originalAnimalPhotos,
+                                originalPassportPhotos = originalPassportPhotos
+                            )
+                        }
 
                         _nameState.update { it.copy(text = animalResponse.name) }
                         _typeState.update {
@@ -149,17 +166,14 @@ class ShelterAnimalViewModel(
                         _birthDateState.update { it.copy(date = animalResponse.birthDate) }
                         _animalPhotosState.update {
                             it.copy(
-                                animal = animalResponse.photoUrls?.map { uri ->
-                                    _filesRepository.getAbsoluteFileUrl(uri)
-                                } ?: emptyList(),
-                                passport = animalResponse.passportPhotoUrls?.map { uri ->
-                                    _filesRepository.getAbsoluteFileUrl(uri)
-                                } ?: emptyList()
+                                animal = originalAnimalPhotos.filepath,
+                                passport = originalPassportPhotos.filepath
                             )
                         }
                     }
                 )
             }
+
             else -> throw IllegalArgumentException(
                 "Expected route to be ${NavigationRoute.Shelter.Animal::class.simpleName}, got ${route::class}"
             )
@@ -309,7 +323,7 @@ class ShelterAnimalViewModel(
         if (isAllValid) {
             launchSave(
                 operation = {
-                    when(val currentMode = _mode.value) {
+                    when (val currentMode = _mode.value) {
                         ShelterAnimalState.Mode.Add -> {
                             _shelterRepository.createAnimal(
                                 name = trimmedName,
@@ -318,26 +332,47 @@ class ShelterAnimalViewModel(
                                 gender = _genderState.value.selected!!,
                                 description = trimmedDescription,
                                 birthDate = birthDate,
-                                photoUris = _animalPhotosState.value.animal,
-                                passportUris = _animalPhotosState.value.passport,
+                                animalPhotoUris = _animalPhotosState.value.animal,
+                                passportPhotoUris = _animalPhotosState.value.passport,
                             )
                         }
+
                         is ShelterAnimalState.Mode.Edit -> {
-                            val removedPhotos = currentMode.originalAnimalPhotos.filter { uri ->
-                                !_animalPhotosState.value.animal.contains(uri)
-                            }
+                            val removedPhotos: List<String> =
+                                currentMode.originalAnimalPhotos.filepath.filter { filepath: String ->
+                                    !_animalPhotosState.value.animal.contains(filepath)
+                                }.mapIndexed { index: Int, filepath: String ->
+                                    currentMode.originalAnimalPhotos.filenames[index]
+                                }
 
-                            val newPhotos = _animalPhotosState.value.animal.filter { uri ->
-                                !currentMode.originalAnimalPhotos.contains(uri)
-                            }
+                            val newPhotoUris =
+                                _animalPhotosState.value.animal.filter { filepath: String ->
+                                    !currentMode.originalAnimalPhotos.filepath.contains(filepath)
+                                }
 
-                            val removedPassportPhotos = currentMode.originalPassportPhotos.filter { uri ->
-                                !_animalPhotosState.value.passport.contains(uri)
-                            }
+                            Log.i(
+                                "shelter animal",
+                                "original photo ${currentMode.originalAnimalPhotos}, " +
+                                        "state: ${animalPhotosState.value.animal}, removed $removedPhotos, new $newPhotoUris"
+                            )
 
-                            val newPassportPhotos = _animalPhotosState.value.passport.filter { uri ->
-                                !currentMode.originalPassportPhotos.contains(uri)
-                            }
+                            val removedPassportPhotos: List<String> =
+                                currentMode.originalPassportPhotos.filepath.filter { filepath: String ->
+                                    !_animalPhotosState.value.passport.contains(filepath)
+                                }.mapIndexed { index: Int, filepath: String ->
+                                    currentMode.originalPassportPhotos.filenames[index]
+                                }
+
+                            val newPassportPhotoUris =
+                                _animalPhotosState.value.passport.filter { filepath: String ->
+                                    !currentMode.originalPassportPhotos.filepath.contains(filepath)
+                                }
+
+                            Log.i(
+                                "shelter animal",
+                                "original passport photo ${currentMode.originalPassportPhotos}, " +
+                                        "state: ${animalPhotosState.value.passport}, removed $removedPassportPhotos, new $newPassportPhotoUris"
+                            )
 
                             _shelterRepository.updateAnimal(
                                 id = currentMode.idAnimal,
@@ -347,10 +382,10 @@ class ShelterAnimalViewModel(
                                 gender = _genderState.value.selected!!,
                                 description = trimmedDescription,
                                 birthDate = birthDate,
-                                removedPhotoUris = removedPhotos,
-                                newPhotoUris = newPhotos,
-                                removedPassportUris = removedPassportPhotos,
-                                newPassportUris = newPassportPhotos,
+                                removedAnimalPhotos = removedPhotos,
+                                newPhotoUris = newPhotoUris,
+                                removedPassportPhotos = removedPassportPhotos,
+                                newPassportUris = newPassportPhotoUris,
                             )
                         }
                     }

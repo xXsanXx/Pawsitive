@@ -1,5 +1,7 @@
 package com.nastena.pawsitive.server.files;
 
+import com.nastena.pawsitive.dto.ErrorCode;
+import com.nastena.pawsitive.server.exceptions.ServerRuntimeException;
 import com.nastena.pawsitive.utils.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -31,10 +33,27 @@ public class FileStorageService {
 
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-            return FileUtils.getLocalFileUrl(filename);
+            return filename;
 
         } catch (IOException e) {
-            throw new RuntimeException("File upload failed");
+            throw new ServerRuntimeException("File upload failed", ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void deleteFile(String filename) {
+        try {
+            Path path = Paths.get(UPLOAD_DIR).resolve(filename);
+
+            boolean deleted = Files.deleteIfExists(path);
+
+            if (!deleted) {
+                throw new ServerRuntimeException("File %s not found".formatted(filename),
+                        ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (IOException e) {
+            throw new ServerRuntimeException("Failed to delete file %s: %s".formatted(filename, e.getMessage()),
+                    ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -47,10 +66,10 @@ public class FileStorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             }
-            throw new RuntimeException("File not found");
+            throw new ServerRuntimeException("File %s not found".formatted(filename), ErrorCode.INTERNAL_SERVER_ERROR);
 
         } catch (MalformedURLException e) {
-            throw new RuntimeException("File not found", e);
+            throw new ServerRuntimeException("File %s not found".formatted(filename), ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

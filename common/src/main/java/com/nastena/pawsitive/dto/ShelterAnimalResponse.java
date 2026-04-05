@@ -11,9 +11,9 @@ public class ShelterAnimalResponse {
     private AnimalGender gender;
     private String description;
 
-    private List<String> photoUrls;
+    private List<String> animalPhotos;
 
-    private List<String> passportPhotoUrls;
+    private List<String> passportPhotos;
 
 
     public ShelterAnimalResponse() {
@@ -30,8 +30,8 @@ public class ShelterAnimalResponse {
         this.birthDate = birthDate;
         this.gender = gender;
         this.description = description;
-        this.photoUrls = photoUrls;
-        this.passportPhotoUrls = passportPhotoUrls;
+        this.animalPhotos = photoUrls;
+        this.passportPhotos = passportPhotoUrls;
     }
 
 
@@ -63,11 +63,11 @@ public class ShelterAnimalResponse {
         return description;
     }
 
-    public List<String> getPhotoUrls() {
-        return photoUrls;
+    public List<String> getAnimalPhotos() {
+        return animalPhotos;
     }
 
-    public List<String> getPassportPhotoUrls() {
-        return passportPhotoUrls;
+    public List<String> getPassportPhotos() {
+        return passportPhotos;
     }
 }
