@@ -1,7 +1,5 @@
 package com.nastena.pawsitive.ui.screens.shelter.home
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,11 +11,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +29,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
@@ -40,6 +40,10 @@ fun ShelterHomeView(
     viewModel: ShelterHomeViewModel
 ) {
     val animalsState by viewModel.animalsState.collectAsState()
+
+    val confirmAnimalDeleteState by viewModel.confirmAnimalDelete.collectAsState()
+
+
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -53,14 +57,17 @@ fun ShelterHomeView(
         }
     ) { paddingValues: PaddingValues ->
         LazyColumn(
-            modifier = Modifier.padding(paddingValues).fillMaxWidth()
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxWidth()
         ) {
             items(animalsState.size) { index: Int ->
                 val animalState: ShelterHomeState.Animal = animalsState[index]
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (animalState.photoUrls.isNotEmpty()) {
                         AsyncImage(
@@ -79,19 +86,61 @@ fun ShelterHomeView(
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(text = animalState.name)
-                        Text(text = stringResource(LocalizationUtils.getAnimalTypeStringId(animalState.type)))
+                        Text(
+                            text = stringResource(
+                                LocalizationUtils.getAnimalTypeStringId(
+                                    animalState.type
+                                )
+                            )
+                        )
                         Text(text = "${animalState.age} ${stringResource(R.string.common_years)}")
                     }
-                    IconButton(onClick = { viewModel.onViewEvent(event = ShelterHomeEvents.EditingClicked(index) )}) {
+                    IconButton(onClick = {
+                        viewModel.onViewEvent(
+                            event = ShelterHomeEvents.EditingClicked(
+                                index
+                            )
+                        )
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = null
                         )
                     }
+                    IconButton(
+                        onClick = {
+                            viewModel.onViewEvent(ShelterHomeEvents.RemoveClicked(index))
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null
+                        )
+                    }
+
+
                 }
             }
         }
 
     }
+    if (confirmAnimalDeleteState?.isVisible == true) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onConfirmDelete(false) },
+            title = { Text(stringResource(R.string.remove_animal_title)) },
+            text = { Text(stringResource(R.string.warning_remove_animal)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onConfirmDelete(false) }) {
+                    Text(stringResource(R.string.cancel_remove_animal))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onConfirmDelete(true) }) {
+                    Text(stringResource(R.string.remove_animal))
+                }
+            }
+        )
+    }
+
 
 }

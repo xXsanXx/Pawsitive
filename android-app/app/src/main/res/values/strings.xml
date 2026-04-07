@@ -127,12 +127,10 @@
 
     <string name="add_animal_birth_date_invalid">Добавьте дату рождения</string>
 
-
-
-
-
-
-
+    <string name="remove_animal_title">Удалить животное?</string>
+    <string name="warning_remove_animal">Это действие нельзя отменить.</string>
+    <string name="remove_animal">Удалить</string>
+    <string name="cancel_remove_animal">Отмена</string>
 
 
 </resources>

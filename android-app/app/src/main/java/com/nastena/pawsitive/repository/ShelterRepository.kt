@@ -152,7 +152,14 @@ class ShelterRepository(
         }
     }
 
-
+    suspend fun removeAnimal(animalId: Long): Result<Unit> = runCatching {
+        val response: Response<Unit> = _animalsApi.removeAnimal(animalId)
+        if (response.isSuccessful) {
+            return Result.success(Unit)
+        } else {
+            return handleServerErrorBody(response)
+        }
+    }
 }
 
 

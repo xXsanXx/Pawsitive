@@ -7,9 +7,9 @@ import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute.Shelter.Animal.Edit
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,10 +26,15 @@ class ShelterHomeViewModel(
     override val expectedRouteType: KClass<*> = NavigationRoute.ShelterHome::class,
 ) : BaseScreenViewModel(mainViewModel) {
 
-    private val _animalsState: MutableStateFlow<List<ShelterHomeState.Animal>> = MutableStateFlow(emptyList())
+    private val _animalsState: MutableStateFlow<List<ShelterHomeState.Animal>> =
+        MutableStateFlow(emptyList())
     val animalsState: StateFlow<List<ShelterHomeState.Animal>> = _animalsState.asStateFlow()
 
     private val _animalIds: MutableList<Long> = mutableListOf()
+
+    private val _confirmAnimalDelete = MutableStateFlow<ShelterHomeState.ConfirmAnimalDelete?>(null)
+    val confirmAnimalDelete: StateFlow<ShelterHomeState.ConfirmAnimalDelete?> =
+        _confirmAnimalDelete.asStateFlow()
 
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
@@ -54,7 +59,8 @@ class ShelterHomeViewModel(
                                 .atZone(ZoneId.systemDefault()).year
                             val currentYear = LocalDate.now().year
 
-                            ShelterHomeState.Animal(name = animalResponse.name,
+                            ShelterHomeState.Animal(
+                                name = animalResponse.name,
                                 type = animalResponse.type,
                                 age = currentYear - birthYear,
                                 photoUrls = animalResponse.animalPhotos.map { url ->
@@ -79,13 +85,38 @@ class ShelterHomeViewModel(
                         NavigationRoute.Shelter.Animal.Add
                     ),
                 )
+
             is ShelterHomeEvents.EditingClicked -> {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoute.Shelter.Animal.Edit(animalId = _animalIds[event.index])
+                        Edit(animalId = _animalIds[event.index])
                     )
                 )
             }
+
+            is ShelterHomeEvents.RemoveClicked -> {
+                _confirmAnimalDelete.value =
+                    ShelterHomeState.ConfirmAnimalDelete(index = event.index)
+            }
         }
     }
+
+    fun onConfirmDelete(confirmed: Boolean) {
+        val dialogState = _confirmAnimalDelete.value ?: return
+        if (confirmed) removeAnimal(dialogState.index)
+        _confirmAnimalDelete.value = null
+    }
+
+    private fun removeAnimal(index: Int) {
+        val animalId = _animalIds[index]
+
+        launchSave(
+            operation = { _shelterRepository.removeAnimal(animalId) },
+            onSuccess = {
+                _animalsState.update { it.filterIndexed { i, _ -> i != index } }
+                _animalIds.removeAt(index)
+            }
+        )
+    }
+
 }

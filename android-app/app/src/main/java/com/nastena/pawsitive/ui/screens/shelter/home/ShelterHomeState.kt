@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.home
 
+import androidx.compose.ui.text.style.TextIndent
 import com.nastena.pawsitive.dto.AnimalType
 
 object ShelterHomeState {
@@ -9,6 +10,11 @@ object ShelterHomeState {
         val type: AnimalType,
         val age: Int,
         val photoUrls: List<String> = emptyList()
+    )
+
+    data class ConfirmAnimalDelete(
+        val index: Int,
+        val isVisible: Boolean = true
     )
 
 }
