@@ -1,15 +1,16 @@
 package com.nastena.pawsitive.network.api
 
+import com.nastena.pawsitive.dto.AnimalsResponse
 import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Part
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 interface AnimalApi {
 
@@ -39,4 +40,7 @@ interface AnimalApi {
     suspend fun removeAnimal(
         @Body id: Long
     ): Response<Unit>
+
+    @POST("api/animals/user/random")
+    suspend fun getRandomUserAnimalsRatio(): Response<AnimalsResponse>
 }

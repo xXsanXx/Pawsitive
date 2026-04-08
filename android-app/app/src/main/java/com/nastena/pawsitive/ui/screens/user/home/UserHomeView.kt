@@ -2,33 +2,38 @@ package com.nastena.pawsitive.ui.screens.user.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.nastena.pawsitive.dto.ShelterAnimalResponse
+import com.nastena.pawsitive.dto.AnimalResponse
 
 @Composable
 fun UserHomeView(
     modifier: Modifier = Modifier,
     viewModel: UserHomeViewModel
 ) {
-    val currentAnimalState: ShelterAnimalResponse? by viewModel.currentAnimalState.collectAsState()
+    val currentAnimalState: AnimalResponse? by viewModel.currentAnimalState.collectAsState()
 
     UserHomeView(
         modifier = modifier,
@@ -40,50 +45,67 @@ fun UserHomeView(
 @Composable
 private fun UserHomeView(
     modifier: Modifier = Modifier,
-    currentAnimalState: ShelterAnimalResponse?,
+    currentAnimalState: AnimalResponse?,
     onViewEvent: (UserHomeEvents) -> Unit
 ) {
 
-    Column(
+
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = currentAnimalState?.name ?: "Животное не найдено",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        AnimalImage(animal = currentAnimalState)
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Button(onClick = { onViewEvent(UserHomeEvents.DislikeClicked) }) {
-                Text("Пропустить")
-            }
+            AnimalImage(animal = currentAnimalState)
+        }
 
-            Button(onClick = { onViewEvent(UserHomeEvents.DetailsClicked) }) {
-                Text("Подробнее")
-            }
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                IconButton(onClick = { onViewEvent(UserHomeEvents.DislikeClicked) }) {
+                    Icon(
+                        contentDescription = null,
+                        imageVector = Icons.Default.Sos
+                    )
+                }
 
-            Button(onClick = { onViewEvent(UserHomeEvents.LikeClicked) }) {
-                Text("Лайк")
+                Button(onClick = { onViewEvent(UserHomeEvents.DetailsClicked) }) {
+                    Text("Подробнее")
+                }
+
+                Button(onClick = { onViewEvent(UserHomeEvents.LikeClicked) }) {
+                    Text("Лайк")
+                }
             }
         }
 
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = currentAnimalState?.name ?: "Животное не найдено",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
     }
-
 }
 
 @Composable
-fun AnimalImage(animal: ShelterAnimalResponse?) {
+fun AnimalImage(animal: AnimalResponse?) {
     val imageUrl = animal?.animalPhotos?.firstOrNull()
     if (imageUrl != null) {
         Image(

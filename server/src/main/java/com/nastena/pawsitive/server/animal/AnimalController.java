@@ -1,13 +1,13 @@
 package com.nastena.pawsitive.server.animal;
 
-import com.nastena.pawsitive.dto.CreateAnimalRequest;
-import com.nastena.pawsitive.dto.ShelterAnimalResponse;
-import com.nastena.pawsitive.dto.ShelterAnimalsResponse;
-import com.nastena.pawsitive.dto.UpdateAnimalRequest;
+import com.nastena.pawsitive.dto.*;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.server.shelter.ShelterService;
+import com.nastena.pawsitive.server.user.User;
+import com.nastena.pawsitive.server.user.UserAnimalsQueueService;
+import com.nastena.pawsitive.server.user.UserService;
 import com.nastena.pawsitive.utils.AnimalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,12 @@ public class AnimalController {
 
     @Autowired
     private AnimalService animalService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserAnimalsQueueService userAnimalsQueueService;
 
 
     @PostMapping("/create")
@@ -131,6 +137,28 @@ public class AnimalController {
 
 
         return ResponseEntity.ok(shelterAnimalResponse);
+    }
+
+    @PostMapping("/user/random")
+    public ResponseEntity<AnimalsResponse> getRandomUserAnimalsRation(Authentication authentication) {
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+        User user = userService.getUserOrThrow(account);
+
+        List<AnimalResponse> animals = userAnimalsQueueService.getNextRation(user).stream()
+                .map(animal -> new AnimalResponse(
+                        animal.getId(),
+                        animal.getShelter().getId(),
+                        animal.getName(),
+                        animal.getType(),
+                        animal.getBreed(),
+                        animal.getBirthDate(),
+                        animal.getGender(),
+                        animal.getDescription(),
+                        animal.getAnimalPhotos(),
+                        animal.getPassportPhotos()
+                ))
+                .toList();
+        return ResponseEntity.ok(new AnimalsResponse(animals));
     }
 
 

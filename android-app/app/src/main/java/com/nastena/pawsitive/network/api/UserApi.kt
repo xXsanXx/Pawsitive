@@ -8,4 +8,5 @@ interface UserApi {
     @GET("api/user/profile")
     suspend fun getUserProfile(): Response<UserProfileResponse>
 
+
 }
