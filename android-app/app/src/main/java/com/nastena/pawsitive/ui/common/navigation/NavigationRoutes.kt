@@ -1,7 +1,6 @@
 package com.nastena.pawsitive.ui.common.navigation
 
 import com.nastena.pawsitive.dto.AccountRole
-import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalState
 import kotlinx.serialization.Serializable
 
 sealed interface NavigationRoute {
@@ -19,6 +18,9 @@ sealed interface NavigationRoute {
     object UserHome : NavigationRoute
 
     @Serializable
+    object DetailsCard : NavigationRoute
+
+    @Serializable
     object UserProfile : NavigationRoute
 
     @Serializable
@@ -29,6 +31,7 @@ sealed interface NavigationRoute {
 
     @Serializable
     object EditingShelterProfile : NavigationRoute
+
     @Serializable
     object ShelterHome : NavigationRoute
 

@@ -51,7 +51,6 @@ import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalView
 import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalViewModel
 import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalViewModelFactory
-import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.home.ShelterHomeView
@@ -63,6 +62,9 @@ import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelF
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
+import com.nastena.pawsitive.ui.screens.user.home.UserHomeView
+import com.nastena.pawsitive.ui.screens.user.home.UserHomeViewModel
+import com.nastena.pawsitive.ui.screens.user.home.UserHomeViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.profile.UserProfileView
 import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModel
 import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModelFactory
@@ -93,24 +95,32 @@ fun MainContent(
         factory = RegisterViewModelFactory(mainViewModel, accountRepository)
     )
 
-    val userProfileViewModel: UserProfileViewModel = viewModel (
-        factory = UserProfileViewModelFactory(mainViewModel, userRepository, accountRepository )
+    val userProfileViewModel: UserProfileViewModel = viewModel(
+        factory = UserProfileViewModelFactory(mainViewModel, userRepository, accountRepository)
     )
 
-    val shelterProfileViewModel: ShelterProfileViewModel = viewModel (
-        factory = ShelterProfileViewModelFactory(mainViewModel, shelterRepository, accountRepository )
+    val shelterProfileViewModel: ShelterProfileViewModel = viewModel(
+        factory = ShelterProfileViewModelFactory(
+            mainViewModel,
+            shelterRepository,
+            accountRepository
+        )
     )
 
-    val editingShelterProfileViewModel: EditingShelterProfileViewModel = viewModel (
+    val editingShelterProfileViewModel: EditingShelterProfileViewModel = viewModel(
         factory = EditingShelterProfileViewModelFactory(mainViewModel, shelterRepository)
     )
 
-    val shelterHomeViewModel: ShelterHomeViewModel = viewModel (
+    val shelterHomeViewModel: ShelterHomeViewModel = viewModel(
         factory = ShelterHomeViewModelFactory(mainViewModel, shelterRepository, filesRepository)
     )
 
-    val shelterAnimalViewModel: ShelterAnimalViewModel = viewModel (
+    val shelterAnimalViewModel: ShelterAnimalViewModel = viewModel(
         factory = ShelterAnimalViewModelFactory(mainViewModel, shelterRepository, filesRepository)
+    )
+
+    val userHomeViewModel: UserHomeViewModel = viewModel(
+        factory = UserHomeViewModelFactory(mainViewModel, shelterRepository)
     )
 
     val navController: NavHostController = rememberNavController()
@@ -127,9 +137,11 @@ fun MainContent(
 
     // --- Content --------
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
 
@@ -152,7 +164,8 @@ fun MainContent(
                     shelterProfileViewModel = shelterProfileViewModel,
                     editingShelterProfileViewModel = editingShelterProfileViewModel,
                     shelterHomeViewModel = shelterHomeViewModel,
-                    shelterAnimalViewModel = shelterAnimalViewModel
+                    shelterAnimalViewModel = shelterAnimalViewModel,
+                    userHomeViewModel = userHomeViewModel
                 )
             }
         }
@@ -181,6 +194,7 @@ private fun Navigation(
     registerViewModel: RegisterViewModel,
     loginViewModel: LoginViewModel,
     userProfileViewModel: UserProfileViewModel,
+    userHomeViewModel: UserHomeViewModel,
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
     shelterHomeViewModel: ShelterHomeViewModel,
@@ -197,52 +211,68 @@ private fun Navigation(
             }
         }
 
-        composable<NavigationRoute.Register> { backStackEntry : NavBackStackEntry ->
+        composable<NavigationRoute.Register> { backStackEntry: NavBackStackEntry ->
             ScreenView(registerViewModel, backStackEntry.toRoute<NavigationRoute.Register>()) {
                 RegisterView(viewModel = registerViewModel)
             }
         }
 
-        composable<NavigationRoute.Login> { backStackEntry : NavBackStackEntry ->
+        composable<NavigationRoute.Login> { backStackEntry: NavBackStackEntry ->
             ScreenView(loginViewModel, backStackEntry.toRoute<NavigationRoute.Login>()) {
                 LoginView(viewModel = loginViewModel)
             }
         }
 
-        composable<NavigationRoute.UserHome> { backStackEntry : NavBackStackEntry ->
-            Text("User home")
+        composable<NavigationRoute.UserHome> { backStackEntry: NavBackStackEntry ->
+            ScreenView(userHomeViewModel, backStackEntry.toRoute<NavigationRoute.UserHome>()) {
+                UserHomeView(viewModel = userHomeViewModel)
+            }
         }
 
-        composable<NavigationRoute.UserProfile> { backStackEntry : NavBackStackEntry ->
-            ScreenView(userProfileViewModel, backStackEntry.toRoute<NavigationRoute.UserProfile>()) {
+        composable<NavigationRoute.UserProfile> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                userProfileViewModel,
+                backStackEntry.toRoute<NavigationRoute.UserProfile>()
+            ) {
                 UserProfileView(viewModel = userProfileViewModel)
             }
         }
 
-        composable<NavigationRoute.ShelterHome> { backStackEntry : NavBackStackEntry ->
-            ScreenView(shelterHomeViewModel, backStackEntry.toRoute<NavigationRoute.ShelterHome>()) {
+        composable<NavigationRoute.ShelterHome> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                shelterHomeViewModel,
+                backStackEntry.toRoute<NavigationRoute.ShelterHome>()
+            ) {
                 ShelterHomeView(viewModel = shelterHomeViewModel)
             }
         }
 
-        composable<NavigationRoute.ShelterProfile> { backStackEntry : NavBackStackEntry ->
-            ScreenView(shelterProfileViewModel, backStackEntry.toRoute<NavigationRoute.ShelterProfile>()) {
+        composable<NavigationRoute.ShelterProfile> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                shelterProfileViewModel,
+                backStackEntry.toRoute<NavigationRoute.ShelterProfile>()
+            ) {
                 ShelterProfileView(viewModel = shelterProfileViewModel)
             }
         }
 
         composable<NavigationRoute.Shelter.Animal.Add> { backStackEntry: NavBackStackEntry ->
-            ScreenView(shelterAnimalViewModel, backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Add>()) {
+            ScreenView(
+                shelterAnimalViewModel,
+                backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Add>()
+            ) {
                 ShelterAnimalView(viewModel = shelterAnimalViewModel)
             }
         }
 
         composable<NavigationRoute.Shelter.Animal.Edit> { backStackEntry: NavBackStackEntry ->
-            ScreenView(shelterAnimalViewModel, backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Edit>()) {
+            ScreenView(
+                shelterAnimalViewModel,
+                backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Edit>()
+            ) {
                 ShelterAnimalView(viewModel = shelterAnimalViewModel)
             }
         }
-
     }
 }
 

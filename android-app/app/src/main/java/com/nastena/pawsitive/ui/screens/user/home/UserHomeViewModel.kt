@@ -43,14 +43,24 @@ class UserHomeViewModel(
     fun onViewEvent(event: UserHomeEvents) {
         when (event) {
             UserHomeEvents.DetailsClicked -> TODO()
-            UserHomeEvents.DislikeClicked -> TODO()
+
+            UserHomeEvents.DislikeClicked -> {
+                showNextAnimal()
+            }
+            
             UserHomeEvents.LikeClicked -> TODO()
         }
     }
 
 
     private fun showNextAnimal() {
+        _currentIndex++
 
+        if (_currentIndex < _animals.size) {
+            _currentAnimalState.value = _animals[_currentIndex]
+        } else {
+            _currentAnimalState.value = null
+        }
     }
 
 
