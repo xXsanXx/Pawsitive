@@ -1,6 +1,5 @@
 package com.nastena.pawsitive.ui.screens.shelter.home
 
-import androidx.compose.ui.text.style.TextIndent
 import com.nastena.pawsitive.dto.AnimalType
 
 object ShelterHomeState {
