@@ -2,6 +2,7 @@ package com.nastena.pawsitive.ui.screens.user.home
 
 import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -32,13 +33,28 @@ class UserHomeViewModel(
 
     fun onViewEvent(event: UserHomeEvents) {
         when (event) {
-            UserHomeEvents.DetailsClicked -> TODO()
+            UserHomeEvents.DetailsClicked -> {
+                currentAnimalState.value?.let { animal ->
+                    mainViewModel.navigate(
+                        To(NavigationRoute.AnimalDetails)
+                    )
+                }
+            }
 
             UserHomeEvents.DislikeClicked -> {
                 showNextAnimal()
             }
 
-            UserHomeEvents.LikeClicked -> TODO()
+            UserHomeEvents.LikeClicked -> {
+                currentAnimalState.value?.let { animal ->
+                    launchSave(
+                        operation = { _userRepository.addToFavorite(animal.id) },
+                        onSuccess = {
+                            showNextAnimal()
+                        }
+                    )
+                }
+            }
         }
     }
 

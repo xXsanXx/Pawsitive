@@ -11,8 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Sos
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -71,16 +72,22 @@ private fun UserHomeView(
                 IconButton(onClick = { onViewEvent(UserHomeEvents.DislikeClicked) }) {
                     Icon(
                         contentDescription = null,
-                        imageVector = Icons.Default.Sos
+                        imageVector = Icons.Default.ThumbDown
                     )
                 }
 
-                Button(onClick = { onViewEvent(UserHomeEvents.DetailsClicked) }) {
-                    Text("Подробнее")
+                IconButton(onClick = { onViewEvent(UserHomeEvents.DetailsClicked) }) {
+                    Icon(
+                        contentDescription = null,
+                        imageVector = Icons.Default.MoreVert
+                    )
                 }
 
-                Button(onClick = { onViewEvent(UserHomeEvents.LikeClicked) }) {
-                    Text("Лайк")
+                IconButton(onClick = { onViewEvent(UserHomeEvents.LikeClicked) }) {
+                    Icon(
+                        contentDescription = null,
+                        imageVector = Icons.Default.ThumbUp
+                    )
                 }
             }
         }

@@ -120,7 +120,7 @@ fun MainContent(
     )
 
     val userHomeViewModel: UserHomeViewModel = viewModel(
-        factory = UserHomeViewModelFactory(mainViewModel, shelterRepository)
+        factory = UserHomeViewModelFactory(mainViewModel, userRepository)
     )
 
     val navController: NavHostController = rememberNavController()

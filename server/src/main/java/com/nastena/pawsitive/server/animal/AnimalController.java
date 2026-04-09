@@ -161,5 +161,13 @@ public class AnimalController {
         return ResponseEntity.ok(new AnimalsResponse(animals));
     }
 
+    @PostMapping("/user/animal/details")
+    public ResponseEntity<AnimalResponse> getAnimalDetails(@RequestBody Long id, Authentication authentication) {
+    }
+
+    @PostMapping("/user/favorite")
+    public ResponseEntity<?> addToFavorite(@RequestBody Long animalId, Authentication authentication) {
+    }
+
 
 }

@@ -2,9 +2,12 @@ package com.nastena.pawsitive.server.shelter;
 
 import com.nastena.pawsitive.server.account.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ShelterRepository extends JpaRepository<Shelter, Long> {
     Optional<Shelter> findByAccount(Account account);
+
 }

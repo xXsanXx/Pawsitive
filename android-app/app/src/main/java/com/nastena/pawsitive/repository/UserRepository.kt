@@ -28,4 +28,22 @@ class UserRepository(
             return handleServerErrorBody(response)
         }
     }
+
+    suspend fun addToFavorite(animalId: Long): Result<AnimalsResponse> = runCatching {
+        val response: Response<AnimalsResponse> = _animalApi.addToFavorite(animalId)
+        if (response.isSuccessful) {
+            return Result.success(response.body()!!)
+        } else {
+            return handleServerErrorBody(response)
+        }
+    }
+
+    suspend fun getAnimalDetails(): Result<AnimalsResponse> = runCatching {
+        val response: Response<AnimalsResponse> = _animalApi.getAnimalDetails()
+        if (response.isSuccessful) {
+            return Result.success(response.body()!!)
+        } else {
+            return handleServerErrorBody(response)
+        }
+    }
 }

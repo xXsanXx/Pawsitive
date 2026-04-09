@@ -18,7 +18,7 @@ sealed interface NavigationRoute {
     object UserHome : NavigationRoute
 
     @Serializable
-    object DetailsCard : NavigationRoute
+    object AnimalDetails : NavigationRoute
 
     @Serializable
     object UserProfile : NavigationRoute
