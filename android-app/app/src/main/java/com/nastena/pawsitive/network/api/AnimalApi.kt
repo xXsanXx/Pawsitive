@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.network.api
 
+import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalsResponse
 import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
@@ -44,9 +45,11 @@ interface AnimalApi {
     @POST("api/animals/user/random")
     suspend fun getRandomUserAnimalsRatio(): Response<AnimalsResponse>
 
-    @POST("api/animals/user/favorite")
-    suspend fun addToFavorite(@Body id: Long): Response<AnimalsResponse>
 
-    @POST("api/animals/user/animal/details")
-    suspend fun getAnimalDetails(): Response<AnimalsResponse>
+    // сделать отдельный api
+    @POST("api/animals/user/favorite/add")
+    suspend fun addToFavorite(@Body id: Long): Response<Unit>
+
+    @POST("api/animals/users/id")
+    suspend fun getAnimalDetails(@Body id: Long): Response<AnimalResponse>
 }

@@ -36,7 +36,7 @@ class UserHomeViewModel(
             UserHomeEvents.DetailsClicked -> {
                 currentAnimalState.value?.let { animal ->
                     mainViewModel.navigate(
-                        To(NavigationRoute.AnimalDetails)
+                        To(NavigationRoute.AnimalDetails(animal.id))
                     )
                 }
             }
