@@ -1,15 +1,10 @@
 package com.nastena.pawsitive.ui.screens.user.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.ThumbDown
@@ -23,18 +18,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import com.nastena.pawsitive.dto.AnimalResponse
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.nastena.pawsitive.R
 
 @Composable
 fun UserHomeView(
     modifier: Modifier = Modifier,
     viewModel: UserHomeViewModel
 ) {
-    val currentAnimalState: AnimalResponse? by viewModel.currentAnimalState.collectAsState()
+    val currentAnimalState: UserHomeState.Animal? by viewModel.currentAnimalState.collectAsState()
 
     UserHomeView(
         modifier = modifier,
@@ -46,19 +42,45 @@ fun UserHomeView(
 @Composable
 private fun UserHomeView(
     modifier: Modifier = Modifier,
-    currentAnimalState: AnimalResponse?,
+    currentAnimalState: UserHomeState.Animal?,
     onViewEvent: (UserHomeEvents) -> Unit
 ) {
 
+    if (currentAnimalState == null) {
+        Box(
+            modifier = modifier.fillMaxSize()
+        ) {
+            Text(
+                text = stringResource(R.string.no_animal)
+            )
+
+        }
+
+        return;
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            AnimalImage(animal = currentAnimalState)
+
+            if (currentAnimalState.photoUrl != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(currentAnimalState.photoUrl)
+                        .build(),
+                    contentDescription = null,
+                    error = painterResource(R.drawable.ic_image_error)
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.user_home_animal_no_photo)
+                )
+            }
         }
 
         Box(
@@ -93,43 +115,15 @@ private fun UserHomeView(
         }
 
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomStart
         ) {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = currentAnimalState?.name ?: "Животное не найдено",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
+            Text(
+                text = currentAnimalState.name,
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
     }
 }
 
-@Composable
-fun AnimalImage(animal: AnimalResponse?) {
-    val imageUrl = animal?.animalPhotos?.firstOrNull()
-    if (imageUrl != null) {
-        Image(
-            painter = rememberAsyncImagePainter(
-                model = imageUrl
-            ),
-            contentDescription = "Фото животного",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)
-                .clip(RoundedCornerShape(12.dp))
-        )
-    } else {
-        Text(
-            text = "Фото недоступно",
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
+

@@ -5,6 +5,7 @@ import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
+import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute.Shelter.Animal.Edit
@@ -55,14 +56,10 @@ class ShelterHomeViewModel(
                         animalsResponse.animals.map { animalResponse: ShelterAnimalResponse ->
                             _animalIds.add(animalResponse.id)
 
-                            val birthYear = Instant.ofEpochMilli(animalResponse.birthDate)
-                                .atZone(ZoneId.systemDefault()).year
-                            val currentYear = LocalDate.now().year
-
                             ShelterHomeState.Animal(
                                 name = animalResponse.name,
                                 type = animalResponse.type,
-                                age = currentYear - birthYear,
+                                age = Utils.dateToAge(dateMillis = animalResponse.birthDate),
                                 photoUrls = animalResponse.animalPhotos.map { url ->
                                     _filesRepository.getAbsoluteFileUrl(url)
                                 }

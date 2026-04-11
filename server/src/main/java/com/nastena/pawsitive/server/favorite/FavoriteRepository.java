@@ -10,5 +10,8 @@ import java.util.Optional;
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findByUser(User user);
 
-    void deleteByAnimalAndUser (User user, Animal animal);
+    Optional<Favorite> findByUserAndAnimal(User user, Animal animal);
+    Optional<Favorite> findByUserAndAnimalId(User user, Long animalId);
+
+    void deleteByAnimalAndUser(Animal animal, User user);
 }

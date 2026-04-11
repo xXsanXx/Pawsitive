@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,7 +51,8 @@ fun UserFavoriteView(
                 .padding(paddingValues)
                 .fillMaxWidth()
         ) {
-            items(animalsState) { animalState ->
+            items(animalsState.size) { index: Int ->
+                val animalState: UserFavoriteState.Animal = animalsState[index]
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -68,7 +72,11 @@ fun UserFavoriteView(
                         )
                     }
 
-                    Column {
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+
                         Text(text = animalState.name)
                         Text(
                             text = stringResource(
@@ -76,6 +84,16 @@ fun UserFavoriteView(
                             )
                         )
                         Text("${animalState.age} ${stringResource(R.string.common_years)}")
+                    }
+                    IconButton(
+                        onClick = {
+                            viewModel.onViewEvent(UserFavoriteEvents.RemoveClicked(index))
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null
+                        )
                     }
 
                 }

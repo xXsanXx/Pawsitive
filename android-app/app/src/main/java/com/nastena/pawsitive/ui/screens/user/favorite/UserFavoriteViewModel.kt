@@ -2,7 +2,9 @@ package com.nastena.pawsitive.ui.screens.user.favorite
 
 import android.util.Log
 import com.nastena.pawsitive.dto.AnimalsResponse
+import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
@@ -11,9 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import kotlin.reflect.KClass
 
 class UserFavoriteViewModel(
@@ -41,6 +40,7 @@ class UserFavoriteViewModel(
         super.onEnter(route)
 
         _animalIds.clear()
+        _animalsState.update { emptyList() }
 
         launchSave(
             operation = {
@@ -54,17 +54,15 @@ class UserFavoriteViewModel(
                 _animalsState.update {
 
                     animalsResponse.animals.map { animalResponse ->
-
-                        val birthYear = Instant.ofEpochMilli(animalResponse.birthDate)
-                            .atZone(ZoneId.systemDefault()).year
-
-                        val currentYear = LocalDate.now().year
-
+                        _animalIds.add(animalResponse.id)
                         UserFavoriteState.Animal(
                             name = animalResponse.name,
                             type = animalResponse.type,
-                            age = currentYear - birthYear,
-                            photoUrl = animalResponse.animalPhotos.firstOrNull()
+                            age = Utils.dateToAge(animalResponse.birthDate),
+                            photoUrl = animalResponse.animalPhotos?.getOrNull(0)
+                                ?.let { photo: String ->
+                                    NetworkUtils.getAbsoluteFileUrl(photo)
+                                }
                         )
                     }
                 }

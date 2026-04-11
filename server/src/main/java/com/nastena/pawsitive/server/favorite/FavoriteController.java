@@ -53,7 +53,7 @@ public class FavoriteController {
         User user = userService.getUserOrThrow(account);
         Animal animal = animalService.getAnimalOrThrow(id);
 
-        favoriteService.removeFromFavorite(user, animal);
+        favoriteService.removeFromFavorite(animal, user);
 
         return ResponseEntity.ok("Animal removed from favorite");
     }

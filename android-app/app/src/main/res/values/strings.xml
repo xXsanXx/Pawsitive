@@ -53,6 +53,9 @@
     <string name="user_profile_name">Имя пользователя</string>
     <string name="user_profile_email">Электронная почта</string>
 
+    <!-- User Home -->
+    <string name="user_home_animal_no_photo">Фотография отсутствует</string>
+
     <!-- Shelter Profile -->
     <string name="shelter_profile_title">Профиль</string>
     <string name="shelter_profile_logout_submit">Выйти из профиля</string>
@@ -137,6 +140,8 @@
     <string name="favorite_warning_remove_animal">Это действие нельзя отменить.</string>
     <string name="favorite_remove_animal_button">Удалить</string>
     <string name="favorite_cancel_remove_animal">Отмена</string>
+
+    <string name="no_animal">Животное не найдено</string>
 
 
 </resources>

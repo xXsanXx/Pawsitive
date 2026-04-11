@@ -3,6 +3,7 @@ package com.nastena.pawsitive.server.favorite;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.user.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,8 +27,9 @@ public class FavoriteService {
         return favoriteRepository.findByUser(user);
     }
 
-    public void removeFromFavorite(User user, Animal animal) {
-        favoriteRepository.deleteByAnimalAndUser(user, animal);
+    @Transactional
+    public void removeFromFavorite(Animal animal, User user) {
+        favoriteRepository.deleteByAnimalAndUser(animal, user);
     }
 
 

@@ -1,7 +1,9 @@
 package com.nastena.pawsitive.ui.screens.user.home
 
 import com.nastena.pawsitive.dto.AnimalResponse
+import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
@@ -17,10 +19,12 @@ class UserHomeViewModel(
 
     override val expectedRouteType: KClass<*> = NavigationRoute.UserHome::class
 
-    private val _currentAnimalState = MutableStateFlow<AnimalResponse?>(null)
+    private val _currentAnimalState = MutableStateFlow<UserHomeState.Animal?>(null)
     val currentAnimalState = _currentAnimalState.asStateFlow()
 
     private var _currentIndex = 0
+
+    private var _currentId: Long? = null
 
     private var _animals: List<AnimalResponse?> = emptyList()
 
@@ -34,11 +38,11 @@ class UserHomeViewModel(
     fun onViewEvent(event: UserHomeEvents) {
         when (event) {
             UserHomeEvents.DetailsClicked -> {
-                currentAnimalState.value?.let { animal ->
-                    mainViewModel.navigate(
-                        To(NavigationRoute.AnimalDetails(animal.id))
+                mainViewModel.navigate(
+                    To(
+                        NavigationRoute.AnimalDetails(_currentId!!)
                     )
-                }
+                )
             }
 
             UserHomeEvents.DislikeClicked -> {
@@ -46,14 +50,12 @@ class UserHomeViewModel(
             }
 
             UserHomeEvents.LikeClicked -> {
-                currentAnimalState.value?.let { animal ->
-                    launchSave(
-                        operation = { _userRepository.addToFavorite(animal.id) },
-                        onSuccess = {
-                            showNextAnimal()
-                        }
-                    )
-                }
+                launchSave(
+                    operation = { _userRepository.addToFavorite(_currentId!!) },
+                    onSuccess = {
+                        showNextAnimal()
+                    }
+                )
             }
         }
     }
@@ -63,7 +65,9 @@ class UserHomeViewModel(
         _currentIndex++
 
         if (_currentIndex < _animals.size) {
-            _currentAnimalState.value = _animals[_currentIndex]
+            _currentAnimalState.value =
+                _animals[_currentIndex]?.let(::responseToView)
+            _currentId = _animals[_currentIndex]?.id
         } else {
             _currentAnimalState.value = null
 
@@ -80,9 +84,20 @@ class UserHomeViewModel(
                 _animals = response.animals
                 _currentIndex = 0
 
-                _currentAnimalState.value = _animals.firstOrNull()
+                _currentAnimalState.value =
+                    _animals.firstOrNull()?.let(::responseToView)
             }
         )
     }
+
+    private fun responseToView(animalResponse: AnimalResponse): UserHomeState.Animal =
+        UserHomeState.Animal(
+            name = animalResponse.name,
+            type = animalResponse.type,
+            age = Utils.dateToAge(animalResponse.birthDate),
+            photoUrl = animalResponse.animalPhotos.getOrNull(0)?.let { photo: String ->
+                NetworkUtils.getAbsoluteFileUrl(photo)
+            }
+        )
 
 }
