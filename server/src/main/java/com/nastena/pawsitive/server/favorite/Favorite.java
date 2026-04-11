@@ -3,7 +3,10 @@ package com.nastena.pawsitive.server.favorite;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.user.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 @Entity
 @Table(
         name = "favorites",
@@ -17,6 +20,7 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
@@ -32,23 +36,4 @@ public class Favorite {
         this.animal = animal;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Animal getAnimal() {
-        return animal;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setAnimal(Animal animal) {
-        this.animal = animal;
-    }
 }

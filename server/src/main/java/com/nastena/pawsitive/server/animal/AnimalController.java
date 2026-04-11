@@ -161,9 +161,9 @@ public class AnimalController {
         return ResponseEntity.ok(new AnimalsResponse(animals));
     }
 
-    @PostMapping("/users/id")
-    public ResponseEntity<?> getAnimalDetails(@RequestBody Long id, Authentication authentication) {
-    }
+//    @PostMapping("/users/id")
+//    public ResponseEntity<?> getAnimalDetails(@RequestBody Long id, Authentication authentication) {
+//    }
 
 
 }

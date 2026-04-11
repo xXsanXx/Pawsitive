@@ -129,8 +129,14 @@
 
     <string name="remove_animal_title">Удалить животное?</string>
     <string name="warning_remove_animal">Это действие нельзя отменить.</string>
-    <string name="remove_animal">Удалить</string>
+    <string name="remove_animal_button">Удалить</string>
     <string name="cancel_remove_animal">Отмена</string>
+
+
+    <string name="favorite_remove_animal_title">Удалить животное из избранного?</string>
+    <string name="favorite_warning_remove_animal">Это действие нельзя отменить.</string>
+    <string name="favorite_remove_animal_button">Удалить</string>
+    <string name="favorite_cancel_remove_animal">Отмена</string>
 
 
 </resources>

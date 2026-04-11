@@ -1,4 +1,107 @@
 package com.nastena.pawsitive.ui.screens.user.favorite
 
-class UserFavoriteViewModel {
+import android.util.Log
+import com.nastena.pawsitive.dto.AnimalsResponse
+import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.main.MainViewModel
+import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import kotlin.reflect.KClass
+
+class UserFavoriteViewModel(
+    mainViewModel: MainViewModel,
+    private val _userRepository: UserRepository
+
+) : BaseScreenViewModel(mainViewModel) {
+
+    override val expectedRouteType: KClass<*> = NavigationRoute.Favorite::class
+
+    private val _animalsState: MutableStateFlow<List<UserFavoriteState.Animal>> =
+        MutableStateFlow(emptyList())
+
+    val animalsState: StateFlow<List<UserFavoriteState.Animal>> = _animalsState.asStateFlow()
+
+    private val _animalIds: MutableList<Long> = mutableListOf()
+
+    private val _confirmAnimalDelete =
+        MutableStateFlow<UserFavoriteState.ConfirmAnimalDelete?>(null)
+    val confirmAnimalDelete: StateFlow<UserFavoriteState.ConfirmAnimalDelete?> =
+        _confirmAnimalDelete.asStateFlow()
+
+
+    override fun onEnter(route: NavigationRoute) {
+        super.onEnter(route)
+
+        _animalIds.clear()
+
+        launchSave(
+            operation = {
+                Log.d("Favorite", "Loading favorites")
+                _userRepository.getUserFavorite()
+            },
+
+            onSuccess = { animalsResponse: AnimalsResponse ->
+                Log.i("Favorite", "Got ${animalsResponse.animals.size} animals")
+
+                _animalsState.update {
+
+                    animalsResponse.animals.map { animalResponse ->
+
+                        val birthYear = Instant.ofEpochMilli(animalResponse.birthDate)
+                            .atZone(ZoneId.systemDefault()).year
+
+                        val currentYear = LocalDate.now().year
+
+                        UserFavoriteState.Animal(
+                            name = animalResponse.name,
+                            type = animalResponse.type,
+                            age = currentYear - birthYear,
+                            photoUrl = animalResponse.animalPhotos.firstOrNull()
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    fun onViewEvent(event: UserFavoriteEvents) {
+        when (event) {
+            is UserFavoriteEvents.GoToAnimalClicked -> {
+                mainViewModel.navigate(
+                    To(NavigationRoute.AnimalDetails(animalId = _animalIds[event.index]))
+                )
+            }
+
+            is UserFavoriteEvents.RemoveClicked -> {
+                _confirmAnimalDelete.value =
+                    UserFavoriteState.ConfirmAnimalDelete(index = event.index)
+            }
+        }
+    }
+
+    fun onConfirmDelete(confirmed: Boolean) {
+        val dialogState = _confirmAnimalDelete.value ?: return
+        if (confirmed) removeAnimalFromFavorite(dialogState.index)
+        _confirmAnimalDelete.value = null
+    }
+
+    private fun removeAnimalFromFavorite(index: Int) {
+        val animalId = _animalIds[index]
+
+        launchSave(
+            operation = { _userRepository.removeFromFavorite(animalId) },
+            onSuccess = {
+                _animalsState.update { it.filterIndexed { i, _ -> i != index } }
+                _animalIds.removeAt(index)
+            }
+        )
+    }
 }

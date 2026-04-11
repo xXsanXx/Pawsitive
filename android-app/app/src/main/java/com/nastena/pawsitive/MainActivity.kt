@@ -7,6 +7,7 @@ import com.nastena.pawsitive.network.OkHttpClient
 import com.nastena.pawsitive.network.RetrofitClient
 import com.nastena.pawsitive.network.api.AccountApi
 import com.nastena.pawsitive.network.api.AnimalApi
+import com.nastena.pawsitive.network.api.FavoriteApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.network.api.UserApi
 import com.nastena.pawsitive.repository.AccountRepository
@@ -30,9 +31,10 @@ class MainActivity : ComponentActivity() {
         val userApi = retrofit.create(UserApi::class.java)
         val shelterApi = retrofit.create(ShelterApi::class.java)
         val animalApi = retrofit.create(AnimalApi::class.java)
+        val favoriteApi = retrofit.create(FavoriteApi::class.java)
 
         val accountRepository = AccountRepository(accountApi, authDataStore)
-        val userRepository = UserRepository(userApi, animalApi)
+        val userRepository = UserRepository(userApi, animalApi, favoriteApi)
         val shelterRepository = ShelterRepository(
             shelterApi,
             _animalsApi = animalApi,

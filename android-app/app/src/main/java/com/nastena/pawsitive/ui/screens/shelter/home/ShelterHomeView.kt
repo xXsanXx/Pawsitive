@@ -136,7 +136,7 @@ fun ShelterHomeView(
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onConfirmDelete(true) }) {
-                    Text(stringResource(R.string.remove_animal))
+                    Text(stringResource(R.string.remove_animal_button))
                 }
             }
         )

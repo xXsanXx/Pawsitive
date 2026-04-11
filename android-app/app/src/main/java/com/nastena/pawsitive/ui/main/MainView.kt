@@ -62,6 +62,9 @@ import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelF
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
+import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteView
+import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteViewModel
+import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.home.UserHomeView
 import com.nastena.pawsitive.ui.screens.user.home.UserHomeViewModel
 import com.nastena.pawsitive.ui.screens.user.home.UserHomeViewModelFactory
@@ -123,6 +126,10 @@ fun MainContent(
         factory = UserHomeViewModelFactory(mainViewModel, userRepository)
     )
 
+    val userFavoriteViewModel: UserFavoriteViewModel = viewModel(
+        factory = UserFavoriteViewModelFactory(mainViewModel, userRepository)
+    )
+
     val navController: NavHostController = rememberNavController()
 
     val screenState by mainViewModel.mainState.collectAsState()
@@ -165,7 +172,8 @@ fun MainContent(
                     editingShelterProfileViewModel = editingShelterProfileViewModel,
                     shelterHomeViewModel = shelterHomeViewModel,
                     shelterAnimalViewModel = shelterAnimalViewModel,
-                    userHomeViewModel = userHomeViewModel
+                    userHomeViewModel = userHomeViewModel,
+                    userFavoriteViewModel = userFavoriteViewModel
                 )
             }
         }
@@ -193,8 +201,11 @@ private fun Navigation(
     splashViewModel: SplashViewModel,
     registerViewModel: RegisterViewModel,
     loginViewModel: LoginViewModel,
+
     userProfileViewModel: UserProfileViewModel,
     userHomeViewModel: UserHomeViewModel,
+    userFavoriteViewModel: UserFavoriteViewModel,
+
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
     shelterHomeViewModel: ShelterHomeViewModel,
@@ -226,6 +237,12 @@ private fun Navigation(
         composable<NavigationRoute.UserHome> { backStackEntry: NavBackStackEntry ->
             ScreenView(userHomeViewModel, backStackEntry.toRoute<NavigationRoute.UserHome>()) {
                 UserHomeView(viewModel = userHomeViewModel)
+            }
+        }
+
+        composable<NavigationRoute.Favorite> { backStackEntry: NavBackStackEntry ->
+            ScreenView(userFavoriteViewModel, backStackEntry.toRoute<NavigationRoute.Favorite>()) {
+                UserFavoriteView(viewModel = userFavoriteViewModel)
             }
         }
 

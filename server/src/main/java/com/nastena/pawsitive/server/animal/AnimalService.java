@@ -157,6 +157,11 @@ public class AnimalService {
         return animal;
     }
 
+    public Animal getAnimalOrThrow(Long id) {
+        return animalRepository.findById(id)
+                .orElseThrow(() -> new ServerRuntimeException("Can't find animal by id", ErrorCode.INVALID_INPUT));
+    }
+
     public void removeAnimalOrThrow(Long id) {
         Animal animal = animalRepository.findById(id).orElseThrow(() -> new ServerRuntimeException("Can not find animal by id", ErrorCode.INVALID_INPUT));
         animalRepository.delete(animal);

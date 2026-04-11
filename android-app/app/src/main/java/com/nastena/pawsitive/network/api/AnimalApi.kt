@@ -45,11 +45,6 @@ interface AnimalApi {
     @POST("api/animals/user/random")
     suspend fun getRandomUserAnimalsRatio(): Response<AnimalsResponse>
 
-
-    // сделать отдельный api
-    @POST("api/animals/user/favorite/add")
-    suspend fun addToFavorite(@Body id: Long): Response<Unit>
-
     @POST("api/animals/users/id")
     suspend fun getAnimalDetails(@Body id: Long): Response<AnimalResponse>
 }
