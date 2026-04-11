@@ -1,6 +1,5 @@
 package com.nastena.pawsitive.repository
 
-import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalsResponse
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.network.api.AnimalApi
@@ -52,16 +51,6 @@ class UserRepository(
 
     suspend fun getUserFavorite(): Result<AnimalsResponse> = runCatching {
         val response: Response<AnimalsResponse> = _favoriteApi.get()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
-    }
-
-
-    suspend fun getAnimalDetails(animalId: Long): Result<AnimalResponse> = runCatching {
-        val response: Response<AnimalResponse> = _animalApi.getAnimalDetails(animalId)
         if (response.isSuccessful) {
             return Result.success(response.body()!!)
         } else {

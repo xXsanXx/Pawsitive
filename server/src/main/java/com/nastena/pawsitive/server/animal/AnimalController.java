@@ -161,9 +161,26 @@ public class AnimalController {
         return ResponseEntity.ok(new AnimalsResponse(animals));
     }
 
-//    @PostMapping("/users/id")
-//    public ResponseEntity<?> getAnimalDetails(@RequestBody Long id, Authentication authentication) {
-//    }
+    @PostMapping("/users/id")
+    public ResponseEntity<AnimalResponse> getAnimalDetails(@RequestBody Long id, Authentication authentication) {
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+        User user = userService.getUserOrThrow(account);
 
+        Animal animal = animalService.getAnimalOrThrow(id);
 
+        AnimalResponse animalResponse = new AnimalResponse(
+                animal.getId(),
+                animal.getShelter().getId(),
+                animal.getName(),
+                animal.getType(),
+                animal.getBreed(),
+                animal.getBirthDate(),
+                animal.getGender(),
+                animal.getDescription(),
+                animal.getAnimalPhotos(),
+                animal.getPassportPhotos()
+        );
+
+        return ResponseEntity.ok(animalResponse);
+    }
 }
