@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.main
 
+import AnimalDetailsView
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -62,6 +63,8 @@ import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelF
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
+import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModel
+import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteView
 import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteViewModel
 import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteViewModelFactory
@@ -130,6 +133,10 @@ fun MainContent(
         factory = UserFavoriteViewModelFactory(mainViewModel, userRepository)
     )
 
+    val animalDetailsViewModel: AnimalDetailsViewModel = viewModel(
+        factory = AnimalDetailsViewModelFactory(mainViewModel, userRepository)
+    )
+
     val navController: NavHostController = rememberNavController()
 
     val screenState by mainViewModel.mainState.collectAsState()
@@ -173,7 +180,8 @@ fun MainContent(
                     shelterHomeViewModel = shelterHomeViewModel,
                     shelterAnimalViewModel = shelterAnimalViewModel,
                     userHomeViewModel = userHomeViewModel,
-                    userFavoriteViewModel = userFavoriteViewModel
+                    userFavoriteViewModel = userFavoriteViewModel,
+                    animalDetailsViewModel = animalDetailsViewModel
                 )
             }
         }
@@ -205,6 +213,7 @@ private fun Navigation(
     userProfileViewModel: UserProfileViewModel,
     userHomeViewModel: UserHomeViewModel,
     userFavoriteViewModel: UserFavoriteViewModel,
+    animalDetailsViewModel: AnimalDetailsViewModel,
 
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
@@ -243,6 +252,15 @@ private fun Navigation(
         composable<NavigationRoute.Favorite> { backStackEntry: NavBackStackEntry ->
             ScreenView(userFavoriteViewModel, backStackEntry.toRoute<NavigationRoute.Favorite>()) {
                 UserFavoriteView(viewModel = userFavoriteViewModel)
+            }
+        }
+
+        composable<NavigationRoute.AnimalDetails> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                animalDetailsViewModel,
+                backStackEntry.toRoute<NavigationRoute.AnimalDetails>()
+            ) {
+                AnimalDetailsView(viewModel = animalDetailsViewModel)
             }
         }
 

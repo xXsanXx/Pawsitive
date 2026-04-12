@@ -84,8 +84,12 @@ class UserHomeViewModel(
                 _animals = response.animals
                 _currentIndex = 0
 
+                val firstAnimal = _animals.firstOrNull()
+
                 _currentAnimalState.value =
-                    _animals.firstOrNull()?.let(::responseToView)
+                    firstAnimal?.let(::responseToView)
+
+                _currentId = firstAnimal?.id
             }
         )
     }

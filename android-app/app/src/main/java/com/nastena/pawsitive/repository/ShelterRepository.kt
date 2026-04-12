@@ -3,7 +3,6 @@ package com.nastena.pawsitive.repository
 import android.content.ContentResolver
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
-import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.dto.CreateAnimalRequest
 import com.nastena.pawsitive.dto.ShelterAnimalResponse
@@ -162,14 +161,7 @@ class ShelterRepository(
         }
     }
 
-    suspend fun getAnimalDetails(animalId: Long): Result<AnimalResponse> = runCatching {
-        val response: Response<AnimalResponse> = _animalsApi.getAnimalDetails(animalId)
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
-    }
+
 }
 
 

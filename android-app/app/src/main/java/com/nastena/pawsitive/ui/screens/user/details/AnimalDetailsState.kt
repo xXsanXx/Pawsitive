@@ -11,7 +11,7 @@ object AnimalDetailsState {
         val type: AnimalType,
         val breed: AnimalBreed,
         val gender: AnimalGender,
-        val birthDate: Int,
-        val photosUrl: String?
+        val birthDate: Long,
+        val photosUrl: List<String> = emptyList()
     )
 }

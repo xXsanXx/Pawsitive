@@ -143,5 +143,7 @@
 
     <string name="no_animal">Животное не найдено</string>
 
+    <string name="animal_birth_date">Дата рождения: %s</string>
+
 
 </resources>
