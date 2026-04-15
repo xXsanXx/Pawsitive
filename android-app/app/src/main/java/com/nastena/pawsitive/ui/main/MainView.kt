@@ -65,6 +65,9 @@ import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModel
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModelFactory
+import com.nastena.pawsitive.ui.screens.user.details.shelter_info.ShelterInfoView
+import com.nastena.pawsitive.ui.screens.user.details.shelter_info.ShelterInfoViewModel
+import com.nastena.pawsitive.ui.screens.user.details.shelter_info.ShelterInfoViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteView
 import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteViewModel
 import com.nastena.pawsitive.ui.screens.user.favorite.UserFavoriteViewModelFactory
@@ -137,6 +140,10 @@ fun MainContent(
         factory = AnimalDetailsViewModelFactory(mainViewModel, userRepository)
     )
 
+    val shelterInfoViewModel: ShelterInfoViewModel = viewModel(
+        factory = ShelterInfoViewModelFactory(mainViewModel, shelterRepository, filesRepository)
+    )
+
     val navController: NavHostController = rememberNavController()
 
     val screenState by mainViewModel.mainState.collectAsState()
@@ -181,7 +188,8 @@ fun MainContent(
                     shelterAnimalViewModel = shelterAnimalViewModel,
                     userHomeViewModel = userHomeViewModel,
                     userFavoriteViewModel = userFavoriteViewModel,
-                    animalDetailsViewModel = animalDetailsViewModel
+                    animalDetailsViewModel = animalDetailsViewModel,
+                    shelterInfoViewModel = shelterInfoViewModel
                 )
             }
         }
@@ -214,6 +222,7 @@ private fun Navigation(
     userHomeViewModel: UserHomeViewModel,
     userFavoriteViewModel: UserFavoriteViewModel,
     animalDetailsViewModel: AnimalDetailsViewModel,
+    shelterInfoViewModel: ShelterInfoViewModel,
 
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
@@ -261,6 +270,15 @@ private fun Navigation(
                 backStackEntry.toRoute<NavigationRoute.AnimalDetails>()
             ) {
                 AnimalDetailsView(viewModel = animalDetailsViewModel)
+            }
+        }
+
+        composable<NavigationRoute.ShelterInfo> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                shelterInfoViewModel,
+                backStackEntry.toRoute<NavigationRoute.ShelterInfo>()
+            ) {
+                ShelterInfoView(viewModel = shelterInfoViewModel)
             }
         }
 

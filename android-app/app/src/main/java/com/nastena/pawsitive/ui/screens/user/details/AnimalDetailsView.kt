@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import coil.request.ImageRequest
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
+import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsEvents
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModel
 
 
@@ -98,6 +100,19 @@ fun AnimalDetailsView(
                             LocalizationUtils.getAnimalGenderStringId(animalState.gender)
                         )
                     )
+
+                    Button(
+                        onClick = {
+                            viewModel.onViewEvent(
+                                AnimalDetailsEvents.ShelterInfoClicked
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            stringResource(R.string.shelter_info_clicked)
+                        )
+                    }
 
 
                 }

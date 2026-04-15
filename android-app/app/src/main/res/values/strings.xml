@@ -145,5 +145,7 @@
 
     <string name="animal_birth_date">Дата рождения: %s</string>
 
+    <string name="shelter_info_clicked">Узнать о приюте</string>
+
 
 </resources>

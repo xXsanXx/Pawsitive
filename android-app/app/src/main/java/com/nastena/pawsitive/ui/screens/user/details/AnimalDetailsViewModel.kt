@@ -6,6 +6,8 @@ import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -34,8 +36,11 @@ class AnimalDetailsViewModel(
 
     val animalState: StateFlow<AnimalDetailsState.Animal> = _animalState.asStateFlow()
 
+    private var _shelterId: Long? = null
+
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
+
 
         val detailsRoute = route as NavigationRoute.AnimalDetails
 
@@ -46,6 +51,7 @@ class AnimalDetailsViewModel(
             },
 
             onSuccess = { response ->
+                _shelterId = response.shelterId
                 _animalState.value =
                     AnimalDetailsState.Animal(
                         name = response.name,
@@ -64,7 +70,15 @@ class AnimalDetailsViewModel(
     fun onViewEvent(event: AnimalDetailsEvents) {
         when (event) {
             AnimalDetailsEvents.GoToFormClicked -> TODO()
-            AnimalDetailsEvents.ShelterInfoClicked -> TODO()
+            AnimalDetailsEvents.ShelterInfoClicked -> {
+                mainViewModel.navigate(
+                    To(
+                        NavigationRoute.ShelterInfo(_shelterId!!),
+                        Route(NavigationRoute.AnimalDetails::class)
+                    )
+                )
+
+            }
         }
     }
 
