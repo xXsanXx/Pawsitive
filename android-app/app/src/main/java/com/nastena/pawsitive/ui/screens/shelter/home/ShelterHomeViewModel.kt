@@ -42,7 +42,7 @@ class ShelterHomeViewModel(
         launchSave(
             operation = {
                 Log.d("ShelterHome", "Loading animals data")
-                _shelterRepository.getShelterAnimalsData()
+                _shelterRepository.getAnimalsData()
             },
 
             onSuccess = { animalsResponse: ShelterAnimalsResponse ->

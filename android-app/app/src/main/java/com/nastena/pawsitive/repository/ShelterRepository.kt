@@ -14,6 +14,7 @@ import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.repository.utils.handleServerErrorBody
+import com.nastena.pawsitive.repository.utils.runSimpleRequest
 import com.nastena.pawsitive.utils.AnimalUtils
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -24,45 +25,24 @@ class ShelterRepository(
     private val _animalsApi: AnimalApi,
     private val _contentResolver: ContentResolver
 ) {
-    suspend fun getShelterProfileData(): Result<ShelterProfileResponse> = runCatching {
-        val response: Response<ShelterProfileResponse> = _api.getShelterProfile()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getProfileData(): Result<ShelterProfileResponse> = runSimpleRequest {
+        _api.getShelterProfile()
     }
 
-    suspend fun updateShelterProfileData(
+    suspend fun updateProfileData(
         phone: String,
         address: String,
         info: String
-    ): Result<Unit> = runCatching {
-        val response: Response<Unit> =
-            _api.updateShelterProfile(UpdateShelterProfileRequest(phone, address, info))
-        if (response.isSuccessful) {
-            return Result.success(Unit)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    ): Result<Unit> = runSimpleRequest {
+        _api.updateShelterProfile(UpdateShelterProfileRequest(phone, address, info))
     }
 
-    suspend fun getShelterAnimalsData(): Result<ShelterAnimalsResponse> = runCatching {
-        val response: Response<ShelterAnimalsResponse> = _animalsApi.getShelterAnimals()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getAnimalsData(): Result<ShelterAnimalsResponse> = runSimpleRequest {
+        _animalsApi.getShelterAnimals()
     }
 
-    suspend fun getShelterAnimal(animalId: Long): Result<ShelterAnimalResponse> {
-        val response: Response<ShelterAnimalResponse> = _animalsApi.getShelterAnimal(animalId)
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getAnimal(animalId: Long): Result<ShelterAnimalResponse> = runSimpleRequest {
+        _animalsApi.getShelterAnimal(animalId)
     }
 
     suspend fun createAnimal(
@@ -152,13 +132,8 @@ class ShelterRepository(
         }
     }
 
-    suspend fun removeAnimal(animalId: Long): Result<Unit> = runCatching {
-        val response: Response<Unit> = _animalsApi.removeAnimal(animalId)
-        if (response.isSuccessful) {
-            return Result.success(Unit)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun removeAnimal(animalId: Long): Result<Unit> = runSimpleRequest {
+        _animalsApi.removeAnimal(animalId)
     }
 
 

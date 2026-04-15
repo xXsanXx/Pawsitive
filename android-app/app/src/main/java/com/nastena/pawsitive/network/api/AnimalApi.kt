@@ -43,7 +43,7 @@ interface AnimalApi {
     ): Response<Unit>
 
     @POST("api/animals/user/random")
-    suspend fun getRandomUserAnimalsRatio(): Response<AnimalsResponse>
+    suspend fun getRandomUserAnimalsRation(): Response<AnimalsResponse>
 
     @POST("api/animals/users/id")
     suspend fun getAnimalDetails(@Body id: Long): Response<AnimalResponse>

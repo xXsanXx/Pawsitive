@@ -7,7 +7,6 @@ import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
-import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -74,7 +73,6 @@ class AnimalDetailsViewModel(
                 mainViewModel.navigate(
                     To(
                         NavigationRoute.ShelterInfo(_shelterId!!),
-                        Route(NavigationRoute.AnimalDetails::class)
                     )
                 )
 

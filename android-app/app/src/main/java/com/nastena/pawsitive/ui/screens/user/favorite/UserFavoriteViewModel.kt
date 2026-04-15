@@ -45,7 +45,7 @@ class UserFavoriteViewModel(
         launchSave(
             operation = {
                 Log.d("Favorite", "Loading favorites")
-                _userRepository.getUserFavorite()
+                _userRepository.getFavorites()
             },
 
             onSuccess = { animalsResponse: AnimalsResponse ->

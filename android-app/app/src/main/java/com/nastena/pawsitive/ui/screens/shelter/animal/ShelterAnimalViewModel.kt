@@ -121,7 +121,7 @@ class ShelterAnimalViewModel(
 
             is NavigationRoute.Shelter.Animal.Edit -> {
                 launchSave(
-                    operation = { _shelterRepository.getShelterAnimal(animalId = route.animalId) },
+                    operation = { _shelterRepository.getAnimal(animalId = route.animalId) },
                     onSuccess = { animalResponse ->
                         val originalAnimalPhotos = ShelterAnimalState.Mode.Edit.OriginalPhotos(
                             filenames = animalResponse.animalPhotos ?: emptyList(),

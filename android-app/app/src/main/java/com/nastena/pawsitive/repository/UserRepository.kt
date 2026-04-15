@@ -2,69 +2,43 @@ package com.nastena.pawsitive.repository
 
 import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalsResponse
+import com.nastena.pawsitive.dto.ShelterInfoResponse
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.FavoriteApi
+import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.network.api.UserApi
-import com.nastena.pawsitive.repository.utils.handleServerErrorBody
-import retrofit2.Response
+import com.nastena.pawsitive.repository.utils.runSimpleRequest
 
 class UserRepository(
     private val _api: UserApi,
+    private val _shelterApi: ShelterApi,
     private val _animalApi: AnimalApi,
     private val _favoriteApi: FavoriteApi
 ) {
-    suspend fun getUserProfileData(): Result<UserProfileResponse> = runCatching {
-        val response: Response<UserProfileResponse> = _api.getUserProfile()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getProfileData(): Result<UserProfileResponse> = runSimpleRequest {
+        _api.getUserProfile()
     }
 
-    suspend fun getRandomAnimalsRatio(): Result<AnimalsResponse> = runCatching {
-        val response: Response<AnimalsResponse> = _animalApi.getRandomUserAnimalsRatio()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getRandomAnimalsRation(): Result<AnimalsResponse> = runSimpleRequest {
+        _animalApi.getRandomUserAnimalsRation()
     }
 
-    suspend fun addToFavorite(animalId: Long): Result<Unit> = runCatching {
-        val response: Response<Unit> = _favoriteApi.add(animalId)
-        if (response.isSuccessful) {
-            return Result.success(Unit)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun addToFavorite(animalId: Long): Result<Unit> = runSimpleRequest {
+        _favoriteApi.add(animalId)
     }
 
-    suspend fun removeFromFavorite(animalId: Long): Result<Unit> = runCatching {
-        val response: Response<Unit> = _favoriteApi.remove(animalId)
-        if (response.isSuccessful) {
-            return Result.success(Unit)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun removeFromFavorite(animalId: Long): Result<Unit> = runSimpleRequest {
+        _favoriteApi.remove(animalId)
     }
 
-    suspend fun getUserFavorite(): Result<AnimalsResponse> = runCatching {
-        val response: Response<AnimalsResponse> = _favoriteApi.get()
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getFavorites(): Result<AnimalsResponse> = runSimpleRequest { _favoriteApi.get() }
+
+    suspend fun getAnimalDetails(animalId: Long): Result<AnimalResponse> = runSimpleRequest {
+        _animalApi.getAnimalDetails(animalId)
     }
 
-    suspend fun getAnimalDetails(animalId: Long): Result<AnimalResponse> = runCatching {
-        val response: Response<AnimalResponse> = _animalApi.getAnimalDetails(animalId)
-        if (response.isSuccessful) {
-            return Result.success(response.body()!!)
-        } else {
-            return handleServerErrorBody(response)
-        }
+    suspend fun getShelterInfo(shelterId: Long): Result<ShelterInfoResponse> = runSimpleRequest {
+        _shelterApi.getShelterInfo(shelterId)
     }
 }

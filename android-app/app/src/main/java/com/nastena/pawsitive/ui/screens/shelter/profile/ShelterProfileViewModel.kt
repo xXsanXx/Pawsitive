@@ -43,7 +43,7 @@ class ShelterProfileViewModel(
         launchSave(
             operation = {
                 Log.d("ShelterProfile", "Loading profile data")
-                _shelterRepository.getShelterProfileData()
+                _shelterRepository.getProfileData()
             },
 
             onSuccess = { shelterProfile: ShelterProfileResponse ->

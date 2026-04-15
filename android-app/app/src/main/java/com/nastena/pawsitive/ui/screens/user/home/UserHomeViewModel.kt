@@ -77,7 +77,7 @@ class UserHomeViewModel(
 
     private fun loadAnimalsRation() {
         launchSave(
-            operation = { _userRepository.getRandomAnimalsRatio() },
+            operation = { _userRepository.getRandomAnimalsRation() },
 
             onSuccess = { response ->
 

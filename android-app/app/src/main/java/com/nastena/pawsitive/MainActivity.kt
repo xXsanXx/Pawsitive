@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         val favoriteApi = retrofit.create(FavoriteApi::class.java)
 
         val accountRepository = AccountRepository(accountApi, authDataStore)
-        val userRepository = UserRepository(userApi, animalApi, favoriteApi)
+        val userRepository = UserRepository(userApi, shelterApi, animalApi, favoriteApi)
         val shelterRepository = ShelterRepository(
             shelterApi,
             _animalsApi = animalApi,

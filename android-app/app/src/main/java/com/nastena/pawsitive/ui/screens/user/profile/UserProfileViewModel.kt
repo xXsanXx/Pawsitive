@@ -4,8 +4,7 @@ import android.util.Log
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.UserRepository
-import com.nastena.pawsitive.ui.common.navigation.Navigation.*
-import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -32,12 +31,11 @@ class UserProfileViewModel(
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
-        mainViewModel.hideNavigationBar()
-
         launchSave(
             operation = {
                 Log.d("UserProfile", "Loading profile data")
-                _userRepository.getUserProfileData() },
+                _userRepository.getProfileData()
+            },
 
             onSuccess = { userProfile: UserProfileResponse ->
                 Log.d("UserProfile", "Success: $userProfile")

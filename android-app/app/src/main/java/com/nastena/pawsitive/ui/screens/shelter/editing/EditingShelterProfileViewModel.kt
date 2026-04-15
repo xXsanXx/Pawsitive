@@ -48,7 +48,7 @@ class EditingShelterProfileViewModel(
 
         launchSave(
             operation = {
-                _shelterRepository.getShelterProfileData()
+                _shelterRepository.getProfileData()
             },
 
             onSuccess = { shelterProfile: ShelterProfileResponse ->
@@ -89,7 +89,7 @@ class EditingShelterProfileViewModel(
 
                 launchSave(
                     operation = {
-                        _shelterRepository.updateShelterProfileData(
+                        _shelterRepository.updateProfileData(
                             trimmedPhone,
                             _addressState.value, _infoState.value
                         )

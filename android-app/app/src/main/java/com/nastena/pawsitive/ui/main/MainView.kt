@@ -141,7 +141,7 @@ fun MainContent(
     )
 
     val shelterInfoViewModel: ShelterInfoViewModel = viewModel(
-        factory = ShelterInfoViewModelFactory(mainViewModel, shelterRepository, filesRepository)
+        factory = ShelterInfoViewModelFactory(mainViewModel, userRepository, filesRepository)
     )
 
     val navController: NavHostController = rememberNavController()
