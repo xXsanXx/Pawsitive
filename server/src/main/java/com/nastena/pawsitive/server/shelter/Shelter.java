@@ -15,6 +15,7 @@ public class Shelter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     @Setter
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false, unique = true)

@@ -31,7 +31,16 @@ public class ShelterService {
         return shelterRepository
                 .findByAccount(account)
                 .orElseThrow(() -> new ServerRuntimeException(
-                        String.format("No user found for account with email %s", account.getEmail()),
+                        String.format("No shelter found for account with email %s", account.getEmail()),
+                        ErrorCode.UNAUTHORIZED
+                ));
+    }
+
+    public Shelter getShelterOrThrow(Long id) {
+        return shelterRepository
+                .findById(id)
+                .orElseThrow(() -> new ServerRuntimeException(
+                        String.format("No shelter found with id %d", id),
                         ErrorCode.UNAUTHORIZED
                 ));
     }
