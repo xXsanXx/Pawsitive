@@ -13,6 +13,7 @@ import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlin.reflect.KClass
 
 class AnimalDetailsViewModel(
@@ -36,10 +37,10 @@ class AnimalDetailsViewModel(
     val animalState: StateFlow<AnimalDetailsState.Animal> = _animalState.asStateFlow()
 
     private var _shelterId: Long? = null
+    private var _animalId: Long? = null
 
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
-
 
         val detailsRoute = route as NavigationRoute.AnimalDetails
 
@@ -51,7 +52,7 @@ class AnimalDetailsViewModel(
 
             onSuccess = { response ->
                 _shelterId = response.shelterId
-                _animalState.value =
+                _animalState.update {
                     AnimalDetailsState.Animal(
                         name = response.name,
                         type = response.type,
@@ -62,13 +63,24 @@ class AnimalDetailsViewModel(
                             ?.map { NetworkUtils.getAbsoluteFileUrl(it) }
                             ?: emptyList()
                     )
+                }
+
             }
         )
     }
 
     fun onViewEvent(event: AnimalDetailsEvents) {
         when (event) {
-            AnimalDetailsEvents.GoToFormClicked -> TODO()
+            AnimalDetailsEvents.GoToFormClicked -> {
+                _animalId?.let { animalId ->
+                    mainViewModel.navigate(
+                        To(
+                            NavigationRoute.Form(animalId)
+                        )
+                    )
+                }
+            }
+
             AnimalDetailsEvents.ShelterInfoClicked -> {
                 mainViewModel.navigate(
                     To(

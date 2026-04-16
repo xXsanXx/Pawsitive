@@ -24,6 +24,9 @@ sealed interface NavigationRoute {
     data class ShelterInfo(val shelterId: Long) : NavigationRoute
 
     @Serializable
+    data class Form(val animalId: Long) : NavigationRoute
+
+    @Serializable
     object UserProfile : NavigationRoute
 
     @Serializable

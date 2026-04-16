@@ -114,6 +114,19 @@ fun AnimalDetailsView(
                         )
                     }
 
+                    Button(
+                        onClick = {
+                            viewModel.onViewEvent(
+                                AnimalDetailsEvents.GoToFormClicked
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            stringResource(R.string.form_clicked)
+                        )
+                    }
+
 
                 }
             }

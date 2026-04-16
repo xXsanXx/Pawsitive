@@ -146,6 +146,14 @@
     <string name="animal_birth_date">Дата рождения: %s</string>
 
     <string name="shelter_info_clicked">Узнать о приюте</string>
+    <string name="form_clicked">Отправить заявку на животное</string>
+
+    <!-- Form -->
+    <string name="form_title">Анкета</string>
+
+    <string name="animal_name_invalid">Имя животного от 2 до 200 букв</string>
+    <string name="animal_name_is_empty">Поле не должно быть пустым</string>
+    <string name="animal_name_label">Кличка животного</string>
 
 
 </resources>
