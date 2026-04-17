@@ -4,9 +4,8 @@ import com.nastena.pawsitive.ui.common.validation.ValidationState
 
 object FormState {
 
-    data class AnimalName(
-        val text: String,
-        val validation: ValidationState
+    data class Animal(
+        val name: String
     )
 
     data class FullName(

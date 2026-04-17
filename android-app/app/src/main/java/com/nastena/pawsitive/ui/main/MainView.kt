@@ -65,6 +65,9 @@ import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModel
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsViewModelFactory
+import com.nastena.pawsitive.ui.screens.user.details.form.FormView
+import com.nastena.pawsitive.ui.screens.user.details.form.FormViewModel
+import com.nastena.pawsitive.ui.screens.user.details.form.FormViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.details.shelter_info.ShelterInfoView
 import com.nastena.pawsitive.ui.screens.user.details.shelter_info.ShelterInfoViewModel
 import com.nastena.pawsitive.ui.screens.user.details.shelter_info.ShelterInfoViewModelFactory
@@ -140,6 +143,10 @@ fun MainContent(
         factory = AnimalDetailsViewModelFactory(mainViewModel, userRepository)
     )
 
+    val formViewModel: FormViewModel = viewModel(
+        factory = FormViewModelFactory(mainViewModel, userRepository)
+    )
+
     val shelterInfoViewModel: ShelterInfoViewModel = viewModel(
         factory = ShelterInfoViewModelFactory(mainViewModel, userRepository, filesRepository)
     )
@@ -189,7 +196,8 @@ fun MainContent(
                     userHomeViewModel = userHomeViewModel,
                     userFavoriteViewModel = userFavoriteViewModel,
                     animalDetailsViewModel = animalDetailsViewModel,
-                    shelterInfoViewModel = shelterInfoViewModel
+                    shelterInfoViewModel = shelterInfoViewModel,
+                    formViewModel = formViewModel
                 )
             }
         }
@@ -223,6 +231,7 @@ private fun Navigation(
     userFavoriteViewModel: UserFavoriteViewModel,
     animalDetailsViewModel: AnimalDetailsViewModel,
     shelterInfoViewModel: ShelterInfoViewModel,
+    formViewModel: FormViewModel,
 
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
@@ -279,6 +288,15 @@ private fun Navigation(
                 backStackEntry.toRoute<NavigationRoute.ShelterInfo>()
             ) {
                 ShelterInfoView(viewModel = shelterInfoViewModel)
+            }
+        }
+
+        composable<NavigationRoute.Form> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                formViewModel,
+                backStackEntry.toRoute<NavigationRoute.Form>()
+            ) {
+                FormView(viewModel = formViewModel)
             }
         }
 

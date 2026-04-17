@@ -2,8 +2,10 @@ package com.nastena.pawsitive.repository
 
 import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalsResponse
+import com.nastena.pawsitive.dto.FormRequest
 import com.nastena.pawsitive.dto.ShelterInfoResponse
 import com.nastena.pawsitive.dto.UserProfileResponse
+import com.nastena.pawsitive.network.api.AdoptionApi
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.FavoriteApi
 import com.nastena.pawsitive.network.api.ShelterApi
@@ -14,7 +16,8 @@ class UserRepository(
     private val _api: UserApi,
     private val _shelterApi: ShelterApi,
     private val _animalApi: AnimalApi,
-    private val _favoriteApi: FavoriteApi
+    private val _favoriteApi: FavoriteApi,
+    private val _adoptionApi: AdoptionApi
 ) {
     suspend fun getProfileData(): Result<UserProfileResponse> = runSimpleRequest {
         _api.getUserProfile()
@@ -41,4 +44,9 @@ class UserRepository(
     suspend fun getShelterInfo(shelterId: Long): Result<ShelterInfoResponse> = runSimpleRequest {
         _shelterApi.getShelterInfo(shelterId)
     }
+
+    suspend fun sendForm(id: Long, request: FormRequest): Result<AnimalResponse> =
+        runSimpleRequest {
+            _adoptionApi.sendForm(id, request)
+        }
 }

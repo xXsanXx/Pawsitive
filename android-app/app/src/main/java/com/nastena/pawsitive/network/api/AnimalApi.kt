@@ -47,4 +47,5 @@ interface AnimalApi {
 
     @POST("api/animals/users/id")
     suspend fun getAnimalDetails(@Body id: Long): Response<AnimalResponse>
+
 }

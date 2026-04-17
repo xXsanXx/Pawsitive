@@ -1,5 +1,7 @@
 package com.nastena.pawsitive.ui.screens.user.details.form
 
+import com.nastena.pawsitive.dto.FormRequest
+import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.main.MainViewModel
@@ -13,6 +15,7 @@ import kotlin.reflect.KClass
 
 class FormViewModel(
     mainViewModel: MainViewModel,
+    private val _userRepository: UserRepository
 ) : BaseScreenViewModel(mainViewModel) {
 
     override val expectedRouteType: KClass<*> = NavigationRoute.Form::class
@@ -25,12 +28,13 @@ class FormViewModel(
         )
     }
 
-    private val _animalName = MutableStateFlow(
-        FormState.AnimalName(
-            text = "", validation = ValidationState.Valid
+    private val _animalState: MutableStateFlow<FormState.Animal> = MutableStateFlow(
+        FormState.Animal(
+            name = ""
         )
     )
-    val animalName: StateFlow<FormState.AnimalName> = _animalName.asStateFlow()
+
+    val animalState: StateFlow<FormState.Animal> = _animalState.asStateFlow()
 
     private val _fullNameState = MutableStateFlow(
         FormState.FullName(
@@ -65,7 +69,18 @@ class FormViewModel(
 
         mainViewModel.hideNavigationBar()
 
-        _animalName.update { it.copy(text = "", validation = ValidationState.Valid) }
+        val formRoute = route as NavigationRoute.Form
+
+        launchSave(
+            operation = {
+                _userRepository.getAnimalDetails(formRoute.animalId)
+            },
+            onSuccess = { response ->
+                _animalState.update {
+                    it.copy(name = response.name)
+                }
+            }
+        )
 
         _fullNameState.update { it.copy(text = "", validation = ValidationState.Valid) }
 
@@ -82,9 +97,6 @@ class FormViewModel(
                 _ageState.update { it.copy(text = event.newText) }
             }
 
-            is FormEvents.AnimalName.TextUpdated -> {
-                _animalName.update { it.copy(text = event.newText) }
-            }
 
             is FormEvents.FullName.TextUpdated -> {
                 _fullNameState.update { it.copy(text = event.newText) }
@@ -101,37 +113,32 @@ class FormViewModel(
             FormEvents.SendForm -> {
                 sendForm()
             }
+
+
         }
     }
 
     private fun sendForm() {
-        val name = _fullNameState.value.text
-        if (name.isBlank()) {
-            _fullNameState.update { it.copy(validation = ValidationState.Empty) }
-        } else if (
-            name.length < 2 ||
-            name.length > 50 ||
-            !NAME_REGEX.matcher(name).matches()
-        ) {
-            _fullNameState.update { it.copy(validation = ValidationState.InvalidFormat) }
-        } else {
-            _fullNameState.update {
-                it.copy(validation = ValidationState.Valid)
-            }
-        }
 
-        val trimmedAnimalName = _animalName.value.text.trim()
-        if (trimmedAnimalName.isBlank()) {
-            _animalName.update { it.copy(validation = ValidationState.Empty) }
-        } else if (
-            trimmedAnimalName.length < 2 ||
-            trimmedAnimalName.length > 50 ||
-            !NAME_REGEX.matcher(trimmedAnimalName).matches()
-        ) {
-            _animalName.update { it.copy(validation = ValidationState.InvalidFormat) }
-        } else {
-            _animalName.update {
-                it.copy(validation = ValidationState.Valid)
+
+        val age = _ageState.value.text.trim()
+        val profession = _professionState.value.text.trim()
+
+        val trimmedName = _fullNameState.value.text.trim()
+        when {
+            trimmedName.isBlank() -> {
+                _fullNameState.update { it.copy(validation = ValidationState.Empty) }
+                return
+            }
+
+            trimmedName.length < 2 || trimmedName.length > 200 || !NAME_REGEX.matcher(trimmedName)
+                .matches() -> {
+                _fullNameState.update { it.copy(validation = ValidationState.InvalidFormat) }
+                return
+            }
+
+            else -> {
+                _fullNameState.update { it.copy(validation = ValidationState.Valid) }
             }
         }
 
@@ -140,15 +147,47 @@ class FormViewModel(
             _phoneState.update { it.copy(validation = ValidationState.InvalidFormat) }
             return
         } else {
-            _phoneState.update {
-                it.copy(validation = ValidationState.Valid)
-            }
+            _phoneState.update { it.copy(validation = ValidationState.Valid) }
         }
 
+        if (age.isBlank()) {
+            _ageState.update { it.copy(validation = ValidationState.Empty) }
+            return
+        } else {
+            _ageState.update { it.copy(validation = ValidationState.Valid) }
+        }
 
+        if (profession.isBlank()) {
+            _professionState.update { it.copy(validation = ValidationState.Empty) }
+            return
+        } else {
+            _professionState.update { it.copy(validation = ValidationState.Valid) }
+        }
+
+        val isAllValid = _fullNameState.value.validation == ValidationState.Valid &&
+                _ageState.value.validation == ValidationState.Valid &&
+                _phoneState.value.validation == ValidationState.Valid &&
+                _professionState.value.validation == ValidationState.Valid
+
+        if (isAllValid) {
+            launchSave(
+                operation = {
+                    _userRepository.sendForm(
+                        formRoute.animalId,
+                        FormRequest(
+                            trimmedName,
+                            age,
+                            profession,
+                            trimmedPhone
+                        )
+                    )
+                },
+                onSuccess = {
+
+                }
+            )
+        }
     }
-
-
 }
 
 

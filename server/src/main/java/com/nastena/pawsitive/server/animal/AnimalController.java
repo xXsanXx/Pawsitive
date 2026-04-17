@@ -183,4 +183,5 @@ public class AnimalController {
 
         return ResponseEntity.ok(animalResponse);
     }
+
 }

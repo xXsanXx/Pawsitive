@@ -44,6 +44,8 @@ class AnimalDetailsViewModel(
 
         val detailsRoute = route as NavigationRoute.AnimalDetails
 
+        _animalId = detailsRoute.animalId
+
         launchSave(
             operation = {
                 Log.d("Details", "Loading details")

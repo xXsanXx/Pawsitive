@@ -31,7 +31,7 @@ fun FormView(
     viewModel: FormViewModel
 ) {
     // ------------- States --------------------
-    val animalState: FormState.AnimalName by viewModel.animalName.collectAsState()
+    val animalState: FormState.Animal by viewModel.animalState.collectAsState()
     val fullNameState: FormState.FullName by viewModel.fullNameState.collectAsState()
     val ageState: FormState.Age by viewModel.ageState.collectAsState()
     val professionState: FormState.Profession by viewModel.professionState.collectAsState()
@@ -51,7 +51,7 @@ fun FormView(
 @Composable
 private fun FormView(
     modifier: Modifier = Modifier,
-    animalState: FormState.AnimalName,
+    animalState: FormState.Animal,
     fullNameState: FormState.FullName,
     ageState: FormState.Age,
     professionState: FormState.Profession,
@@ -78,13 +78,17 @@ private fun FormView(
             Spacer(modifier = Modifier.height(24.dp))
 
             // ------------- Animal name --------------------
+
+            Text(text = animalState.name)
+
+            // ------------- Full name --------------------
             AnimatedVisibility(
-                visible = animalState.validation != ValidationState.Valid
+                visible = fullNameState.validation != ValidationState.Valid
             ) {
                 OutlinedTextField(
-                    value = when (animalState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.animal_name_is_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.animal_name_invalid)
+                    value = when (fullNameState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.full_name_is_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.full_name_invalid)
                         ValidationState.Valid -> ""
                     },
                     onValueChange = {},
@@ -95,16 +99,16 @@ private fun FormView(
             }
 
             OutlinedTextField(
-                value = animalState.text,
+                value = fullNameState.text,
                 onValueChange = { newText ->
-                    onViewEvent(FormEvents.AnimalName.TextUpdated(newText))
+                    onViewEvent(FormEvents.FullName.TextUpdated(newText))
 
                 },
-                label = { Text(stringResource(R.string.animal_name_label)) },
+                label = { Text(stringResource(R.string.full_name_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = animalState.validation != ValidationState.Valid
+                isError = fullNameState.validation != ValidationState.Valid
             )
 
             Spacer(modifier = Modifier.height(12.dp))

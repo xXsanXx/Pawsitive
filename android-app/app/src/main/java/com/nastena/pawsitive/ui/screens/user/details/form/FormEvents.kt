@@ -2,11 +2,6 @@ package com.nastena.pawsitive.ui.screens.user.details.form
 
 sealed interface FormEvents {
 
-    sealed interface AnimalName : FormEvents {
-
-        data class TextUpdated(val newText: String) : AnimalName
-    }
-
     sealed interface FullName : FormEvents {
 
         data class TextUpdated(val newText: String) : FullName

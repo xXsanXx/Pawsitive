@@ -151,9 +151,9 @@
     <!-- Form -->
     <string name="form_title">Анкета</string>
 
-    <string name="animal_name_invalid">Имя животного от 2 до 200 букв</string>
-    <string name="animal_name_is_empty">Поле не должно быть пустым</string>
-    <string name="animal_name_label">Кличка животного</string>
+    <string name="full_name_invalid">Ф.И.О. от 2 до 200 букв</string>
+    <string name="full_name_is_empty">Поле не должно быть пустым</string>
+    <string name="full_name_label">Ваши Ф.И.О.</string>
 
 
 </resources>
