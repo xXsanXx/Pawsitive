@@ -262,8 +262,10 @@ private fun FormView(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
+            // ------------- Button --------------------
+
             Button(
-                onClick = { onViewEvent(FormEvents.SendForm(R.string.form_send_button)) },
+                onClick = { onViewEvent(FormEvents.SendForm(R.string.form_send)) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(stringResource(R.string.form_send_button))

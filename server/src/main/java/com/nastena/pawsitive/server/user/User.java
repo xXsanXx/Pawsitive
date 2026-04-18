@@ -18,6 +18,7 @@ public class User {
     @JoinColumn(name = "account_id", nullable = false, unique = true)
     private Account account;
 
+    @NotNull
     private String name;
 
     private Long birthDate;
@@ -25,6 +26,7 @@ public class User {
     @NotNull
     private String profession;
 
+    @NotNull
     private String phone;
 
     public User() {}
