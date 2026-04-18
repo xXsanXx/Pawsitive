@@ -46,6 +46,17 @@ class MainViewModel : ViewModel() {
             is MainViewEvents.NavigationBar.ClickedItem -> {
                 _navigationBarState.update { it.copy(selected = viewEvent.index) }
             }
+
+            MainViewEvents.MessageBox.ClickedOk -> {
+                when (val currentState = _mainState.value) {
+                    is MainState.Message -> {
+                        _mainState.update { MainState.Idle }
+                        currentState.onOkayCallback()
+                    }
+
+                    else -> {}
+                }
+            }
         }
     }
 
@@ -59,6 +70,10 @@ class MainViewModel : ViewModel() {
 
     fun showLoading() {
         _mainState.update { MainState.Loading }
+    }
+
+    fun showMessage(messageId: Int, onOkay: () -> Unit = { }) {
+        _mainState.update { MainState.Message(messageId, onOkay) }
     }
 
     fun hideLoading() {
@@ -78,8 +93,6 @@ class MainViewModel : ViewModel() {
                             NavigationRoute.Login,
                             Navigation.To.PopUpType.Origin
                         )
-
-
                     )
                 }
             }

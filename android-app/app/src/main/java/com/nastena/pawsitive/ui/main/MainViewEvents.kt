@@ -5,6 +5,10 @@ sealed interface MainViewEvents {
         object ClickedOk : ErrorBox
     }
 
+    sealed interface MessageBox : MainViewEvents {
+        object ClickedOk : MessageBox
+    }
+
     sealed interface NavigationBar : MainViewEvents {
         data class ClickedItem(val index: Int) : NavigationBar
     }

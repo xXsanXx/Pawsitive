@@ -6,6 +6,7 @@ sealed interface MainState {
     object Idle : MainState
     object Loading : MainState
     data class Error(val throwable: Throwable) : MainState
+    data class Message(val messageId: Int, val onOkayCallback: () -> Unit) : MainState
 }
 
 data class NavigationBarState(

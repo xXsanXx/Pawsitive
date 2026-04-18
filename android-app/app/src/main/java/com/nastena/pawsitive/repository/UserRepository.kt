@@ -2,8 +2,9 @@ package com.nastena.pawsitive.repository
 
 import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalsResponse
-import com.nastena.pawsitive.dto.FormRequest
 import com.nastena.pawsitive.dto.ShelterInfoResponse
+import com.nastena.pawsitive.dto.UserFormResponse
+import com.nastena.pawsitive.dto.UserFormUpdateRequest
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.network.api.AdoptionApi
 import com.nastena.pawsitive.network.api.AnimalApi
@@ -45,8 +46,27 @@ class UserRepository(
         _shelterApi.getShelterInfo(shelterId)
     }
 
-    suspend fun sendForm(id: Long, request: FormRequest): Result<AnimalResponse> =
-        runSimpleRequest {
-            _adoptionApi.sendForm(id, request)
-        }
+    suspend fun updateForm(
+        name: String,
+        birthDate: Long,
+        profession: String,
+        phone: String
+    ): Result<Unit> = runSimpleRequest {
+        _api.updateUserForm(
+            userFormUpdateRequest = UserFormUpdateRequest(
+                name,
+                birthDate,
+                profession,
+                phone
+            )
+        )
+    }
+
+    suspend fun getFormForAnimal(animalId: Long): Result<UserFormResponse> = runSimpleRequest {
+        _api.getUserFormForAnimal(animalId)
+    }
+
+    suspend fun createForm(id: Long): Result<Unit> = runSimpleRequest {
+        _adoptionApi.createForm(id)
+    }
 }

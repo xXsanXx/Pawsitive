@@ -1,7 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.animal
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -48,7 +47,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
@@ -270,7 +268,7 @@ private fun ShelterAnimalView(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = when(animalType) {
+                                text = when (animalType) {
                                     AnimalType.DOG -> stringResource(R.string.add_animal_type_dog)
                                     AnimalType.CAT -> stringResource(R.string.add_animal_type_cat)
                                 },

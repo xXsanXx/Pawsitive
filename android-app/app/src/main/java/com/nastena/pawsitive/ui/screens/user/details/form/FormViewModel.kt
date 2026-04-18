@@ -1,7 +1,7 @@
 package com.nastena.pawsitive.ui.screens.user.details.form
 
-import com.nastena.pawsitive.dto.FormRequest
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.main.MainViewModel
@@ -21,20 +21,21 @@ class FormViewModel(
     override val expectedRouteType: KClass<*> = NavigationRoute.Form::class
 
     companion object {
-        private val NAME_REGEX = Pattern.compile("^[А-Яа-я\\s]{2,200}$")
+        private val NAME_REGEX = Pattern.compile("^[А-Яа-я\\s]{2,300}$")
 
         private val PHONE_REGEX = Pattern.compile(
             "^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$"
         )
     }
 
-    private val _animalState: MutableStateFlow<FormState.Animal> = MutableStateFlow(
-        FormState.Animal(
-            name = ""
+    private val _animalState: MutableStateFlow<FormState.AnimalInfo> = MutableStateFlow(
+        FormState.AnimalInfo(
+            animalName = "",
+            shelterName = ""
         )
     )
 
-    val animalState: StateFlow<FormState.Animal> = _animalState.asStateFlow()
+    val animalState: StateFlow<FormState.AnimalInfo> = _animalState.asStateFlow()
 
     private val _fullNameState = MutableStateFlow(
         FormState.FullName(
@@ -43,12 +44,10 @@ class FormViewModel(
     )
     val fullNameState: StateFlow<FormState.FullName> = _fullNameState.asStateFlow()
 
-    private val _ageState = MutableStateFlow(
-        FormState.Age(
-            text = "", validation = ValidationState.Valid
-        )
-    )
-    val ageState: StateFlow<FormState.Age> = _ageState.asStateFlow()
+    private val _birthDateState =
+        MutableStateFlow(FormState.BirthDate(date = null, isValid = true))
+
+    val birthDateState: StateFlow<FormState.BirthDate> = _birthDateState.asStateFlow()
 
     private val _professionState = MutableStateFlow(
         FormState.Profession(
@@ -64,65 +63,95 @@ class FormViewModel(
     )
     val phoneState: StateFlow<FormState.Phone> = _phoneState.asStateFlow()
 
+    private var _isUserFormChanged = false
+    private var _animalId: Long = 0
+
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
+
+        _isUserFormChanged = false
 
         mainViewModel.hideNavigationBar()
 
         val formRoute = route as NavigationRoute.Form
+        _animalId = formRoute.animalId
 
         launchSave(
             operation = {
-                _userRepository.getAnimalDetails(formRoute.animalId)
+                _userRepository.getFormForAnimal(formRoute.animalId)
             },
             onSuccess = { response ->
                 _animalState.update {
-                    it.copy(name = response.name)
+                    it.copy(
+                        animalName = response.animalName,
+                        shelterName = response.shelterName
+                    )
                 }
+
+                _fullNameState.update {
+                    it.copy(
+                        text = response.name,
+                        validation = ValidationState.Valid
+                    )
+                }
+
+                _birthDateState.update { it.copy(response.birthDate, isValid = true) }
+
+                _professionState.update {
+                    it.copy(
+                        text = response.profession,
+                        validation = ValidationState.Valid
+                    )
+                }
+
+                _phoneState.update {
+                    it.copy(
+                        text = response.phone,
+                        validation = ValidationState.Valid
+                    )
+                }
+
             }
         )
-
-        _fullNameState.update { it.copy(text = "", validation = ValidationState.Valid) }
-
-        _ageState.update { it.copy(text = "", validation = ValidationState.Valid) }
-
-        _professionState.update { it.copy(text = "", validation = ValidationState.Valid) }
-
-        _phoneState.update { it.copy(text = "", validation = ValidationState.Valid) }
     }
 
     fun onViewEvent(event: FormEvents) {
         when (event) {
-            is FormEvents.Age.TextUpdated -> {
-                _ageState.update { it.copy(text = event.newText) }
+            is FormEvents.BirthDate.DateSelected -> {
+                _birthDateState.update { it.copy(date = event.date) }
+                _isUserFormChanged = true
             }
-
 
             is FormEvents.FullName.TextUpdated -> {
                 _fullNameState.update { it.copy(text = event.newText) }
+                _isUserFormChanged = true
             }
 
             is FormEvents.Phone.TextUpdated -> {
                 _phoneState.update { it.copy(text = event.newText) }
+                _isUserFormChanged = true
             }
 
             is FormEvents.Profession.TextUpdated -> {
                 _professionState.update { it.copy(text = event.newText) }
+                _isUserFormChanged = true
             }
 
-            FormEvents.SendForm -> {
-                sendForm()
+            is FormEvents.SendForm -> {
+                sendForm(event.messageIdOnSuccess)
             }
-
-
         }
     }
 
-    private fun sendForm() {
+    private fun sendForm(messageIdOnSuccess: Int) {
+        val birthDate = _birthDateState.value.date
+        val isBirthDateValid = birthDate != null && birthDate < System.currentTimeMillis()
 
-
-        val age = _ageState.value.text.trim()
-        val profession = _professionState.value.text.trim()
+        val trimmedProfession = _professionState.value.text.trim()
+        val isProfessionValid = trimmedProfession.isNotBlank()
+        _professionState.update {
+            it.copy(validation = if (isProfessionValid) ValidationState.Valid else ValidationState.Empty)
+        }
 
         val trimmedName = _fullNameState.value.text.trim()
         when {
@@ -131,7 +160,7 @@ class FormViewModel(
                 return
             }
 
-            trimmedName.length < 2 || trimmedName.length > 200 || !NAME_REGEX.matcher(trimmedName)
+            trimmedName.length < 2 || trimmedName.length > 300 || !NAME_REGEX.matcher(trimmedName)
                 .matches() -> {
                 _fullNameState.update { it.copy(validation = ValidationState.InvalidFormat) }
                 return
@@ -150,43 +179,50 @@ class FormViewModel(
             _phoneState.update { it.copy(validation = ValidationState.Valid) }
         }
 
-        if (age.isBlank()) {
-            _ageState.update { it.copy(validation = ValidationState.Empty) }
-            return
-        } else {
-            _ageState.update { it.copy(validation = ValidationState.Valid) }
-        }
-
-        if (profession.isBlank()) {
-            _professionState.update { it.copy(validation = ValidationState.Empty) }
-            return
-        } else {
-            _professionState.update { it.copy(validation = ValidationState.Valid) }
-        }
-
-        val isAllValid = _fullNameState.value.validation == ValidationState.Valid &&
-                _ageState.value.validation == ValidationState.Valid &&
-                _phoneState.value.validation == ValidationState.Valid &&
-                _professionState.value.validation == ValidationState.Valid
+        val isAllValid = _fullNameState.value.validation is ValidationState.Valid &&
+                _phoneState.value.validation is ValidationState.Valid &&
+                _professionState.value.validation is ValidationState.Valid && isBirthDateValid
 
         if (isAllValid) {
-            launchSave(
-                operation = {
-                    _userRepository.sendForm(
-                        formRoute.animalId,
-                        FormRequest(
+            if (_isUserFormChanged) {
+                launchSave(
+                    operation = {
+                        _userRepository.updateForm(
                             trimmedName,
-                            age,
-                            profession,
+                            birthDate,
+                            trimmedProfession,
                             trimmedPhone
                         )
-                    )
-                },
-                onSuccess = {
-
-                }
-            )
+                    },
+                    onSuccess = {
+                        createForm(messageIdOnSuccess)
+                    }
+                )
+            } else {
+                createForm(messageIdOnSuccess)
+            }
         }
+    }
+
+    private fun createForm(messageIdOnSuccess: Int) {
+        launchSave(
+            operation = {
+                _userRepository.createForm(_animalId)
+            },
+            onSuccess = {
+                mainViewModel.showMessage(
+                    messageIdOnSuccess,
+                    onOkay = {
+                        mainViewModel.navigate(
+                            Navigation.To(
+                                NavigationRoute.UserHome,
+                                popUpType = Navigation.To.PopUpType.Origin
+                            )
+                        )
+                    }
+                )
+            }
+        )
     }
 }
 

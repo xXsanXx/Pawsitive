@@ -2,30 +2,31 @@ package com.nastena.pawsitive.server.user;
 
 import com.nastena.pawsitive.server.account.Account;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class User {
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false, unique = true)
     private Account account;
 
-    @Getter
-    @Setter
     private String name;
 
-    public User() {}
+    private Long birthDate;
 
-    public User(Account account) {
-        this.account = account;
-    }
+    @NotNull
+    private String profession;
+
+    private String phone;
+
+    public User() {}
 
 }

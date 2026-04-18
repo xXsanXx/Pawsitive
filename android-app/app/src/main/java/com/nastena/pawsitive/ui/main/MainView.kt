@@ -209,6 +209,20 @@ fun MainContent(
         }
 
         AnimatedVisibility(
+            visible = screenState is MainState.Message
+        ) {
+            when (val currentState = screenState) {
+                is MainState.Message -> {
+                    MessageBox(
+                        messageId = currentState.messageId,
+                        onOkayClicked = { onViewEvent(MainViewEvents.MessageBox.ClickedOk) })
+                }
+
+                else -> {}
+            }
+        }
+
+        AnimatedVisibility(
             visible = screenState is MainState.Error
         ) {
             if (screenState is MainState.Error) {
@@ -454,6 +468,28 @@ private fun ErrorBox(
         confirmButton = {
             TextButton(
                 onClick = { onViewEvent(MainViewEvents.ErrorBox.ClickedOk) }
+            ) {
+                Text(text = stringResource(R.string.error_ok))
+            }
+        }
+    )
+}
+
+@Composable
+private fun MessageBox(
+    modifier: Modifier = Modifier,
+    messageId: Int,
+    onOkayClicked: () -> Unit
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { onOkayClicked() },
+        text = {
+            Text(text = stringResource(messageId))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onOkayClicked() }
             ) {
                 Text(text = stringResource(R.string.error_ok))
             }

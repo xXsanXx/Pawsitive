@@ -155,5 +155,15 @@
     <string name="full_name_is_empty">Поле не должно быть пустым</string>
     <string name="full_name_label">Ваши Ф.И.О.</string>
 
+    <string name="profession_invalid">Опишите Ваш род деятельности</string>
+    <string name="profession_is_empty">Поле не должно быть пустым</string>
+    <string name="profession_label">Род занятий, профессия.</string>
+
+    <string name="phone_invalid">Неверный формат</string>
+    <string name="phone_is_empty">Поле не должно быть пустым</string>
+    <string name="phone_label">Номер телефона для связи</string>
+
+    <string name="form_send_button">Отправить заявку</string>
+
 
 </resources>

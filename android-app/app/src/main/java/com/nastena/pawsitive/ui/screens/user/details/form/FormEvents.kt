@@ -7,9 +7,9 @@ sealed interface FormEvents {
         data class TextUpdated(val newText: String) : FullName
     }
 
-    sealed interface Age : FormEvents {
+    sealed interface BirthDate : FormEvents {
 
-        data class TextUpdated(val newText: String) : Age
+        data class DateSelected(val date: Long) : BirthDate
     }
 
     sealed interface Profession : FormEvents {
@@ -22,5 +22,5 @@ sealed interface FormEvents {
         data class TextUpdated(val newText: String) : Phone
     }
 
-    object SendForm : FormEvents
+    data class SendForm(val messageIdOnSuccess: Int) : FormEvents
 }
