@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private static final Pattern NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,300}$");
+    private static final Pattern NAME_REGEX = Pattern.compile("^[А-Яа-я\\s]{2,300}$");
 
     private static final Pattern PHONE_REGEX = Pattern.compile(
             "^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$");

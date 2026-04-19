@@ -43,22 +43,35 @@ public class UserController {
 
     @PostMapping("/form/update")
     public ResponseEntity<?> updateFormRequest(@RequestBody UserFormUpdateRequest request, Authentication authentication) {
+
+        log.info("[user form] Update request");
         log.info("[user form] Email: {}", authentication.getName());
+        log.info("[user form] Name: {}", request.getName());
+        log.info("[user form] Profession: {}", request.getProfession());
+        log.info("[user form] Phone: {}", request.getPhone());
 
         Account account = accountService.getAccountOrThrow(authentication.getName());
         User user = userService.getUserOrThrow(account);
 
         userService.updateFormOrThrow(user,request);
 
+        log.info("[user form] Form updated successfully");
+
         return ResponseEntity.ok("Form updated successfully");
     }
 
     @PostMapping("/form/get")
     public ResponseEntity<UserFormResponse> getForm(@RequestBody Long id, Authentication authentication) {
+
+        log.info("[form] Request form for animalId {}", id);
+        log.info("[form] Email: {}", authentication.getName());
+
         Account account = accountService.getAccountOrThrow(authentication.getName());
         User user = userService.getUserOrThrow(account);
 
         Animal animal = animalService.getAnimalOrThrow(id);
+
+        log.info("[form] Animal found: {}", animal.getName());
 
         UserFormResponse userFormResponse = new UserFormResponse(
                 animal.getName(),
@@ -68,6 +81,8 @@ public class UserController {
                 user.getProfession(),
                 user.getPhone()
         );
+
+        log.info("[form] Form response created");
 
         return ResponseEntity.ok(userFormResponse);
     }

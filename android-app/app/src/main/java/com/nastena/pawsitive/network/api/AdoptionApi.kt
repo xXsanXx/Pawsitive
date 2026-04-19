@@ -1,10 +1,15 @@
 package com.nastena.pawsitive.network.api
 
+import com.nastena.pawsitive.dto.UserAdoptionsResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AdoptionApi {
-    @POST("api/form/create")
+    @POST("api/adoption/form/create")
     suspend fun createForm(@Body id: Long): Response<Unit>
+
+    @GET("api/adoption/requests")
+    suspend fun getUserRequests(): Response<UserAdoptionsResponse>
 }

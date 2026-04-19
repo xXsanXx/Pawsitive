@@ -3,6 +3,7 @@ package com.nastena.pawsitive.repository
 import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.dto.AnimalsResponse
 import com.nastena.pawsitive.dto.ShelterInfoResponse
+import com.nastena.pawsitive.dto.UserAdoptionsResponse
 import com.nastena.pawsitive.dto.UserFormResponse
 import com.nastena.pawsitive.dto.UserFormUpdateRequest
 import com.nastena.pawsitive.dto.UserProfileResponse
@@ -68,5 +69,9 @@ class UserRepository(
 
     suspend fun createForm(id: Long): Result<Unit> = runSimpleRequest {
         _adoptionApi.createForm(id)
+    }
+
+    suspend fun getUserRequests(): Result<UserAdoptionsResponse> = runSimpleRequest {
+        _adoptionApi.getUserRequests()
     }
 }

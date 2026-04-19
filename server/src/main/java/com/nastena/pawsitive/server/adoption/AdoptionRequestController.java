@@ -31,10 +31,19 @@ public class AdoptionRequestController {
     @PostMapping("/form/create")
     public ResponseEntity<?> sendForm(@RequestBody Long animalId, Authentication authentication) {
 
+        log.info("[adoption] Request to create form");
+        log.info("[adoption] AnimalId: {}", animalId);
+        log.info("[adoption] User email: {}", authentication.getName());
+
         Account account = accountService.getAccountOrThrow(authentication.getName());
         User user = userService.getUserOrThrow(account);
 
+        log.info("[adoption] User found: {}", user.getName());
+
+
         adoptionRequestService.createFormOrThrow(user, animalId);
+
+        log.info("[adoption] Adoption form successfully created");
 
         return ResponseEntity.ok("Form sent");
     }

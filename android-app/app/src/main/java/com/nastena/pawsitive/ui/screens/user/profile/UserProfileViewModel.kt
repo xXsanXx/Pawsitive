@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.ui.screens.user.profile
 
 import android.util.Log
+import com.nastena.pawsitive.dto.UserAdoptionsResponse
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.UserRepository
@@ -28,6 +29,11 @@ class UserProfileViewModel(
     private val _nameState = MutableStateFlow("")
     val nameState: StateFlow<String> = _nameState.asStateFlow()
 
+    private val _adoptionState: MutableStateFlow<List<UserProfileState.Requests>> =
+        MutableStateFlow(emptyList())
+
+    val adoptionState: StateFlow<List<UserProfileState.Requests>> = _adoptionState.asStateFlow()
+
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
@@ -41,6 +47,34 @@ class UserProfileViewModel(
                 Log.d("UserProfile", "Success: $userProfile")
                 _emailState.update { userProfile.email }
                 _nameState.update { userProfile.name }
+            }
+        )
+
+        launchSave(
+            operation = {
+                Log.d("UserProfileForm", "My forms")
+                _userRepository.getUserRequests()
+            },
+            onSuccess = { userAdoptionsResponse: UserAdoptionsResponse ->
+                Log.i(
+                    "UserRequests",
+                    "Got ${userAdoptionsResponse.adoptionsResponse} userAdoptionsResponse"
+                )
+
+                if (userAdoptionsResponse.adoptionsResponse != null) {
+                    _adoptionState.update {
+                        userAdoptionsResponse.adoptionsResponse.map { userAdoptionResponse ->
+
+                            UserProfileState.Requests(
+                                animalName = userAdoptionResponse.animalName,
+                                shelterName = userAdoptionResponse.shelterName,
+                                status = userAdoptionResponse.status
+
+                            )
+
+                        }
+                    }
+                }
             }
         )
     }

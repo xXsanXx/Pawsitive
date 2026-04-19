@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.screens.user.details.form
 
+import android.util.Log
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
@@ -76,6 +77,9 @@ class FormViewModel(
         val formRoute = route as NavigationRoute.Form
         _animalId = formRoute.animalId
 
+        Log.d("FormViewModel", "AnimalId received: $_animalId")
+
+
         launchSave(
             operation = {
                 _userRepository.getFormForAnimal(formRoute.animalId)
@@ -144,25 +148,38 @@ class FormViewModel(
     }
 
     private fun sendForm(messageIdOnSuccess: Int) {
+
+        Log.d("FormViewModel", "Send form pressed")
+
         val birthDate = _birthDateState.value.date
+        val trimmedName = _fullNameState.value.text.trim()
+        val trimmedProfession = _professionState.value.text.trim()
+        val trimmedPhone = _phoneState.value.text.trim()
+
+        // -------- BirthDate validation --------
         val isBirthDateValid = birthDate != null && birthDate < System.currentTimeMillis()
 
-        val trimmedProfession = _professionState.value.text.trim()
-        val isProfessionValid = trimmedProfession.isNotBlank()
-        _professionState.update {
-            it.copy(validation = if (isProfessionValid) ValidationState.Valid else ValidationState.Empty)
+        _birthDateState.update {
+            it.copy(isValid = isBirthDateValid)
         }
 
-        val trimmedName = _fullNameState.value.text.trim()
+        if (!isBirthDateValid) return
+
+
+        // -------- Name validation --------
         when {
             trimmedName.isBlank() -> {
                 _fullNameState.update { it.copy(validation = ValidationState.Empty) }
                 return
             }
 
-            trimmedName.length < 2 || trimmedName.length > 300 || !NAME_REGEX.matcher(trimmedName)
-                .matches() -> {
-                _fullNameState.update { it.copy(validation = ValidationState.InvalidFormat) }
+            trimmedName.length < 2 ||
+                    trimmedName.length > 300 ||
+                    !NAME_REGEX.matcher(trimmedName).matches() -> {
+
+                _fullNameState.update {
+                    it.copy(validation = ValidationState.InvalidFormat)
+                }
                 return
             }
 
@@ -171,45 +188,69 @@ class FormViewModel(
             }
         }
 
-        val trimmedPhone = _phoneState.value.text.trim()
-        if (!PHONE_REGEX.matcher(trimmedPhone).matches()) {
-            _phoneState.update { it.copy(validation = ValidationState.InvalidFormat) }
+
+        // -------- Profession validation --------
+        if (trimmedProfession.isBlank()) {
+            _professionState.update {
+                it.copy(validation = ValidationState.Empty)
+            }
             return
         } else {
-            _phoneState.update { it.copy(validation = ValidationState.Valid) }
+            _professionState.update {
+                it.copy(validation = ValidationState.Valid)
+            }
         }
 
-        val isAllValid = _fullNameState.value.validation is ValidationState.Valid &&
-                _phoneState.value.validation is ValidationState.Valid &&
-                _professionState.value.validation is ValidationState.Valid && isBirthDateValid
 
-        if (isAllValid) {
-            if (_isUserFormChanged) {
-                launchSave(
-                    operation = {
-                        _userRepository.updateForm(
-                            trimmedName,
-                            birthDate,
-                            trimmedProfession,
-                            trimmedPhone
-                        )
-                    },
-                    onSuccess = {
-                        createForm(messageIdOnSuccess)
-                    }
-                )
-            } else {
-                createForm(messageIdOnSuccess)
+        // -------- Phone validation --------
+        if (!PHONE_REGEX.matcher(trimmedPhone).matches()) {
+            _phoneState.update {
+                it.copy(validation = ValidationState.InvalidFormat)
             }
+            return
+        } else {
+            _phoneState.update {
+                it.copy(validation = ValidationState.Valid)
+            }
+        }
+
+
+        // -------- Send form --------
+        if (_isUserFormChanged) {
+
+            Log.d("FormViewModel", "User form changed -> updating form")
+
+            launchSave(
+                operation = {
+                    _userRepository.updateForm(
+                        trimmedName,
+                        birthDate,
+                        trimmedProfession,
+                        trimmedPhone
+                    )
+                },
+                onSuccess = {
+                    createForm(messageIdOnSuccess)
+                }
+            )
+
+        } else {
+            createForm(messageIdOnSuccess)
         }
     }
 
     private fun createForm(messageIdOnSuccess: Int) {
+
+        Log.d("FormViewModel", "Creating adoption form for animalId=$_animalId")
+        
         launchSave(
             operation = {
                 _userRepository.createForm(_animalId)
             },
             onSuccess = {
+
+                Log.d("FormViewModel", "Form successfully created")
+
                 mainViewModel.showMessage(
                     messageIdOnSuccess,
                     onOkay = {

@@ -8,6 +8,8 @@ public class UserFormResponse {
     private String profession;
     private String phone;
 
+    public UserFormResponse() {}
+
     public UserFormResponse(String animalName, String shelterName, String name, Long birthDate, String profession, String phone) {
         this.animalName = animalName;
         this.shelterName = shelterName;

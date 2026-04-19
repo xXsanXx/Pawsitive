@@ -251,7 +251,7 @@ private fun FormView(
                 value = phoneState.text,
                 onValueChange = { newText ->
                     val digits = newText.filter { it.isDigit() }.take(10)
-                    onViewEvent(FormEvents.Phone.TextUpdated(digits))
+                    onViewEvent(FormEvents.Phone.TextUpdated("+7$digits"))
                 },
                 label = { Text(stringResource(R.string.phone_label)) },
                 modifier = Modifier.fillMaxWidth(),
