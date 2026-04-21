@@ -169,5 +169,8 @@
 
     <string name="user_forms_title">Мои заявки</string>
 
+    <string name="cancel_request_button">Отменить заявку</string>
+    <string name="request_cancelled">Заявка отменена</string>
+
 
 </resources>

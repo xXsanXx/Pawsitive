@@ -60,6 +60,7 @@ public class AdoptionRequestController {
 
         List<UserAdoptionResponse> responses = requests.stream()
                 .map(request -> new UserAdoptionResponse(
+                        request.getAnimal().getId(),
                         request.getAnimal().getName(),
                         request.getAnimal().getShelter().getName(),
                         request.getStatus()
@@ -69,5 +70,20 @@ public class AdoptionRequestController {
         log.info("[user requests] sending {} requests", responses.size());
 
         return ResponseEntity.ok(new UserAdoptionsResponse(responses));
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancelAdoptionRequest(@RequestBody Long animalId, Authentication authentication) {
+
+        log.info("[adoption] Cancel request for animalId: {}", animalId);
+
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+        User user = userService.getUserOrThrow(account);
+
+        adoptionRequestService.cancelAdoptionRequest(user, animalId);
+
+        log.info("[adoption] Adoption request cancelled");
+
+        return ResponseEntity.ok("Request cancelled");
     }
 }

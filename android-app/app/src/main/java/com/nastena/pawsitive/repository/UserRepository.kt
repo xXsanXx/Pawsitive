@@ -74,4 +74,9 @@ class UserRepository(
     suspend fun getUserRequests(): Result<UserAdoptionsResponse> = runSimpleRequest {
         _adoptionApi.getUserRequests()
     }
+
+    suspend fun cancelAdoptionRequest(animalId: Long): Result<Unit> = runSimpleRequest {
+        _adoptionApi.cancelAdoptionRequest(animalId)
+
+    }
 }

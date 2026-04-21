@@ -5,7 +5,9 @@ import com.nastena.pawsitive.dto.ErrorCode;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalService;
 import com.nastena.pawsitive.server.exceptions.ServerRuntimeException;
+import com.nastena.pawsitive.server.favorite.FavoriteRepository;
 import com.nastena.pawsitive.server.user.User;
+import com.nastena.pawsitive.server.user.UserAnimalsQueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,15 @@ public class AdoptionRequestService {
 
     @Autowired
     private AdoptionRequestRepository repository;
+
     @Autowired
     private AnimalService animalService;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private UserAnimalsQueueService userAnimalsQueueService;
 
 
     public void createFormOrThrow(User user, Long animalId) throws ServerRuntimeException{
@@ -37,7 +46,20 @@ public class AdoptionRequestService {
 
         repository.save(adoptionRequest);
 
-        repository.deleteByUserAndAnimal(user, animal);
+        favoriteRepository.deleteByAnimalAndUser(animal, user);
+
+        userAnimalsQueueService.removeAnimalFromQueue(user, animalId);
+
+    }
+
+    public void cancelAdoptionRequest(User user, Long animalId) {
+        Animal animal = animalService.getAnimalOrThrow(animalId);
+
+        AdoptionRequest request = repository.findByUserAndAnimal(user, animal)
+                .orElseThrow(() -> new ServerRuntimeException("Adoption request not found", ErrorCode.INVALID_INPUT));
+
+        repository.delete(request);
+
     }
 
     public List<AdoptionRequest> getRequestsByUser(User user) {

@@ -12,5 +12,4 @@ public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequest
 
     List<AdoptionRequest> findByUser(User user);
 
-    void deleteByUserAndAnimal(User user, Animal animal);
 }

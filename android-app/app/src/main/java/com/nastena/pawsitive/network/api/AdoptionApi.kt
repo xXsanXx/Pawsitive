@@ -12,4 +12,7 @@ interface AdoptionApi {
 
     @GET("api/adoption/requests")
     suspend fun getUserRequests(): Response<UserAdoptionsResponse>
+
+    @POST("api/adoption/cancel")
+    suspend fun cancelAdoptionRequest(@Body animalId: Long): Response<Unit>
 }

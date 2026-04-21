@@ -34,6 +34,7 @@ class UserProfileViewModel(
 
     val adoptionState: StateFlow<List<UserProfileState.Requests>> = _adoptionState.asStateFlow()
 
+
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
@@ -82,7 +83,7 @@ class UserProfileViewModel(
     fun onViewEvent(event: UserProfileViewEvents) {
         when (event) {
             UserProfileViewEvents.LogoutClicked -> onLogoutClicked()
-            UserProfileViewEvents.CancelClicked -> TODO()
+            is UserProfileViewEvents.CancelRequestClicked -> cancelAdoptionRequest(event.animalId)
         }
     }
 
@@ -96,6 +97,15 @@ class UserProfileViewModel(
                         To.PopUpType.Origin
                     )
                 )
+            }
+        )
+    }
+
+    private fun cancelAdoptionRequest(animalId: Long) {
+        launchSave(
+            operation = { _userRepository.cancelAdoptionRequest(animalId) },
+            onSuccess = {
+
             }
         )
     }
