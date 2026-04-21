@@ -61,20 +61,20 @@ class UserProfileViewModel(
                     "Got ${userAdoptionsResponse.adoptionsResponse} userAdoptionsResponse"
                 )
 
-                if (userAdoptionsResponse.adoptionsResponse != null) {
-                    _adoptionState.update {
-                        userAdoptionsResponse.adoptionsResponse.map { userAdoptionResponse ->
 
-                            UserProfileState.Requests(
-                                animalName = userAdoptionResponse.animalName,
-                                shelterName = userAdoptionResponse.shelterName,
-                                status = userAdoptionResponse.status
+                _adoptionState.update {
+                    userAdoptionsResponse.adoptionsResponse.map { userAdoptionResponse ->
 
-                            )
+                        UserProfileState.Requests(
+                            animalName = userAdoptionResponse.animalName,
+                            shelterName = userAdoptionResponse.shelterName,
+                            status = userAdoptionResponse.status
 
-                        }
+                        )
+
                     }
                 }
+
             }
         )
     }
@@ -82,6 +82,7 @@ class UserProfileViewModel(
     fun onViewEvent(event: UserProfileViewEvents) {
         when (event) {
             UserProfileViewEvents.LogoutClicked -> onLogoutClicked()
+            UserProfileViewEvents.CancelClicked -> TODO()
         }
     }
 

@@ -110,7 +110,7 @@ class FormViewModel(
 
                 _phoneState.update {
                     it.copy(
-                        text = response.phone,
+                        text = response.phone.removePrefix("+7"),
                         validation = ValidationState.Valid
                     )
                 }
@@ -154,7 +154,7 @@ class FormViewModel(
         val birthDate = _birthDateState.value.date
         val trimmedName = _fullNameState.value.text.trim()
         val trimmedProfession = _professionState.value.text.trim()
-        val trimmedPhone = _phoneState.value.text.trim()
+        val trimmedPhone = "+7${_phoneState.value.text.trim()}"
 
         // -------- BirthDate validation --------
         val isBirthDateValid = birthDate != null && birthDate < System.currentTimeMillis()
@@ -242,10 +242,11 @@ class FormViewModel(
     private fun createForm(messageIdOnSuccess: Int) {
 
         Log.d("FormViewModel", "Creating adoption form for animalId=$_animalId")
-        
+
         launchSave(
             operation = {
                 _userRepository.createForm(_animalId)
+                _userRepository.getFavorites()
             },
             onSuccess = {
 

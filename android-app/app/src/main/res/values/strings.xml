@@ -140,6 +140,7 @@
     <string name="favorite_warning_remove_animal">Это действие нельзя отменить.</string>
     <string name="favorite_remove_animal_button">Удалить</string>
     <string name="favorite_cancel_remove_animal">Отмена</string>
+    <string name="favorite_title">Избранное</string>
 
     <string name="no_animal">Животное не найдено</string>
 
@@ -165,6 +166,8 @@
 
     <string name="form_send_button">Отправить заявку</string>
     <string name="form_send">Заявка отправлена..........</string>
+
+    <string name="user_forms_title">Мои заявки</string>
 
 
 </resources>
