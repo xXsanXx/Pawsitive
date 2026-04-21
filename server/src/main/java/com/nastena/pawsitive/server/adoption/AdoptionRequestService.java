@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +36,12 @@ public class AdoptionRequestService {
         adoptionRequest.setStatus(AdoptionStatus.PENDING);
 
         repository.save(adoptionRequest);
+
+        repository.deleteByUserAndAnimal(user, animal);
+    }
+
+    public List<AdoptionRequest> getRequestsByUser(User user) {
+        return repository.findByUser(user);
     }
 
 
