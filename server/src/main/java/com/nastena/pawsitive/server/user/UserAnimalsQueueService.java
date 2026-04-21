@@ -90,4 +90,11 @@ public class UserAnimalsQueueService {
             animalsQueue.animals.subList(animalsSize - QUEUE_SIZE, animalsSize).clear();
         }
     }
+
+    public void removeAnimalFromQueue(User user, Long animalId) {
+        AnimalsQueue queue = userAnimalsQueue.get(user.getId());
+        if (queue != null) {
+            queue.animals.remove(animalId);
+        }
+    }
 }
