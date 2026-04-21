@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,8 +47,6 @@ public class AdoptionRequestService {
 
         repository.save(adoptionRequest);
 
-        favoriteRepository.deleteByAnimalAndUser(animal, user);
-
         userAnimalsQueueService.removeAnimalFromQueue(user, animalId);
 
     }
@@ -61,6 +60,21 @@ public class AdoptionRequestService {
         repository.delete(request);
 
     }
+
+    public AdoptionStatus getStatus(User user, Long animalId) {
+        Animal animal = animalService.getAnimalOrThrow(animalId);
+        return getStatus(user, animal);
+    }
+
+    public AdoptionStatus getStatus(User user, Animal animal) {
+        Optional<AdoptionRequest> maybeRequest = repository.findByUserAndAnimal(user, animal);
+        if (maybeRequest.isEmpty()) {
+            return AdoptionStatus.NONE;
+        }
+
+        return maybeRequest.get().getStatus();
+    }
+
 
     public List<AdoptionRequest> getRequestsByUser(User user) {
         return repository.findByUser(user);

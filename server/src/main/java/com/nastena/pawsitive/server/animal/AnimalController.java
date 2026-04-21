@@ -3,6 +3,7 @@ package com.nastena.pawsitive.server.animal;
 import com.nastena.pawsitive.dto.*;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
+import com.nastena.pawsitive.server.adoption.AdoptionRequestService;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import com.nastena.pawsitive.server.shelter.ShelterService;
 import com.nastena.pawsitive.server.user.User;
@@ -39,6 +40,9 @@ public class AnimalController {
     @Autowired
     private UserAnimalsQueueService userAnimalsQueueService;
 
+    @Autowired
+    private AdoptionRequestService adoptionRequestService;
+
 
     @PostMapping("/create")
     public ResponseEntity<Long> createAnimal(
@@ -47,7 +51,7 @@ public class AnimalController {
             @RequestParam(value = AnimalUtils.RequestParams.PASSPORT_PHOTOS, required = false) List<MultipartFile> vetPassports,
             Authentication authentication
 
-    )  {
+    ) {
 
         String email = authentication.getName();
 
@@ -145,18 +149,22 @@ public class AnimalController {
         User user = userService.getUserOrThrow(account);
 
         List<AnimalResponse> animals = userAnimalsQueueService.getNextRation(user).stream()
-                .map(animal -> new AnimalResponse(
-                        animal.getId(),
-                        animal.getShelter().getId(),
-                        animal.getName(),
-                        animal.getType(),
-                        animal.getBreed(),
-                        animal.getBirthDate(),
-                        animal.getGender(),
-                        animal.getDescription(),
-                        animal.getAnimalPhotos(),
-                        animal.getPassportPhotos()
-                ))
+                .map(animal -> {
+                    AdoptionStatus status = adoptionRequestService.getStatus(user, animal);
+                    return new AnimalResponse(
+                            animal.getId(),
+                            animal.getShelter().getId(),
+                            animal.getName(),
+                            animal.getType(),
+                            animal.getBreed(),
+                            animal.getBirthDate(),
+                            animal.getGender(),
+                            animal.getDescription(),
+                            status,
+                            animal.getAnimalPhotos(),
+                            animal.getPassportPhotos()
+                    );
+                })
                 .toList();
         return ResponseEntity.ok(new AnimalsResponse(animals));
     }
@@ -168,6 +176,7 @@ public class AnimalController {
 
         Animal animal = animalService.getAnimalOrThrow(id);
 
+        AdoptionStatus status = adoptionRequestService.getStatus(user, animal);
         AnimalResponse animalResponse = new AnimalResponse(
                 animal.getId(),
                 animal.getShelter().getId(),
@@ -177,6 +186,7 @@ public class AnimalController {
                 animal.getBirthDate(),
                 animal.getGender(),
                 animal.getDescription(),
+                status,
                 animal.getAnimalPhotos(),
                 animal.getPassportPhotos()
         );

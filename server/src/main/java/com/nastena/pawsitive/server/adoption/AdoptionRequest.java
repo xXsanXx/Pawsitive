@@ -27,6 +27,8 @@ public class AdoptionRequest {
     private AdoptionStatus status;
 
 
+
+
     public AdoptionRequest() {}
 
 }

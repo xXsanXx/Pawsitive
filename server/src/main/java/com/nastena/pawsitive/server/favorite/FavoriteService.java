@@ -2,6 +2,8 @@ package com.nastena.pawsitive.server.favorite;
 
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.user.User;
+import com.nastena.pawsitive.server.user.UserAnimalsQueueService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +11,9 @@ import java.util.List;
 
 @Service
 public class FavoriteService {
+
+    @Autowired
+    private UserAnimalsQueueService animalsQueueService;
 
     private final FavoriteRepository favoriteRepository;
 
@@ -21,6 +26,9 @@ public class FavoriteService {
 
         Favorite favorite = new Favorite(user, animal);
         favoriteRepository.save(favorite);
+
+        animalsQueueService.removeAnimalFromQueue(user, animal.getId());
+
     }
 
     public List<Favorite> getUserFavorites(User user) {

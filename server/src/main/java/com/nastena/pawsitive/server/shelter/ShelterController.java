@@ -1,13 +1,13 @@
 package com.nastena.pawsitive.server.shelter;
 
-import com.nastena.pawsitive.dto.AnimalResponse;
-import com.nastena.pawsitive.dto.ShelterInfoResponse;
-import com.nastena.pawsitive.dto.ShelterProfileResponse;
-import com.nastena.pawsitive.dto.UpdateShelterProfileRequest;
+import com.nastena.pawsitive.dto.*;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
+import com.nastena.pawsitive.server.adoption.AdoptionRequestService;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalService;
+import com.nastena.pawsitive.server.user.User;
+import com.nastena.pawsitive.server.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +30,12 @@ public class ShelterController {
 
     @Autowired
     private AnimalService animalService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AdoptionRequestService adoptionRequestService;
 
     @GetMapping("/profile")
     public ResponseEntity<ShelterProfileResponse> getProfile(Authentication authentication) {
@@ -61,27 +67,34 @@ public class ShelterController {
     }
 
     @PostMapping("/info")
-    public ResponseEntity<?> getShelterInfo(@RequestBody Long id) {
+    public ResponseEntity<?> getShelterInfo(@RequestBody Long id, Authentication authentication) {
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+        User user = userService.getUserOrThrow(account);
+
         Shelter shelter = shelterService.getShelterOrThrow(id);
 
         List<Animal> animals = animalService.getShelterAnimals(shelter);
+
 
         return ResponseEntity.ok(
                 new ShelterInfoResponse(
                         shelter.getId(), shelter.getName(), shelter.getAccount().getEmail(), shelter.getPhone(), shelter.getAddress(),
                         shelter.getInfo(), animals.stream().map(
-                        animal -> new AnimalResponse(
-                                animal.getId(),
-                                animal.getShelter().getId(),
-                                animal.getName(),
-                                animal.getType(),
-                                animal.getBreed(),
-                                animal.getBirthDate(),
-                                animal.getGender(),
-                                animal.getDescription(),
-                                animal.getAnimalPhotos(),
-                                animal.getPassportPhotos()
-                        )).toList()
+                        animal -> {
+                            AdoptionStatus status = adoptionRequestService.getStatus(user, animal);
+                            return new AnimalResponse(
+                                    animal.getId(),
+                                    animal.getShelter().getId(),
+                                    animal.getName(),
+                                    animal.getType(),
+                                    animal.getBreed(),
+                                    animal.getBirthDate(),
+                                    animal.getGender(),
+                                    animal.getDescription(),
+                                    status,
+                                    animal.getAnimalPhotos(),
+                                    animal.getPassportPhotos());
+                        }).toList()
                 )
         );
 

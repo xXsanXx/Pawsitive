@@ -1,9 +1,11 @@
 package com.nastena.pawsitive.server.favorite;
 
+import com.nastena.pawsitive.dto.AdoptionStatus;
 import com.nastena.pawsitive.dto.AnimalResponse;
 import com.nastena.pawsitive.dto.AnimalsResponse;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
+import com.nastena.pawsitive.server.adoption.AdoptionRequestService;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalService;
 import com.nastena.pawsitive.server.user.User;
@@ -32,6 +34,9 @@ public class FavoriteController {
 
     @Autowired
     private FavoriteService favoriteService;
+
+    @Autowired
+    private AdoptionRequestService adoptionRequestService;
 
     @PostMapping("/add")
     public ResponseEntity<?> addToFavorite(@RequestBody Long id, Authentication authentication) {
@@ -68,7 +73,7 @@ public class FavoriteController {
         List<AnimalResponse> animals = favorites.stream()
                 .map(favorite -> {
                     Animal animal = favorite.getAnimal();
-
+                    AdoptionStatus status = adoptionRequestService.getStatus(user, animal);
                     return new AnimalResponse(
                             animal.getId(),
                             animal.getShelter().getId(),
@@ -78,6 +83,7 @@ public class FavoriteController {
                             animal.getBirthDate(),
                             animal.getGender(),
                             animal.getDescription(),
+                            status,
                             animal.getAnimalPhotos(),
                             animal.getPassportPhotos()
                     );

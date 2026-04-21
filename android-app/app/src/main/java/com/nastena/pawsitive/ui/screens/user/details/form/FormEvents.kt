@@ -22,5 +22,5 @@ sealed interface FormEvents {
         data class TextUpdated(val newText: String) : Phone
     }
 
-    data class SendForm(val messageIdOnSuccess: Int) : FormEvents
+    object SendForm : FormEvents
 }

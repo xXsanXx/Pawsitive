@@ -1,6 +1,8 @@
 package com.nastena.pawsitive.ui.screens.user.profile
 
 import android.util.Log
+import com.nastena.pawsitive.R
+import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.dto.UserAdoptionsResponse
 import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
@@ -34,9 +36,15 @@ class UserProfileViewModel(
 
     val adoptionState: StateFlow<List<UserProfileState.Requests>> = _adoptionState.asStateFlow()
 
+    private val _animalIds: MutableList<Long> = mutableListOf()
 
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
+
+        _emailState.update { "" }
+        _nameState.update { "" }
+        _adoptionState.update { emptyList() }
+        _animalIds.clear()
 
         launchSave(
             operation = {
@@ -62,9 +70,10 @@ class UserProfileViewModel(
                     "Got ${userAdoptionsResponse.adoptionsResponse} userAdoptionsResponse"
                 )
 
-
                 _adoptionState.update {
                     userAdoptionsResponse.adoptionsResponse.map { userAdoptionResponse ->
+
+                        _animalIds.add(userAdoptionResponse.animalId)
 
                         UserProfileState.Requests(
                             animalName = userAdoptionResponse.animalName,
@@ -83,7 +92,11 @@ class UserProfileViewModel(
     fun onViewEvent(event: UserProfileViewEvents) {
         when (event) {
             UserProfileViewEvents.LogoutClicked -> onLogoutClicked()
-            is UserProfileViewEvents.CancelRequestClicked -> cancelAdoptionRequest(event.animalId)
+            is UserProfileViewEvents.CancelRequestClicked -> {
+                val request: UserProfileState.Requests = _adoptionState.value.get(event.index)
+                assert(request.status == AdoptionStatus.PENDING)
+                cancelAdoptionRequest(event.index)
+            }
         }
     }
 
@@ -101,11 +114,18 @@ class UserProfileViewModel(
         )
     }
 
-    private fun cancelAdoptionRequest(animalId: Long) {
+    private fun cancelAdoptionRequest(animalIndex: Int) {
+        val animalId: Long = _animalIds[animalIndex]
+
         launchSave(
             operation = { _userRepository.cancelAdoptionRequest(animalId) },
             onSuccess = {
-
+                mainViewModel.showMessage(R.string.request_cancelled)
+                _adoptionState.update {
+                    _adoptionState.value.take(animalIndex) +
+                            _adoptionState.value.dropLast(animalIndex + 1)
+                }
+                _animalIds.removeIf { id: Long -> animalId == id }
             }
         )
     }

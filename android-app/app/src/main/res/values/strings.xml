@@ -165,12 +165,10 @@
     <string name="phone_label">Номер телефона для связи</string>
 
     <string name="form_send_button">Отправить заявку</string>
-    <string name="form_send">Заявка отправлена..........</string>
+    <string name="form_sent">Заявка отправлена..........</string>
 
     <string name="user_forms_title">Мои заявки</string>
 
     <string name="cancel_request_button">Отменить заявку</string>
     <string name="request_cancelled">Заявка отменена</string>
-
-
 </resources>

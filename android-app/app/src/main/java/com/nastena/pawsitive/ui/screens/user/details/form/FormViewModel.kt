@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.ui.screens.user.details.form
 
 import android.util.Log
+import com.nastena.pawsitive.R
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
@@ -142,12 +143,12 @@ class FormViewModel(
             }
 
             is FormEvents.SendForm -> {
-                sendForm(event.messageIdOnSuccess)
+                sendForm()
             }
         }
     }
 
-    private fun sendForm(messageIdOnSuccess: Int) {
+    private fun sendForm() {
 
         Log.d("FormViewModel", "Send form pressed")
 
@@ -230,16 +231,16 @@ class FormViewModel(
                     )
                 },
                 onSuccess = {
-                    createForm(messageIdOnSuccess)
+                    createForm()
                 }
             )
 
         } else {
-            createForm(messageIdOnSuccess)
+            createForm()
         }
     }
 
-    private fun createForm(messageIdOnSuccess: Int) {
+    private fun createForm() {
 
         Log.d("FormViewModel", "Creating adoption form for animalId=$_animalId")
 
@@ -253,7 +254,7 @@ class FormViewModel(
                 Log.d("FormViewModel", "Form successfully created")
 
                 mainViewModel.showMessage(
-                    messageIdOnSuccess,
+                    R.string.form_sent,
                     onOkay = {
                         mainViewModel.navigate(
                             Navigation.To(

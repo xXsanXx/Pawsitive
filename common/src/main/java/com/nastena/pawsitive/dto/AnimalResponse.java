@@ -12,6 +12,8 @@ public class AnimalResponse {
     private AnimalGender gender;
     private String description;
 
+    private AdoptionStatus status;
+
     private List<String> animalPhotos;
 
     private List<String> passportPhotos;
@@ -22,7 +24,7 @@ public class AnimalResponse {
 
 
     public AnimalResponse(Long id, Long shelterId, String name, AnimalType type, AnimalBreed breed,
-                          Long birthDate, AnimalGender gender, String description, List<String> photoUrls,
+                          Long birthDate, AnimalGender gender, String description, AdoptionStatus status, List<String> photoUrls,
                           List<String> passportPhotoUrls) {
         this.id = id;
         this.shelterId = shelterId;
@@ -32,6 +34,7 @@ public class AnimalResponse {
         this.birthDate = birthDate;
         this.gender = gender;
         this.description = description;
+        this.status = status;
         this.animalPhotos = photoUrls;
         this.passportPhotos = passportPhotoUrls;
     }
@@ -75,5 +78,9 @@ public class AnimalResponse {
 
     public Long getShelterId() {
         return shelterId;
+    }
+
+    public AdoptionStatus getStatus() {
+        return status;
     }
 }
