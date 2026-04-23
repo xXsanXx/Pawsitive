@@ -61,6 +61,9 @@ import com.nastena.pawsitive.ui.screens.shelter.home.ShelterHomeViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.profile.ShelterProfileViewModelFactory
+import com.nastena.pawsitive.ui.screens.shelter.requests.ShelterRequestsView
+import com.nastena.pawsitive.ui.screens.shelter.requests.ShelterRequestsViewModel
+import com.nastena.pawsitive.ui.screens.shelter.requests.ShelterRequestsViewModelFactory
 import com.nastena.pawsitive.ui.screens.splash.SplashView
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModel
 import com.nastena.pawsitive.ui.screens.splash.SplashViewModelFactory
@@ -133,6 +136,10 @@ fun MainContent(
         factory = ShelterHomeViewModelFactory(mainViewModel, shelterRepository, filesRepository)
     )
 
+    val shelterRequestsViewModel: ShelterRequestsViewModel = viewModel(
+        factory = ShelterRequestsViewModelFactory(mainViewModel, shelterRepository, filesRepository)
+    )
+
     val shelterAnimalViewModel: ShelterAnimalViewModel = viewModel(
         factory = ShelterAnimalViewModelFactory(mainViewModel, shelterRepository, filesRepository)
     )
@@ -203,6 +210,7 @@ fun MainContent(
                     userFavoriteViewModel = userFavoriteViewModel,
                     animalDetailsViewModel = animalDetailsViewModel,
                     shelterInfoViewModel = shelterInfoViewModel,
+                    shelterRequestsViewModel = shelterRequestsViewModel,
                     formViewModel = formViewModel
                 )
             }
@@ -256,7 +264,8 @@ private fun Navigation(
     shelterProfileViewModel: ShelterProfileViewModel,
     editingShelterProfileViewModel: EditingShelterProfileViewModel,
     shelterHomeViewModel: ShelterHomeViewModel,
-    shelterAnimalViewModel: ShelterAnimalViewModel
+    shelterAnimalViewModel: ShelterAnimalViewModel,
+    shelterRequestsViewModel: ShelterRequestsViewModel
 ) {
     NavHost(
         navController = navController,
@@ -335,6 +344,15 @@ private fun Navigation(
                 backStackEntry.toRoute<NavigationRoute.ShelterHome>()
             ) {
                 ShelterHomeView(viewModel = shelterHomeViewModel)
+            }
+        }
+
+        composable<NavigationRoute.ShelterRequests> { backStackEntry: NavBackStackEntry ->
+            ScreenView(
+                shelterRequestsViewModel,
+                backStackEntry.toRoute<NavigationRoute.ShelterRequests>()
+            ) {
+                ShelterRequestsView(viewModel = shelterRequestsViewModel)
             }
         }
 

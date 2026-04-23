@@ -7,6 +7,7 @@ import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.dto.CreateAnimalRequest
 import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
+import com.nastena.pawsitive.dto.ShelterFormsResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
@@ -134,6 +135,10 @@ class ShelterRepository(
 
     suspend fun removeAnimal(animalId: Long): Result<Unit> = runSimpleRequest {
         _animalsApi.removeAnimal(animalId)
+    }
+
+    suspend fun getShelterForms(): Result<ShelterFormsResponse> = runSimpleRequest {
+        _api.getShelterForms()
     }
 
 

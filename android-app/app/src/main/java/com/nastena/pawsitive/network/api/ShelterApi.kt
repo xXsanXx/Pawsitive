@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.network.api
 
+import com.nastena.pawsitive.dto.ShelterFormsResponse
 import com.nastena.pawsitive.dto.ShelterInfoResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
@@ -21,5 +22,8 @@ interface ShelterApi {
     suspend fun getShelterInfo(
         @Body id: Long
     ): Response<ShelterInfoResponse>
+
+    @GET("api/shelter/forms")
+    suspend fun getShelterForms(): Response<ShelterFormsResponse>
 
 }

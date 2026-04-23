@@ -48,7 +48,7 @@ object NavigationBars {
                 icon = Icons.Default.Home
             ),
             Item(
-                navigation = Navigation.To(NavigationRoute.ShelterHome),
+                navigation = Navigation.To(NavigationRoute.ShelterRequests),
                 icon = Icons.Default.Description
             ),
             Item(

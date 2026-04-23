@@ -1,6 +1,10 @@
 package com.nastena.pawsitive.ui.screens.shelter.requests
 
+import android.util.Log
+import com.nastena.pawsitive.dto.ShelterFormsResponse
+import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -12,48 +16,60 @@ import kotlin.reflect.KClass
 
 class ShelterRequestsViewModel(
     mainViewModel: MainViewModel,
-    private val _shelterRepository: ShelterRepository
-) : BaseScreenViewModel(mainViewModel) {
+    private val _shelterRepository: ShelterRepository,
+    private val _filesRepository: FilesRepository,
+
+    ) : BaseScreenViewModel(mainViewModel) {
 
     override val expectedRouteType: KClass<*> = NavigationRoute.ShelterRequests::class
 
-    private val _animalsState: MutableStateFlow<List<ShelterRequestsState.Animal>> =
+    private val _formState: MutableStateFlow<List<ShelterRequestsState.Form>> =
         MutableStateFlow(emptyList())
 
-    val animalsState: StateFlow<List<ShelterRequestsState.Animal>> = _animalsState.asStateFlow()
+    val formState: StateFlow<List<ShelterRequestsState.Form>> = _formState.asStateFlow()
 
-    private val _animalIds: MutableList<Long> = mutableListOf()
+    private val _requestIds: MutableList<Long> = mutableListOf()
 
 
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
-        _animalIds.clear()
-        _animalsState.update { emptyList() }
+        _requestIds.clear()
+        _formState.update { emptyList() }
 
-//        launchSave(
-//            operation = {
-//                Log.d("Requests", "Loading requests")
-////                _shelterRepository.
-//            },
-//
-//            onSuccess = { animalsResponse: AnimalsResponse ->
-//                Log.i("Requests", "Got ${animalsResponse.animals.size} animals")
-//
-//                _animalsState.update {
-//
-//                    animalsResponse.animals.map { animalResponse ->
-//                        _animalIds.add(animalResponse.id)
-//                        ShelterRequestsState.Animal(
-//                            name = animalResponse.name,
-//                            photoUrl = animalResponse.animalPhotos?.getOrNull(0)
-//                                ?.let { photo: String ->
-//                                    NetworkUtils.getAbsoluteFileUrl(photo)
-//                                }
-//                        )
-//                    }
-//                }
-//            }
-//        )
+        launchSave(
+            operation = {
+                Log.d("Requests", "Loading requests")
+                _shelterRepository.getShelterForms()
+            },
+
+            onSuccess = { shelterFormsResponse: ShelterFormsResponse ->
+                Log.i("Requests", "Got ${shelterFormsResponse.shelterFormsResponse.size} forms")
+
+                _formState.update {
+                    shelterFormsResponse.shelterFormsResponse.map { form ->
+                        _requestIds.add(form.requestId)
+
+                        ShelterRequestsState.Form(
+                            animalName = form.animalName,
+                            userName = form.userName,
+                            photoUrls = form.animalPhotos.map { url ->
+                                _filesRepository.getAbsoluteFileUrl(url)
+                            }
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    fun onViewEvent(event: ShelterRequestsEvents) {
+        when (event) {
+            is ShelterRequestsEvents.GoToFormClicked -> {
+                mainViewModel.navigate(
+                    To(NavigationRoute.FormDetails(requestId = _requestIds[event.index]))
+                )
+            }
+        }
     }
 }

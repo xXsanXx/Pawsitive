@@ -39,6 +39,9 @@ sealed interface NavigationRoute {
     object ShelterRequests : NavigationRoute
 
     @Serializable
+    data class FormDetails(val requestId: Long) : NavigationRoute
+
+    @Serializable
     object EditingShelterProfile : NavigationRoute
 
     @Serializable

@@ -177,4 +177,7 @@
     <string name="adoption_status_pending">Заявка на рассмотрении</string>
     <string name="adoption_status_approved">Заявка одобрена</string>
     <string name="adoption_status_rejected">Заявка отклонена</string>
+
+
+    <string name="shelter_forms_title">Заявки на животных</string>
 </resources>

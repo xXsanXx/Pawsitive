@@ -1,6 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.requests
 
-interface ShelterRequestsEvents {
+sealed interface ShelterRequestsEvents {
 
     data class GoToFormClicked(val index: Int) : ShelterRequestsEvents
 }
