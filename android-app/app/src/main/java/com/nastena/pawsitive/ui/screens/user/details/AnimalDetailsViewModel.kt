@@ -63,7 +63,8 @@ class AnimalDetailsViewModel(
                         birthDate = response.birthDate,
                         photosUrl = response.animalPhotos
                             ?.map { NetworkUtils.getAbsoluteFileUrl(it) }
-                            ?: emptyList()
+                            ?: emptyList(),
+                        adoptionStatus = response.status
                     )
                 }
 

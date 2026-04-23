@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.user;
 
+import com.nastena.pawsitive.server.adoption.AdoptionRequestRepository;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalRepository;
 import com.nastena.pawsitive.server.favorite.FavoriteRepository;
@@ -32,6 +33,9 @@ public class UserAnimalsQueueService {
 
     @Autowired
     private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private AdoptionRequestRepository adoptionRequestRepository;
 
     private final HashMap<Long, AnimalsQueue> userAnimalsQueue = new HashMap<>();
 
@@ -78,6 +82,7 @@ public class UserAnimalsQueueService {
                             .filter(
                                     animal -> favoriteRepository.findByUserAndAnimal(user, animal).isEmpty()
                             )
+                            .filter(animal -> adoptionRequestRepository.findByUserAndAnimal(user, animal).isEmpty())
                             .map(Animal::getId)
                             .toList()
             );
@@ -95,6 +100,15 @@ public class UserAnimalsQueueService {
         AnimalsQueue queue = userAnimalsQueue.get(user.getId());
         if (queue != null) {
             queue.animals.remove(animalId);
+        }
+    }
+
+    public void addAnimalToQueue(User user, Long animalId) {
+        AnimalsQueue queue = userAnimalsQueue.get(user.getId());
+        if (queue != null && !queue.animals.contains(animalId)) {
+            if (queue.animals.size() < QUEUE_SIZE) {
+                queue.animals.add(animalId);
+            }
         }
     }
 }

@@ -60,10 +60,12 @@ public class AdoptionRequestController {
 
         List<UserAdoptionResponse> responses = requests.stream()
                 .map(request -> new UserAdoptionResponse(
+                        request.getId(),
                         request.getAnimal().getId(),
                         request.getAnimal().getName(),
                         request.getAnimal().getShelter().getName(),
-                        request.getStatus()
+                        request.getStatus(),
+                        request.getAnimal().getAnimalPhotos()
                 ))
                 .toList();
 

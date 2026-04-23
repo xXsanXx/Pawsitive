@@ -169,6 +169,12 @@
 
     <string name="user_forms_title">Мои заявки</string>
 
-    <string name="cancel_request_button">Отменить заявку</string>
-    <string name="request_cancelled">Заявка отменена</string>
+    <string name="cancel_request_button">Отменить заявку?</string>
+    <string name="warning_cancel_request">Это действие нельзя отменить.</string>
+    <string name="cancel_request_button_yes">Да</string>
+    <string name="cancel_cancel_request_no">Нет</string>
+
+    <string name="adoption_status_pending">Заявка на рассмотрении</string>
+    <string name="adoption_status_approved">Заявка одобрена</string>
+    <string name="adoption_status_rejected">Заявка отклонена</string>
 </resources>

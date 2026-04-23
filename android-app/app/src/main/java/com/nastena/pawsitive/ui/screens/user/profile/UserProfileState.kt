@@ -7,6 +7,12 @@ object UserProfileState {
     data class Requests(
         val animalName: String,
         val shelterName: String,
-        val status: AdoptionStatus
+        val status: AdoptionStatus,
+        val photoUrls: List<String> = emptyList()
+    )
+
+    data class ConfirmFormCancel(
+        val index: Int,
+        val isVisible: Boolean = true
     )
 }

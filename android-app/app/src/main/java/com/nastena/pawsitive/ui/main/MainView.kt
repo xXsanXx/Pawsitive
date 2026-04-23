@@ -52,6 +52,7 @@ import com.nastena.pawsitive.ui.screens.register.RegisterViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalView
 import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalViewModel
 import com.nastena.pawsitive.ui.screens.shelter.animal.ShelterAnimalViewModelFactory
+import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileView
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModel
 import com.nastena.pawsitive.ui.screens.shelter.editing.EditingShelterProfileViewModelFactory
 import com.nastena.pawsitive.ui.screens.shelter.home.ShelterHomeView
@@ -108,7 +109,12 @@ fun MainContent(
     )
 
     val userProfileViewModel: UserProfileViewModel = viewModel(
-        factory = UserProfileViewModelFactory(mainViewModel, userRepository, accountRepository)
+        factory = UserProfileViewModelFactory(
+            mainViewModel,
+            userRepository,
+            accountRepository,
+            filesRepository
+        )
     )
 
     val shelterProfileViewModel: ShelterProfileViewModel = viewModel(
@@ -338,6 +344,15 @@ private fun Navigation(
                 backStackEntry.toRoute<NavigationRoute.ShelterProfile>()
             ) {
                 ShelterProfileView(viewModel = shelterProfileViewModel)
+            }
+        }
+
+        composable<NavigationRoute.EditingShelterProfile> { backStackEntry ->
+            ScreenView(
+                editingShelterProfileViewModel,
+                backStackEntry.toRoute<NavigationRoute.EditingShelterProfile>()
+            ) {
+                EditingShelterProfileView(viewModel = editingShelterProfileViewModel)
             }
         }
 

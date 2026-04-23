@@ -2,6 +2,7 @@ package com.nastena.pawsitive.ui.common.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,6 +46,10 @@ object NavigationBars {
             Item(
                 navigation = Navigation.To(NavigationRoute.ShelterHome),
                 icon = Icons.Default.Home
+            ),
+            Item(
+                navigation = Navigation.To(NavigationRoute.ShelterHome),
+                icon = Icons.Default.Description
             ),
             Item(
                 navigation = Navigation.To(NavigationRoute.ShelterProfile),

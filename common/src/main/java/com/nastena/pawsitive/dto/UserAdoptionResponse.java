@@ -1,5 +1,7 @@
 package com.nastena.pawsitive.dto;
 
+import java.util.List;
+
 public class UserAdoptionResponse {
     private Long id;
     private Long animalId;
@@ -7,16 +9,19 @@ public class UserAdoptionResponse {
     private String shelterName;
     private AdoptionStatus status;
 
+    private List<String> animalPhotos;
+
     public UserAdoptionResponse() {
     }
 
 
-    public UserAdoptionResponse(Long id, Long animalId, String animalName, Long shelterId, String shelterName, AdoptionStatus status) {
+    public UserAdoptionResponse(Long id, Long animalId, String animalName, String shelterName, AdoptionStatus status, List<String> animalPhotos) {
         this.id = id;
         this.animalId = animalId;
         this.animalName = animalName;
         this.shelterName = shelterName;
         this.status = status;
+        this.animalPhotos = animalPhotos;
     }
 
     public String getAnimalName() {
@@ -37,5 +42,9 @@ public class UserAdoptionResponse {
 
     public Long getAnimalId() {
         return animalId;
+    }
+
+    public List<String> getAnimalPhotos() {
+        return animalPhotos;
     }
 }

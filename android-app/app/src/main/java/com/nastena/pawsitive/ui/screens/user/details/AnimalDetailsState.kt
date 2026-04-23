@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.screens.user.details
 
+import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
@@ -12,6 +13,8 @@ object AnimalDetailsState {
         val breed: AnimalBreed,
         val gender: AnimalGender,
         val birthDate: Long,
-        val photosUrl: List<String> = emptyList()
+        val photosUrl: List<String> = emptyList(),
+
+        val adoptionStatus: AdoptionStatus = AdoptionStatus.NONE
     )
 }

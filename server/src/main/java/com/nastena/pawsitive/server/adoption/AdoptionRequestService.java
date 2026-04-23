@@ -59,6 +59,8 @@ public class AdoptionRequestService {
 
         repository.delete(request);
 
+        userAnimalsQueueService.addAnimalToQueue(user, animalId);
+
     }
 
     public AdoptionStatus getStatus(User user, Long animalId) {

@@ -1,13 +1,16 @@
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsEvents
@@ -114,22 +118,33 @@ fun AnimalDetailsView(
                         )
                     }
 
-                    Button(
-                        onClick = {
-                            viewModel.onViewEvent(
-                                AnimalDetailsEvents.GoToFormClicked
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
+                    if (animalState.adoptionStatus == AdoptionStatus.NONE) {
+                        Button(
+                            onClick = {
+                                viewModel.onViewEvent(
+                                    AnimalDetailsEvents.GoToFormClicked
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(stringResource(R.string.form_clicked))
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            stringResource(R.string.form_clicked)
+                            text = when (animalState.adoptionStatus) {
+                                AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
+                                AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
+                                AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
+                                else -> ""
+                            },
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
-
-
                 }
             }
         }
+
     }
 }

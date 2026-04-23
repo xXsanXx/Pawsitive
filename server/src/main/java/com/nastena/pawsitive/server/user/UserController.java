@@ -1,18 +1,17 @@
 package com.nastena.pawsitive.server.user;
 
-import com.nastena.pawsitive.dto.*;
+import com.nastena.pawsitive.dto.UserFormResponse;
+import com.nastena.pawsitive.dto.UserFormUpdateRequest;
+import com.nastena.pawsitive.dto.UserProfileResponse;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalService;
-import com.nastena.pawsitive.server.shelter.Shelter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Slf4j

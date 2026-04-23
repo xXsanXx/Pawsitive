@@ -36,6 +36,9 @@ sealed interface NavigationRoute {
     object ShelterProfile : NavigationRoute
 
     @Serializable
+    object ShelterRequests : NavigationRoute
+
+    @Serializable
     object EditingShelterProfile : NavigationRoute
 
     @Serializable
