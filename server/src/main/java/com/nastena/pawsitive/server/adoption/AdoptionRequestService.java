@@ -85,4 +85,13 @@ public class AdoptionRequestService {
         return repository.findByUser(user);
     }
 
+    public List<AdoptionRequest> getShelterRequestsByUser(Shelter shelter) {
+        return repository.findByShelter(shelter);
+    }
+
+    public AdoptionRequest getRequestOrThrow(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Adoption request not found"));
+    }
+
 }

@@ -180,4 +180,8 @@
 
 
     <string name="shelter_forms_title">Заявки на животных</string>
+
+    <string name="shelter_details_form">Детали заявки</string>
+    <string name="shelter_details_form_approved_button">Одобрить</string>
+    <string name="shelter_details_form_rejected_button">Отклонить</string>
 </resources>

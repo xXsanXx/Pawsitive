@@ -1,17 +1,20 @@
 package com.nastena.pawsitive.repository
 
 import android.content.ContentResolver
+import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.dto.CreateAnimalRequest
 import com.nastena.pawsitive.dto.ShelterAnimalResponse
 import com.nastena.pawsitive.dto.ShelterAnimalsResponse
+import com.nastena.pawsitive.dto.ShelterFormDetailsResponse
 import com.nastena.pawsitive.dto.ShelterFormsResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
 import com.nastena.pawsitive.network.NetworkUtils
+import com.nastena.pawsitive.network.api.AdoptionApi
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.repository.utils.handleServerErrorBody
@@ -24,7 +27,8 @@ import retrofit2.Response
 class ShelterRepository(
     private val _api: ShelterApi,
     private val _animalsApi: AnimalApi,
-    private val _contentResolver: ContentResolver
+    private val _contentResolver: ContentResolver,
+    private val _adoptionApi: AdoptionApi
 ) {
     suspend fun getProfileData(): Result<ShelterProfileResponse> = runSimpleRequest {
         _api.getShelterProfile()
@@ -141,6 +145,15 @@ class ShelterRepository(
         _api.getShelterForms()
     }
 
+    suspend fun getShelterFormDetails(resuestId: Long): Result<ShelterFormDetailsResponse> =
+        runSimpleRequest {
+            _api.getShelterDetailsForm(resuestId)
+        }
+
+    suspend fun updateRequestStatus(requestId: Long, status: AdoptionStatus): Result<Unit> =
+        runSimpleRequest {
+            _adoptionApi.updateRequestStatus(requestId, status)
+        }
 
 }
 

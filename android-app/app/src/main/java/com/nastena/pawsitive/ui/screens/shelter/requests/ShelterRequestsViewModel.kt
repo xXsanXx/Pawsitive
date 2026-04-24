@@ -67,7 +67,7 @@ class ShelterRequestsViewModel(
         when (event) {
             is ShelterRequestsEvents.GoToFormClicked -> {
                 mainViewModel.navigate(
-                    To(NavigationRoute.FormDetails(requestId = _requestIds[event.index]))
+                    To(NavigationRoute.ShelterFormDetails(requestId = _requestIds[event.index]))
                 )
             }
         }

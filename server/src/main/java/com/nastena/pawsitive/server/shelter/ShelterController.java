@@ -3,6 +3,7 @@ package com.nastena.pawsitive.server.shelter;
 import com.nastena.pawsitive.dto.*;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
+import com.nastena.pawsitive.server.adoption.AdoptionRequest;
 import com.nastena.pawsitive.server.adoption.AdoptionRequestService;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalService;
@@ -33,6 +34,8 @@ public class ShelterController {
 
     @Autowired
     private UserService userService;
+
+
 
     @Autowired
     private AdoptionRequestService adoptionRequestService;
@@ -97,6 +100,56 @@ public class ShelterController {
                         }).toList()
                 )
         );
+
+    }
+
+    @GetMapping("/forms")
+    public ResponseEntity<ShelterFormsResponse> getRequests(Authentication authentication) {
+        log.info("[shelter requests] email {}", authentication.getName());
+
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+        Shelter shelter = shelterService.getShelterOrThrow(account);
+
+
+        List<AdoptionRequest> requests = adoptionRequestService.getShelterRequestsByUser(shelter);
+
+        List<ShelterFormResponse> responses = requests.stream()
+                .map(request -> new ShelterFormResponse(
+                        request.getId(),
+                        request.getAnimal().getId(),
+                        request.getAnimal().getName(),
+                        request.getAnimal().getAnimalPhotos(),
+                        request.getUser().getId(),
+                        request.getUser().getName()
+                ))
+                .toList();
+
+        log.info("[shelter requests] sending {} requests", responses.size());
+
+        return ResponseEntity.ok(new ShelterFormsResponse(responses));
+    }
+
+    @PostMapping("/forms/details")
+    public ResponseEntity<?> getShelterFormDetails(@RequestBody Long id, Authentication authentication) {
+        Account account = accountService.getAccountOrThrow(authentication.getName());
+        Shelter shelter = shelterService.getShelterOrThrow(id);
+
+        AdoptionRequest request = adoptionRequestService.getRequestOrThrow(id);
+
+        User user = request.getUser();
+
+        ShelterFormDetailsResponse response = new ShelterFormDetailsResponse(
+                request.getId(),
+                request.getAnimal().getName(),
+                request.getAnimal().getAnimalPhotos(),
+                request.getStatus(),
+                user.getName(),
+                user.getBirthDate(),
+                user.getProfession(),
+                user.getPhone()
+        );
+
+        return ResponseEntity.ok(response);
 
     }
 
