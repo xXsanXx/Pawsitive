@@ -150,8 +150,15 @@ public class ShelterController {
         );
 
         return ResponseEntity.ok(response);
-
     }
 
+    @PostMapping("/forms/update")
+    public ResponseEntity<?> updateStatus(@RequestBody ShelterUpdateStatusRequest shelterUpdateStatusRequest) {
+        adoptionRequestService.updateStatus(
+                shelterUpdateStatusRequest.getRequestId(),
+                shelterUpdateStatusRequest.getStatus()
+        );
+        return ResponseEntity.ok().build();
+    }
 
 }

@@ -94,4 +94,14 @@ public class AdoptionRequestService {
                 .orElseThrow(() -> new RuntimeException("Adoption request not found"));
     }
 
+    public void updateStatus(Long requestId, AdoptionStatus status) {
+
+        AdoptionRequest request = repository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        request.setStatus(status);
+
+        repository.save(request);
+    }
+
 }

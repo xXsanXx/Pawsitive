@@ -11,10 +11,10 @@ import com.nastena.pawsitive.dto.ShelterAnimalsResponse
 import com.nastena.pawsitive.dto.ShelterFormDetailsResponse
 import com.nastena.pawsitive.dto.ShelterFormsResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
+import com.nastena.pawsitive.dto.ShelterUpdateStatusRequest
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
 import com.nastena.pawsitive.network.NetworkUtils
-import com.nastena.pawsitive.network.api.AdoptionApi
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.repository.utils.handleServerErrorBody
@@ -26,9 +26,8 @@ import retrofit2.Response
 
 class ShelterRepository(
     private val _api: ShelterApi,
-    private val _animalsApi: AnimalApi,
-    private val _contentResolver: ContentResolver,
-    private val _adoptionApi: AdoptionApi
+    private val _animalApi: AnimalApi,
+    private val _contentResolver: ContentResolver
 ) {
     suspend fun getProfileData(): Result<ShelterProfileResponse> = runSimpleRequest {
         _api.getShelterProfile()
@@ -43,11 +42,11 @@ class ShelterRepository(
     }
 
     suspend fun getAnimalsData(): Result<ShelterAnimalsResponse> = runSimpleRequest {
-        _animalsApi.getShelterAnimals()
+        _animalApi.getShelterAnimals()
     }
 
     suspend fun getAnimal(animalId: Long): Result<ShelterAnimalResponse> = runSimpleRequest {
-        _animalsApi.getShelterAnimal(animalId)
+        _animalApi.getShelterAnimal(animalId)
     }
 
     suspend fun createAnimal(
@@ -79,7 +78,7 @@ class ShelterRepository(
             )
         }
 
-        val response: Response<Long> = _animalsApi.createAnimal(data, photos, passports)
+        val response: Response<Long> = _animalApi.createAnimal(data, photos, passports)
 
         if (response.isSuccessful) {
             Result.success(Unit)
@@ -128,7 +127,7 @@ class ShelterRepository(
             )
         }
 
-        val response: Response<Unit> = _animalsApi.updateAnimal(data, photos, passports)
+        val response: Response<Unit> = _animalApi.updateAnimal(data, photos, passports)
 
         if (response.isSuccessful) {
             Result.success(Unit)
@@ -138,23 +137,27 @@ class ShelterRepository(
     }
 
     suspend fun removeAnimal(animalId: Long): Result<Unit> = runSimpleRequest {
-        _animalsApi.removeAnimal(animalId)
+        _animalApi.removeAnimal(animalId)
     }
 
     suspend fun getShelterForms(): Result<ShelterFormsResponse> = runSimpleRequest {
         _api.getShelterForms()
     }
 
-    suspend fun getShelterFormDetails(resuestId: Long): Result<ShelterFormDetailsResponse> =
+    suspend fun getShelterFormDetails(requestId: Long): Result<ShelterFormDetailsResponse> =
         runSimpleRequest {
-            _api.getShelterDetailsForm(resuestId)
+            _api.getShelterDetailsForm(requestId)
         }
 
-    suspend fun updateRequestStatus(requestId: Long, status: AdoptionStatus): Result<Unit> =
-        runSimpleRequest {
-            _adoptionApi.updateRequestStatus(requestId, status)
-        }
+    suspend fun updateRequestStatus(
+        requestId: Long,
+        status: AdoptionStatus
+    ): Result<Unit> = runSimpleRequest {
 
+        val request = ShelterUpdateStatusRequest(requestId, status)
+
+        _api.updateRequestStatus(request)
+    }
 }
 
 

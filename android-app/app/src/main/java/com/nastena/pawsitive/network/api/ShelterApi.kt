@@ -4,6 +4,7 @@ import com.nastena.pawsitive.dto.ShelterFormDetailsResponse
 import com.nastena.pawsitive.dto.ShelterFormsResponse
 import com.nastena.pawsitive.dto.ShelterInfoResponse
 import com.nastena.pawsitive.dto.ShelterProfileResponse
+import com.nastena.pawsitive.dto.ShelterUpdateStatusRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,6 +29,11 @@ interface ShelterApi {
     suspend fun getShelterForms(): Response<ShelterFormsResponse>
 
     @POST("api/shelter/forms/details")
-    suspend fun getShelterDetailsForm(@Body resuestId: Long): Response<ShelterFormDetailsResponse>
+    suspend fun getShelterDetailsForm(@Body requestId: Long): Response<ShelterFormDetailsResponse>
+
+    @POST("api/shelter/forms/update")
+    suspend fun updateRequestStatus(
+        @Body shelterUpdateStatusRequest: ShelterUpdateStatusRequest
+    ): Response<Unit>
 
 }
