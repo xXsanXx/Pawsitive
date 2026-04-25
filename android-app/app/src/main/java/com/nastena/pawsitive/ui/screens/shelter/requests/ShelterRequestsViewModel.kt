@@ -55,7 +55,8 @@ class ShelterRequestsViewModel(
                             userName = form.userName,
                             photoUrls = form.animalPhotos.map { url ->
                                 _filesRepository.getAbsoluteFileUrl(url)
-                            }
+                            },
+                            status = form.status
                         )
                     }
                 }

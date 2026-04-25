@@ -184,4 +184,14 @@
     <string name="shelter_details_form">Детали заявки</string>
     <string name="shelter_details_form_approved_button">Одобрить</string>
     <string name="shelter_details_form_rejected_button">Отклонить</string>
+
+    <string name="shelter_details_form_submit">Подтверждение</string>
+    <string name="shelter_details_form_question_approved">Вы точно хотите одобрить заявку?</string>
+    <string name="shelter_details_form_question_rejected">Вы точно хотите отклонить заявку?</string>
+
+
+    <string name="label_fio">ФИО: %1$s</string>
+    <string name="label_phone">Телефон: %1$s</string>
+    <string name="label_profession">Профессия: %1$s</string>
+
 </resources>

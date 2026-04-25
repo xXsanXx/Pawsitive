@@ -17,5 +17,9 @@ object ShelterDetailsRequestsState {
 
     )
 
+    data class ConfirmDialogState(
+        val status: AdoptionStatus
+    )
+
 
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.ui.common.Utils
 
 @Composable
@@ -35,6 +37,7 @@ fun ShelterDetailsRequestsView(
     viewModel: ShelterDetailsRequestsViewModel
 ) {
     val formState by viewModel.formState.collectAsState()
+    val dialogState by viewModel.confirmDialogState.collectAsState()
 
 
     Scaffold(
@@ -84,8 +87,10 @@ fun ShelterDetailsRequestsView(
                     Text(text = formState.animalName)
 
 
-                    Text(text = formState.userName)
+                    Text(
+                        text = stringResource(R.string.label_fio, formState.userName)
 
+                    )
 
                     Text(
                         text = stringResource(
@@ -94,9 +99,14 @@ fun ShelterDetailsRequestsView(
                         )
                     )
 
-                    Text(text = formState.phone)
+                    Text(
+                        text = stringResource(R.string.label_phone, formState.phone)
+                    )
 
-                    Text(text = formState.profession)
+                    Text(
+                        text = stringResource(R.string.label_profession, formState.profession)
+                    )
+
 
 
 
@@ -126,6 +136,47 @@ fun ShelterDetailsRequestsView(
                 }
             }
         }
+
+        dialogState?.let { state ->
+
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.onConfirmDialogResult(false)
+                },
+                title = {
+                    Text(text = stringResource(R.string.shelter_details_form_submit))
+                },
+                text = {
+                    Text(
+                        text = when (state.status) {
+                            AdoptionStatus.APPROVED -> stringResource(R.string.shelter_details_form_question_approved)
+                            AdoptionStatus.REJECTED -> stringResource(R.string.shelter_details_form_question_rejected)
+                            else -> ""
+                        }
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.onConfirmDialogResult(false)
+                        }
+                    ) {
+                        Text("Нет")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            viewModel.onConfirmDialogResult(true)
+                        }
+                    ) {
+                        Text("Да")
+                    }
+                }
+            )
+        }
+
+
     }
 
 

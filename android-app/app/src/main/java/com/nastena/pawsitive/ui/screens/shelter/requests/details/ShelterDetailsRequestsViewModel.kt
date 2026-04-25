@@ -4,6 +4,7 @@ import android.util.Log
 import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
@@ -35,6 +36,9 @@ class ShelterDetailsRequestsViewModel(
     )
 
     val formState: StateFlow<ShelterDetailsRequestsState.Form> = _formState.asStateFlow()
+    private val _confirmDialogState =
+        MutableStateFlow<ShelterDetailsRequestsState.ConfirmDialogState?>(null)
+    val confirmDialogState = _confirmDialogState.asStateFlow()
 
 
     private var _requestId: Long = 0
@@ -49,7 +53,7 @@ class ShelterDetailsRequestsViewModel(
         launchSave(
             operation = {
                 Log.d("Details form", "Loading details form")
-                _shelterRepository.getShelterFormDetails(resuestId = detailsRoute.requestId)
+                _shelterRepository.getShelterFormDetails(requestId = detailsRoute.requestId)
             },
 
             onSuccess = { response ->
@@ -73,13 +77,27 @@ class ShelterDetailsRequestsViewModel(
     fun onViewEvent(event: ShelterDetailsRequestsEvents) {
         when (event) {
             ShelterDetailsRequestsEvents.ApprovedClicked -> {
-                updateStatus(AdoptionStatus.APPROVED)
+                _confirmDialogState.value =
+                    ShelterDetailsRequestsState.ConfirmDialogState(AdoptionStatus.APPROVED)
+
             }
 
             ShelterDetailsRequestsEvents.RejectedClicked -> {
-                updateStatus(AdoptionStatus.REJECTED)
+                _confirmDialogState.value =
+                    ShelterDetailsRequestsState.ConfirmDialogState(AdoptionStatus.REJECTED)
+
             }
         }
+    }
+
+    fun onConfirmDialogResult(confirmed: Boolean) {
+        val state = _confirmDialogState.value ?: return
+
+        if (confirmed) {
+            updateStatus(state.status)
+        }
+
+        _confirmDialogState.value = null
     }
 
 
@@ -95,6 +113,9 @@ class ShelterDetailsRequestsViewModel(
                 _formState.update {
                     it.copy(status = status)
                 }
+                mainViewModel.navigate(
+                    To(NavigationRoute.ShelterRequests)
+                )
             }
         )
     }

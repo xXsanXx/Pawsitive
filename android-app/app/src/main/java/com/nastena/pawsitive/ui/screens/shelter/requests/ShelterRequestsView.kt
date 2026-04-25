@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.dto.AdoptionStatus
 
 @Composable
 fun ShelterRequestsView(
@@ -93,6 +94,15 @@ fun ShelterRequestsView(
                         Text(
                             text = formState.userName,
                             style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Text(
+                            text = when (formState.status) {
+                                AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
+                                AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
+                                AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
+                                else -> "Нет"
+                            }
                         )
                     }
 

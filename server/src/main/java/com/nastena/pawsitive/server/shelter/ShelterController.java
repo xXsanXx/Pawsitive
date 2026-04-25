@@ -119,6 +119,7 @@ public class ShelterController {
                         request.getAnimal().getId(),
                         request.getAnimal().getName(),
                         request.getAnimal().getAnimalPhotos(),
+                        request.getStatus(),
                         request.getUser().getId(),
                         request.getUser().getName()
                 ))
@@ -130,11 +131,9 @@ public class ShelterController {
     }
 
     @PostMapping("/forms/details")
-    public ResponseEntity<?> getShelterFormDetails(@RequestBody Long id, Authentication authentication) {
-        Account account = accountService.getAccountOrThrow(authentication.getName());
-        Shelter shelter = shelterService.getShelterOrThrow(id);
+    public ResponseEntity<?> getShelterFormDetails(@RequestBody Long requestId) {
 
-        AdoptionRequest request = adoptionRequestService.getRequestOrThrow(id);
+        AdoptionRequest request = adoptionRequestService.getRequestOrThrow(requestId);
 
         User user = request.getUser();
 
@@ -151,7 +150,6 @@ public class ShelterController {
 
         return ResponseEntity.ok(response);
     }
-
     @PostMapping("/forms/update")
     public ResponseEntity<?> updateStatus(@RequestBody ShelterUpdateStatusRequest shelterUpdateStatusRequest) {
         adoptionRequestService.updateStatus(

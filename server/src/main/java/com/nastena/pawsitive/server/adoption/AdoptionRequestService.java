@@ -2,8 +2,6 @@ package com.nastena.pawsitive.server.adoption;
 
 import com.nastena.pawsitive.dto.AdoptionStatus;
 import com.nastena.pawsitive.dto.ErrorCode;
-import com.nastena.pawsitive.dto.ShelterFormResponse;
-import com.nastena.pawsitive.dto.ShelterFormsResponse;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalService;
 import com.nastena.pawsitive.server.exceptions.ServerRuntimeException;
