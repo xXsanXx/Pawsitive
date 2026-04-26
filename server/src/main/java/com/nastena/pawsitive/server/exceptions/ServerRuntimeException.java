@@ -6,6 +6,7 @@ public class ServerRuntimeException extends RuntimeException {
     public final ErrorCode errorCode;
 
     public ServerRuntimeException(ErrorCode errorCode) {
+        super("");
         this.errorCode = errorCode;
     }
 

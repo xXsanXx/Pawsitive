@@ -23,38 +23,38 @@ public class User {
 
     private Long birthDate;
 
-    @NotNull
-    private String profession;
+    @Column(nullable = false)
+    private String profession = "";
 
-    @NotNull
-    private String currentPets;
+    @Column(nullable = false)
+    private String currentPets = "";
 
-    @NotNull
-    private String previousPets;
+    @Column(nullable = false)
+    private String previousPets = "";
 
-    @NotNull
-    private String feedingExperience;
+    @Column(nullable = false)
+    private String feedingExperience = "";
 
-    @NotNull
-    private String vaccination;
+    @Column(nullable = false)
+    private String vaccination = "";
 
-    @NotNull
-    private String reason;
+    @Column(nullable = false)
+    private String reason = "";
 
-    @NotNull
-    private String petCareWhenAway;
+    @Column(nullable = false)
+    private String petCareWhenAway = "";
 
-    @NotNull
-    private String problemCharacter;
+    @Column(nullable = false)
+    private String problemCharacter = "";
 
-    @NotNull
-    private String healthIssues;
+    @Column(nullable = false)
+    private String healthIssues = "";
 
-    @NotNull
-    private String additionalInfo;
+    @Column(nullable = false)
+    private String additionalInfo = "";
 
-    @NotNull
-    private String phone;
+    @Column(nullable = false)
+    private String phone = "";
 
     public User() {}
 
