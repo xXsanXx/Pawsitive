@@ -31,6 +31,15 @@ class ShelterDetailsRequestsViewModel(
             userName = "",
             phone = "",
             profession = "",
+            currentPets = "",
+            previousPets = "",
+            feedingExperience = "",
+            vaccination = "",
+            reason = "",
+            petCareWhenAway = "",
+            problemCharacter = "",
+            healthIssues = "",
+            additionalInfo = "",
             status = AdoptionStatus.NONE
         )
     )
@@ -63,6 +72,15 @@ class ShelterDetailsRequestsViewModel(
                         userName = response.userName,
                         phone = response.phone,
                         profession = response.profession,
+                        currentPets = response.currentPets,
+                        previousPets = response.previousPets,
+                        feedingExperience = response.feedingExperience,
+                        vaccination = response.vaccination,
+                        reason = response.reason,
+                        petCareWhenAway = response.petCareWhenAway,
+                        problemCharacter = response.problemCharacter,
+                        healthIssues = response.healthIssues,
+                        additionalInfo = response.additionalInfo,
                         birthDate = response.birthDate,
                         photoUrls = response.animalPhotos.map { url ->
                             _filesRepository.getAbsoluteFileUrl(url)

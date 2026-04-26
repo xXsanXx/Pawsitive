@@ -13,6 +13,16 @@ object ShelterDetailsRequestsState {
         val phone: String,
         val profession: String,
 
+        val currentPets: String,
+        val previousPets: String,
+        val feedingExperience: String,
+        val vaccination: String,
+        val reason: String,
+        val petCareWhenAway: String,
+        val problemCharacter: String,
+        val healthIssues: String,
+        val additionalInfo: String,
+
         val status: AdoptionStatus
 
     )

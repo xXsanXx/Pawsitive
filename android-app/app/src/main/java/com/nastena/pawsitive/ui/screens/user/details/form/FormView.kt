@@ -47,6 +47,17 @@ fun FormView(
     val fullNameState: FormState.FullName by viewModel.fullNameState.collectAsState()
     val birthDateState: FormState.BirthDate by viewModel.birthDateState.collectAsState()
     val professionState: FormState.Profession by viewModel.professionState.collectAsState()
+
+    val currentPetsState: FormState.CurrentPets by viewModel.currentPetsState.collectAsState()
+    val previousPetsState: FormState.PreviousPets by viewModel.previousPetsState.collectAsState()
+    val feedingExperienceState: FormState.FeedingExperience by viewModel.feedingExperienceState.collectAsState()
+    val vaccinationState: FormState.Vaccination by viewModel.vaccinationState.collectAsState()
+    val reasonState: FormState.Reason by viewModel.reasonState.collectAsState()
+    val petCareWhenAwayState: FormState.PetCareWhenAway by viewModel.petCareWhenAwayState.collectAsState()
+    val problemCharacterState: FormState.ProblemCharacter by viewModel.problemCharacterState.collectAsState()
+    val healthIssuesState: FormState.HealthIssues by viewModel.healthIssuesState.collectAsState()
+    val additionalInfoState: FormState.AdditionalInfo by viewModel.additionalInfoState.collectAsState()
+
     val phoneState: FormState.Phone by viewModel.phoneState.collectAsState()
 
     FormView(
@@ -55,8 +66,18 @@ fun FormView(
         fullNameState = fullNameState,
         birthDateState = birthDateState,
         professionState = professionState,
+
+        currentPetsState = currentPetsState,
+        previousPetsState = previousPetsState,
+        feedingExperienceState = feedingExperienceState,
+        vaccinationState = vaccinationState,
+        reasonState = reasonState,
+        petCareWhenAwayState = petCareWhenAwayState,
+        problemCharacterState = problemCharacterState,
+        healthIssuesState = healthIssuesState,
+        additionalInfoState = additionalInfoState,
         phoneState = phoneState,
-        onViewEvent = { event -> viewModel.onViewEvent(event) }
+        onViewEvent = { event: FormEvents -> viewModel.onViewEvent(event) }
     )
 }
 
@@ -125,6 +146,17 @@ private fun FormView(
     fullNameState: FormState.FullName,
     birthDateState: FormState.BirthDate,
     professionState: FormState.Profession,
+
+    currentPetsState: FormState.CurrentPets,
+    previousPetsState: FormState.PreviousPets,
+    feedingExperienceState: FormState.FeedingExperience,
+    vaccinationState: FormState.Vaccination,
+    reasonState: FormState.Reason,
+    petCareWhenAwayState: FormState.PetCareWhenAway,
+    problemCharacterState: FormState.ProblemCharacter,
+    healthIssuesState: FormState.HealthIssues,
+    additionalInfoState: FormState.AdditionalInfo,
+
     phoneState: FormState.Phone,
     onViewEvent: (FormEvents) -> Unit
 ) {
@@ -161,8 +193,8 @@ private fun FormView(
             ) {
                 OutlinedTextField(
                     value = when (fullNameState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.full_name_is_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.full_name_invalid)
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
                         ValidationState.Valid -> ""
                     },
                     onValueChange = {},
@@ -204,8 +236,8 @@ private fun FormView(
             ) {
                 OutlinedTextField(
                     value = when (professionState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.profession_is_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.profession_invalid)
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
                         ValidationState.Valid -> ""
                     },
                     onValueChange = {},
@@ -230,13 +262,301 @@ private fun FormView(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // ------------- Current pets --------------------
+            AnimatedVisibility(
+                visible = currentPetsState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (currentPetsState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = currentPetsState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.CurrentPets.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_current_pets)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = currentPetsState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Previous pets --------------------
+            AnimatedVisibility(
+                visible = previousPetsState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (previousPetsState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = previousPetsState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.PreviousPets.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_previous_pets)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = previousPetsState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Feeding experience --------------------
+            AnimatedVisibility(
+                visible = feedingExperienceState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (feedingExperienceState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = feedingExperienceState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.FeedingExperience.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_feeding_experience)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = feedingExperienceState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Vaccination --------------------
+            AnimatedVisibility(
+                visible = vaccinationState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (vaccinationState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = vaccinationState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.Vaccination.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_vaccination)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = vaccinationState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Reason --------------------
+            AnimatedVisibility(
+                visible = reasonState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (reasonState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = reasonState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.Reason.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_reason)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = reasonState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Pet Care When Away --------------------
+            AnimatedVisibility(
+                visible = petCareWhenAwayState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (petCareWhenAwayState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = petCareWhenAwayState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.PetCareWhenAway.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_pet_care_when_away)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = petCareWhenAwayState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Problem Character --------------------
+            AnimatedVisibility(
+                visible = problemCharacterState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (problemCharacterState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = problemCharacterState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.ProblemCharacter.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_problem_character)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = problemCharacterState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Health Issues --------------------
+            AnimatedVisibility(
+                visible = healthIssuesState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (healthIssuesState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = healthIssuesState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.HealthIssues.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_health_issues)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = healthIssuesState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ------------- Additional info --------------------
+            AnimatedVisibility(
+                visible = additionalInfoState.validation != ValidationState.Valid
+            ) {
+                OutlinedTextField(
+                    value = when (additionalInfoState.validation) {
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
+                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
+                        ValidationState.Valid -> ""
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = true
+
+                )
+            }
+
+            OutlinedTextField(
+                value = additionalInfoState.text,
+                onValueChange = { newText ->
+                    onViewEvent(FormEvents.AdditionalInfo.TextUpdated(newText))
+
+                },
+                label = { Text(stringResource(R.string.adoption_form_additional_info)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                isError = additionalInfoState.validation != ValidationState.Valid
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             // ------------- Phone --------------------
             AnimatedVisibility(
                 visible = phoneState.validation != ValidationState.Valid
             ) {
                 OutlinedTextField(
                     value = when (phoneState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.phone_is_empty)
+                        ValidationState.Empty -> stringResource(R.string.not_empty)
                         ValidationState.InvalidFormat -> stringResource(R.string.phone_invalid)
                         ValidationState.Valid -> ""
                     },

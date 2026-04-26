@@ -145,6 +145,15 @@ public class ShelterController {
                 user.getName(),
                 user.getBirthDate(),
                 user.getProfession(),
+                user.getCurrentPets(),
+                user.getPreviousPets(),
+                user.getFeedingExperience(),
+                user.getVaccination(),
+                user.getReason(),
+                user.getPetCareWhenAway(),
+                user.getProblemCharacter(),
+                user.getHealthIssues(),
+                user.getAdditionalInfo(),
                 user.getPhone()
         );
 

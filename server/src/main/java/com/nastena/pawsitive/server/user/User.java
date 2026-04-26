@@ -27,6 +27,33 @@ public class User {
     private String profession;
 
     @NotNull
+    private String currentPets;
+
+    @NotNull
+    private String previousPets;
+
+    @NotNull
+    private String feedingExperience;
+
+    @NotNull
+    private String vaccination;
+
+    @NotNull
+    private String reason;
+
+    @NotNull
+    private String petCareWhenAway;
+
+    @NotNull
+    private String problemCharacter;
+
+    @NotNull
+    private String healthIssues;
+
+    @NotNull
+    private String additionalInfo;
+
+    @NotNull
     private String phone;
 
     public User() {}

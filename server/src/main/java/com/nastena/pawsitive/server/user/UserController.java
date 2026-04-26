@@ -47,6 +47,7 @@ public class UserController {
         log.info("[user form] Email: {}", authentication.getName());
         log.info("[user form] Name: {}", request.getName());
         log.info("[user form] Profession: {}", request.getProfession());
+        log.info("[user form] Reason: {}", request.getReason());
         log.info("[user form] Phone: {}", request.getPhone());
 
         Account account = accountService.getAccountOrThrow(authentication.getName());
@@ -78,6 +79,15 @@ public class UserController {
                 user.getName(),
                 user.getBirthDate(),
                 user.getProfession(),
+                user.getCurrentPets(),
+                user.getPreviousPets(),
+                user.getFeedingExperience(),
+                user.getVaccination(),
+                user.getReason(),
+                user.getPetCareWhenAway(),
+                user.getProblemCharacter(),
+                user.getHealthIssues(),
+                user.getAdditionalInfo(),
                 user.getPhone()
         );
 

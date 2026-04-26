@@ -51,6 +51,15 @@ class UserRepository(
         name: String,
         birthDate: Long,
         profession: String,
+        currentPets: String,
+        previousPets: String,
+        feedingExperience: String,
+        vaccination: String,
+        reason: String,
+        petCareWhenAway: String,
+        problemCharacter: String,
+        healthIssues: String,
+        additionalInfo: String,
         phone: String
     ): Result<Unit> = runSimpleRequest {
         _api.updateUserForm(
@@ -58,6 +67,15 @@ class UserRepository(
                 name,
                 birthDate,
                 profession,
+                currentPets,
+                previousPets,
+                feedingExperience,
+                vaccination,
+                reason,
+                petCareWhenAway,
+                problemCharacter,
+                healthIssues,
+                additionalInfo,
                 phone
             )
         )

@@ -24,6 +24,51 @@ object FormState {
         val validation: ValidationState
     )
 
+    data class CurrentPets(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class PreviousPets(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class FeedingExperience(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class Vaccination(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class Reason(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class PetCareWhenAway(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class ProblemCharacter(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class HealthIssues(
+        val text: String,
+        val validation: ValidationState
+    )
+
+    data class AdditionalInfo(
+        val text: String,
+        val validation: ValidationState
+    )
+
     data class Phone(
         val text: String,
         val validation: ValidationState

@@ -48,6 +48,17 @@ public class UserService {
         user.setPhone(phone);
         user.setProfession(userFormUpdateRequest.getProfession().trim());
 
+        user.setCurrentPets(userFormUpdateRequest.getCurrentPets().trim());
+        user.setPreviousPets(userFormUpdateRequest.getPreviousPets().trim());
+        user.setFeedingExperience(userFormUpdateRequest.getFeedingExperience().trim());
+        user.setVaccination(userFormUpdateRequest.getVaccination().trim());
+        user.setReason(userFormUpdateRequest.getReason().trim());
+        user.setPetCareWhenAway(userFormUpdateRequest.getPetCareWhenAway().trim());
+        user.setProblemCharacter(userFormUpdateRequest.getProblemCharacter().trim());
+        user.setHealthIssues(userFormUpdateRequest.getHealthIssues().trim());
+        user.setAdditionalInfo(userFormUpdateRequest.getAdditionalInfo().trim());
+
+
         userRepository.save(user);
     }
 

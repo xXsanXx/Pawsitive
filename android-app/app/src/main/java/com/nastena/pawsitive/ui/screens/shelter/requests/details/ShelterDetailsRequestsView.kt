@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,30 +85,175 @@ fun ShelterDetailsRequestsView(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    Text(text = formState.animalName)
+                    // ------------- Animal name --------------------
 
-
-                    Text(
-                        text = stringResource(R.string.label_fio, formState.userName)
-
+                    OutlinedTextField(
+                        value = formState.animalName,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_animal_name)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
                     )
 
-                    Text(
-                        text = stringResource(
-                            R.string.animal_birth_date,
-                            Utils.formatDate(formState.birthDate),
-                        )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+
+                    // ------------- User name --------------------
+
+                    OutlinedTextField(
+                        value = formState.userName,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.user_profile_name)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
                     )
 
-                    Text(
-                        text = stringResource(R.string.label_phone, formState.phone)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Birth date --------------------
+
+                    OutlinedTextField(
+                        value = Utils.formatDate(formState.birthDate),
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.animal_birth_date)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    Text(
-                        text = stringResource(R.string.label_profession, formState.profession)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Phone --------------------
+
+                    OutlinedTextField(
+                        value = formState.phone,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.phone_label)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
                     )
 
+                    Spacer(modifier = Modifier.height(12.dp))
 
+
+                    // ------------- Profession --------------------
+
+                    OutlinedTextField(
+                        value = formState.profession,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.profession_label)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Current pets --------------------
+
+                    OutlinedTextField(
+                        value = formState.currentPets,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_current_pets)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Previous pets --------------------
+
+                    OutlinedTextField(
+                        value = formState.previousPets,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_previous_pets)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Feeding experience --------------------
+
+                    OutlinedTextField(
+                        value = formState.feedingExperience,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_feeding_experience)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Vaccination --------------------
+
+                    OutlinedTextField(
+                        value = formState.vaccination,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_vaccination)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Reason --------------------
+
+                    OutlinedTextField(
+                        value = formState.reason,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_reason)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Pet care  --------------------
+
+                    OutlinedTextField(
+                        value = formState.petCareWhenAway,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_pet_care_when_away)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Problem character --------------------
+
+                    OutlinedTextField(
+                        value = formState.problemCharacter,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_problem_character)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Health issues --------------------
+
+                    OutlinedTextField(
+                        value = formState.healthIssues,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_health_issues)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ------------- Additional info --------------------
+
+                    OutlinedTextField(
+                        value = formState.profession,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.shelter_details_form_additional_info)) },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
 
                     Button(

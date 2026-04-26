@@ -16,7 +16,6 @@
     <string name="login_go_to_register">Нет аккаунта? Зарегистрироваться</string>
     <string name="login_submit">Войти</string>
 
-
     <!-- Register -->
     <string name="register_title">Регистрация</string>
 
@@ -29,9 +28,7 @@
     <string name="register_email_label">Электронная почта</string>
 
     <string name="register_password_is_empty">Поле не должно быть пустым</string>
-    <string name="register_password_invalid">Пароль должен содержать минимум 12 символов.\n
-        Должная присутствовать минимум одна заглавная буква\n
-        Должная присутствовать минимум одна цифра</string>
+    <string name="register_password_invalid">Пароль должен содержать не менее 12 символов, заглавную букву и цифру.</string>
     <string name="register_password_label">Пароль</string>
 
 
@@ -94,7 +91,7 @@
 
     <string name="add_animal_name_invalid">Имя животного от 2 до 50 букв</string>
     <string name="add_animal_name_is_empty">Поле не должно быть пустым</string>
-    <string name="add_animal_name_label">Имя животного</string>
+    <string name="add_animal_name_label">Кличка животного</string>
 
     <string name="add_animal_choose_type_invalid">Выбор обязателен</string>
     <string name="add_animal_choose_type_label">Выберите тип животного</string>
@@ -152,20 +149,48 @@
     <!-- Form -->
     <string name="form_title">Анкета</string>
 
-    <string name="full_name_invalid">Обязательное поле</string>
-    <string name="full_name_is_empty">Поле не должно быть пустым</string>
+    <string name="required_field">Обязательное поле</string>
+    <string name="not_empty">Поле не должно быть пустым</string>
+
+
     <string name="full_name_label">Ваши Ф.И.О.</string>
 
-    <string name="profession_invalid">Обязательное поле</string>
-    <string name="profession_is_empty">Поле не должно быть пустым</string>
     <string name="profession_label">Род занятий, профессия.</string>
 
     <string name="phone_invalid">Неверный формат</string>
-    <string name="phone_is_empty">Поле не должно быть пустым</string>
     <string name="phone_label">Номер телефона для связи</string>
 
+    <string name="adoption_form_current_pets">Какие домашние животные есть у вас сейчас? (вид, возраст, пол, характер, заболевания)</string>
+
+    <string name="adoption_form_previous_pets">Какие домашние животные были у вас в прошлом, где они сейчас?\n
+        Расскажите об уходе за ними, о болезнях.\n
+        Если умерли, то в каком возрасте, и какова причина?</string>
+
+    <string name="adoption_form_feeding_experience">Расскажите про ваш опыт кормления домашних питомцев.\n
+        Натуральная пища или специализированный корм (какие именно).\n
+        Какие витамины/добавки/вкусняшки получают (получали) ваши питомцы?</string>
+
+    <string name="adoption_form_vaccination">Расскажите про ваше отношение к прививкам.\n
+        Прививали ли вы своих животных?</string>
+
+
+    <string name="adoption_form_reason">Для чего вы хотите взять животное?\n
+        Для себя или как компаньона для других животных?</string>
+
+    <string name="adoption_form_pet_care_when_away">Если вы уедете на несколько дней (например, в отпуск/командировку),\n
+        кто будет заботиться о животном?</string>
+
+    <string name="adoption_form_problem_character">Вы готовы взять животное с проблемным характером?\n
+        Что для вас является проблемным поведением?</string>
+
+    <string name="adoption_form_health_issues">Вы готовы взять животное с проблемами по здоровью?\n
+        Что вы считаете проблемным здоровьем?</string>
+
+    <string name="adoption_form_additional_info">Что вы ещё хотели бы нам сообщить? :)</string>
+
+
     <string name="form_send_button">Отправить заявку</string>
-    <string name="form_sent">Заявка отправлена..........</string>
+    <string name="form_sent">Заявка отправлена. Следите за изменением в профиле</string>
 
     <string name="user_forms_title">Мои заявки</string>
 
@@ -178,20 +203,33 @@
     <string name="adoption_status_approved">Заявка одобрена</string>
     <string name="adoption_status_rejected">Заявка отклонена</string>
 
-
     <string name="shelter_forms_title">Заявки на животных</string>
-
-    <string name="shelter_details_form">Детали заявки</string>
-    <string name="shelter_details_form_approved_button">Одобрить</string>
-    <string name="shelter_details_form_rejected_button">Отклонить</string>
 
     <string name="shelter_details_form_submit">Подтверждение</string>
     <string name="shelter_details_form_question_approved">Вы точно хотите одобрить заявку?</string>
     <string name="shelter_details_form_question_rejected">Вы точно хотите отклонить заявку?</string>
 
 
-    <string name="label_fio">ФИО: %1$s</string>
-    <string name="label_phone">Телефон: %1$s</string>
-    <string name="label_profession">Профессия: %1$s</string>
+    <!-- Details Form -->
+
+    <string name="shelter_details_form">Детали заявки</string>
+    <string name="shelter_details_form_approved_button">Одобрить</string>
+    <string name="shelter_details_form_rejected_button">Отклонить</string>
+
+    <string name="shelter_details_form_animal_name">Кличка животного</string>
+    <string name="shelter_details_form_user_name">Ф.И.О пользователя</string>
+    <string name="shelter_details_form_user_birth_date">Дата рождения</string>
+    <string name="shelter_details_form_user_phone">Номер телефона</string>
+    <string name="shelter_details_form_user_profession">Род деятельности, профессия</string>
+    <string name="shelter_details_form_current_pets">Какие домашние животные есть сейчас</string>
+    <string name="shelter_details_form_previous_pets">Какие домашние животные были раньше и где они сейчас</string>
+    <string name="shelter_details_form_feeding_experience">Опыт кормления питомцев</string>
+    <string name="shelter_details_form_vaccination">Отношение к прививкам и вакцинации</string>
+    <string name="shelter_details_form_reason">Зачем пользователь хочет взять животное</string>
+    <string name="shelter_details_form_pet_care_when_away">Кто будет заботиться о питомце во время отсутствия</string>
+    <string name="shelter_details_form_problem_character">Готовность к животному с проблемным поведением</string>
+    <string name="shelter_details_form_health_issues">Готовность к животному с проблемами здоровья</string>
+    <string name="shelter_details_form_additional_info">Дополнительная информация от пользователя</string>
+
 
 </resources>
