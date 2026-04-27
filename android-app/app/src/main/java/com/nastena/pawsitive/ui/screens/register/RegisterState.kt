@@ -9,6 +9,7 @@ object RegisterState {
         val text: String,
         val validation: ValidationState
     )
+
     data class Email(
         val text: String,
         val validation: ValidationState
@@ -16,12 +17,14 @@ object RegisterState {
 
     data class Password(
         val text: String,
-        val validation: ValidationState
+        val validation: ValidationState,
+        val isVisible: Boolean
     )
 
     data class ConfirmPassword(
         val text: String,
-        val isValid: Boolean
+        val isValid: Boolean,
+        val isVisible: Boolean
     )
 
     data class AccountRoleMenu(

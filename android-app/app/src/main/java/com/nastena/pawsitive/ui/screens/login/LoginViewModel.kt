@@ -1,12 +1,12 @@
 package com.nastena.pawsitive.ui.screens.login
 
-import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation
-import com.nastena.pawsitive.ui.common.navigation.Navigation.*
-import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.*
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.common.validation.ValidationState
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,42 +22,52 @@ class LoginViewModel(
 
     override val expectedRouteType: KClass<*> = NavigationRoute.Login::class
 
-    private val _emailFieldState = MutableStateFlow(
-        LoginTextFieldState.Email("", isValid = true)
+    private val _emailState = MutableStateFlow(
+        LoginState.Email(
+            text = "", validation = ValidationState.Valid
+        )
     )
-    internal val emailFieldState: StateFlow<LoginTextFieldState.Email> =
-        _emailFieldState.asStateFlow()
+    val emailState: StateFlow<LoginState.Email> = _emailState.asStateFlow()
 
-    private val _passwordFieldState = MutableStateFlow(
-        LoginTextFieldState.Password("", isValid = true, isVisible = false)
+    private val _passwordState = MutableStateFlow(
+        LoginState.Password(
+            "",
+            validation = ValidationState.Valid,
+            isVisible = true
+        )
     )
-    internal val passwordFieldState: StateFlow<LoginTextFieldState.Password> =
-        _passwordFieldState.asStateFlow()
+    val passwordState: StateFlow<LoginState.Password> = _passwordState.asStateFlow()
 
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
         mainViewModel.hideNavigationBar()
 
-        _emailFieldState.update { it.copy(text = "", isValid = true) }
-        _passwordFieldState.update { it.copy(text = "", isValid = true, isVisible = false) }
+        _emailState.update { it.copy(text = "", validation = ValidationState.Valid) }
+        _passwordState.update {
+            it.copy(
+                text = "",
+                validation = ValidationState.Valid,
+                isVisible = false
+            )
+        }
     }
 
-    internal fun onViewEvent(event: LoginViewEvents) {
+    internal fun onViewEvent(event: LoginEvents) {
         when (event) {
-            is LoginViewEvents.Email.TextUpdated -> {
-                updateTextField(event.newText, _emailFieldState)
+            is LoginEvents.Email.TextUpdated -> {
+                _emailState.update { currentEmailState -> currentEmailState.copy(text = event.newText) }
             }
 
-            is LoginViewEvents.Password.TextUpdate -> {
-                updateTextField(event.newText, _passwordFieldState)
+            is LoginEvents.Password.TextUpdated -> {
+                _passwordState.update { it.copy(text = event.newText) }
             }
 
-            LoginViewEvents.Password.EyeClicked -> {
-                _passwordFieldState.update { it.copy(isVisible = !it.isVisible) }
+            LoginEvents.Password.EyeClicked -> {
+                _passwordState.update { it.copy(isVisible = !it.isVisible) }
             }
 
-            LoginViewEvents.GoToRegistrationClicked -> {
+            LoginEvents.GoToRegistrationClicked -> {
                 mainViewModel.navigate(
                     To(
                         NavigationRoute.Register,
@@ -66,9 +76,11 @@ class LoginViewModel(
                 )
             }
 
-            LoginViewEvents.LoginClicked -> {
+            LoginEvents.LoginClicked -> {
                 login()
             }
+
+
         }
     }
 
@@ -84,28 +96,45 @@ class LoginViewModel(
     }
 
     private fun login() {
-        val trimmedEmail = _emailFieldState.value.text.trim()
-        val isValidEmail = !trimmedEmail.isBlank()
-        _emailFieldState.update { it.copy(isValid = isValidEmail) }
 
-        val trimmedPassword = _passwordFieldState.value.text.trim()
-        val isValidPassword = !trimmedPassword.isBlank()
-        _passwordFieldState.update { it.copy(isValid = isValidPassword) }
+        val trimmedEmail = _emailState.value.text.trim()
+        val trimmedPassword = _passwordState.value.text.trim()
 
-        if (!isValidEmail || !isValidPassword) {
-            return;
+        val isEmailValid = android.util.Patterns.EMAIL_ADDRESS
+            .matcher(trimmedEmail)
+            .matches()
+
+        val isPasswordValid = trimmedPassword.length >= 12
+
+        _emailState.update {
+            it.copy(
+                validation = if (isEmailValid)
+                    ValidationState.Valid
+                else
+                    ValidationState.InvalidFormat
+            )
         }
+
+        _passwordState.update {
+            it.copy(
+                validation = if (isPasswordValid)
+                    ValidationState.Valid
+                else
+                    ValidationState.InvalidFormat
+            )
+        }
+
+        if (!isEmailValid || !isPasswordValid) return
 
         launchSave(
             operation = {
                 _accountRepository.login(trimmedEmail, trimmedPassword)
             },
-            onSuccess = { role: AccountRole ->
+            onSuccess = { role ->
                 mainViewModel.initializeNavigationBarSettings(
-                    NavigationBars.fromAccountRole(
-                        role
-                    )
+                    NavigationBars.fromAccountRole(role)
                 )
+
                 mainViewModel.navigate(
                     Navigation.To(
                         NavigationRoute.fromAccountRole(role),

@@ -21,8 +21,9 @@ class RegisterViewModel(
 ) : BaseScreenViewModel(mainViewModel) {
 
     override val expectedRouteType: KClass<*> = NavigationRoute.Register::class
+
     companion object {
-        private val NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$")
+        private val NAME_REGEX = Pattern.compile("^[А-Яа-я\\s]{2,500}$")
     }
 
     private val _nameState = MutableStateFlow(
@@ -41,12 +42,14 @@ class RegisterViewModel(
     private val _passwordState = MutableStateFlow(
         RegisterState.Password(
             "",
-            validation = ValidationState.Valid
+            validation = ValidationState.Valid,
+            isVisible = true
         )
     )
     val passwordState: StateFlow<RegisterState.Password> = _passwordState.asStateFlow()
 
-    private val _confirmPasswordState = MutableStateFlow(RegisterState.ConfirmPassword("", true))
+    private val _confirmPasswordState =
+        MutableStateFlow(RegisterState.ConfirmPassword("", true, isVisible = true))
     val confirmPasswordState: StateFlow<RegisterState.ConfirmPassword> =
         _confirmPasswordState.asStateFlow()
 
@@ -70,10 +73,11 @@ class RegisterViewModel(
         _passwordState.update {
             it.copy(
                 text = "",
-                validation = ValidationState.Valid
+                validation = ValidationState.Valid,
+                isVisible = false
             )
         }
-        _confirmPasswordState.update { it.copy(text = "", isValid = true) }
+        _confirmPasswordState.update { it.copy(text = "", isValid = true, isVisible = false) }
         _accountRoleMenuState.update {
             it.copy(
                 isExpended = false,
@@ -83,32 +87,32 @@ class RegisterViewModel(
         }
     }
 
-    fun onViewEvent(event: RegisterViewEvents) {
+    fun onViewEvent(event: RegisterEvents) {
         when (event) {
-            is RegisterViewEvents.Name.TextUpdated ->
+            is RegisterEvents.Name.TextUpdated ->
                 _nameState.update { it.copy(text = event.newText) }
 
-            is RegisterViewEvents.Email.TextUpdated -> {
+            is RegisterEvents.Email.TextUpdated -> {
                 _emailState.update { currentEmailState -> currentEmailState.copy(text = event.newText) }
             }
 
-            is RegisterViewEvents.Password.TextUpdated -> {
+            is RegisterEvents.Password.TextUpdated -> {
                 _passwordState.update { it.copy(text = event.newText) }
             }
 
-            is RegisterViewEvents.ConfirmPassword.TextUpdated -> {
+            is RegisterEvents.ConfirmPassword.TextUpdated -> {
                 _confirmPasswordState.update { it.copy(text = event.newText) }
             }
 
-            RegisterViewEvents.AccountRoleMenu.ClickedMenu -> {
+            RegisterEvents.AccountRoleMenu.ClickedMenu -> {
                 _accountRoleMenuState.update { it.copy(isExpended = !it.isExpended) }
             }
 
-            RegisterViewEvents.AccountRoleMenu.MenuDismissed -> {
+            RegisterEvents.AccountRoleMenu.MenuDismissed -> {
                 _accountRoleMenuState.update { it.copy(isExpended = false) }
             }
 
-            is RegisterViewEvents.AccountRoleMenu.ClickedSelection -> {
+            is RegisterEvents.AccountRoleMenu.ClickedSelection -> {
                 _accountRoleMenuState.update {
                     it.copy(
                         isExpended = false,
@@ -117,7 +121,7 @@ class RegisterViewModel(
                 }
             }
 
-            RegisterViewEvents.GoToLoginClicked -> {
+            RegisterEvents.GoToLoginClicked -> {
                 mainViewModel.navigate(
                     To(
                         NavigationRoute.Login,
@@ -126,11 +130,17 @@ class RegisterViewModel(
                 )
             }
 
-            RegisterViewEvents.RegisterClicked -> {
+            RegisterEvents.RegisterClicked -> {
                 register()
             }
 
+            RegisterEvents.Password.EyeClicked -> {
+                _passwordState.update { it.copy(isVisible = !it.isVisible) }
+            }
 
+            RegisterEvents.ConfirmPassword.EyeClicked -> {
+                _confirmPasswordState.update { it.copy(isVisible = !it.isVisible) }
+            }
         }
     }
 
@@ -141,7 +151,7 @@ class RegisterViewModel(
             _nameState.update { it.copy(validation = ValidationState.Empty) }
         } else if (
             trimmedName.length < 2 ||
-            trimmedName.length > 50 ||
+            trimmedName.length > 500 ||
             !NAME_REGEX.matcher(trimmedName).matches()
         ) {
             _nameState.update { it.copy(validation = ValidationState.InvalidFormat) }
@@ -184,7 +194,7 @@ class RegisterViewModel(
 
         _accountRoleMenuState.update { it.copy(isValid = it.selected != null) }
 
-        val isAllValid =_nameState.value.validation is ValidationState.Valid &&
+        val isAllValid = _nameState.value.validation is ValidationState.Valid &&
                 _emailState.value.validation is ValidationState.Valid &&
                 _passwordState.value.validation is ValidationState.Valid &&
                 _confirmPasswordState.value.isValid &&

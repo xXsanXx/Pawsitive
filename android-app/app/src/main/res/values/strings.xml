@@ -8,10 +8,12 @@
     <string name="login_title">Вход</string>
 
     <string name="login_email_label">Электронная почта</string>
+    <string name="login_email_invalid">Неправильная электронная почта</string>
 
     <string name="login_password_label">Пароль</string>
     <string name="login_password_show_description">Показать пароль</string>
     <string name="login_password_hide_description">Скрыть пароль</string>
+    <string name="login_password_invalid">Неправильный пароль</string>
 
     <string name="login_go_to_register">Нет аккаунта? Зарегистрироваться</string>
     <string name="login_submit">Войти</string>
@@ -19,7 +21,7 @@
     <!-- Register -->
     <string name="register_title">Регистрация</string>
 
-    <string name="register_name_invalid">Имя пользователя от 2 до 50 букв</string>
+    <string name="register_name_invalid">Имя пользователя не менее 2 букв русского языка</string>
     <string name="register_name_is_empty">Поле не должно быть пустым</string>
     <string name="register_name_label">Имя пользователя</string>
 
