@@ -1,7 +1,7 @@
 package com.nastena.pawsitive.ui.screens.login
 
+import android.util.Patterns
 import com.nastena.pawsitive.repository.AccountRepository
-import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
@@ -84,64 +84,59 @@ class LoginViewModel(
         }
     }
 
-    private inline fun <reified T : LoginTextFieldState> updateTextField(
-        newText: String,
-        textFieldState: MutableStateFlow<T>
-    ) {
-        var isValid = textFieldState.value.isValid
-        if (!newText.isBlank()) {
-            isValid = true
-        }
-        textFieldState.update { it.copy(text = newText, isValid = isValid) as T }
-    }
-
     private fun login() {
 
         val trimmedEmail = _emailState.value.text.trim()
-        val trimmedPassword = _passwordState.value.text.trim()
-
-        val isEmailValid = android.util.Patterns.EMAIL_ADDRESS
-            .matcher(trimmedEmail)
-            .matches()
-
-        val isPasswordValid = trimmedPassword.length >= 12
-
-        _emailState.update {
-            it.copy(
-                validation = if (isEmailValid)
-                    ValidationState.Valid
-                else
-                    ValidationState.InvalidFormat
-            )
-        }
-
-        _passwordState.update {
-            it.copy(
-                validation = if (isPasswordValid)
-                    ValidationState.Valid
-                else
-                    ValidationState.InvalidFormat
-            )
-        }
-
-        if (!isEmailValid || !isPasswordValid) return
-
-        launchSave(
-            operation = {
-                _accountRepository.login(trimmedEmail, trimmedPassword)
-            },
-            onSuccess = { role ->
-                mainViewModel.initializeNavigationBarSettings(
-                    NavigationBars.fromAccountRole(role)
-                )
-
-                mainViewModel.navigate(
-                    Navigation.To(
-                        NavigationRoute.fromAccountRole(role),
-                        Navigation.To.PopUpType.Route(NavigationRoute.Login::class)
-                    )
-                )
+        if (trimmedEmail.isBlank()) {
+            _emailState.update { it.copy(validation = ValidationState.Empty) }
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+            _emailState.update { it.copy(validation = ValidationState.InvalidFormat) }
+        } else {
+            _emailState.update {
+                it.copy(validation = ValidationState.Valid)
             }
-        )
+        }
+
+        val trimmedPassword = _passwordState.value.text.trim()
+        if (trimmedPassword.isBlank()) {
+            _passwordState.update { it.copy(validation = ValidationState.Empty) }
+        } else if (
+            trimmedPassword.length < 12 ||
+            !trimmedPassword.any { symbol -> symbol.isDigit() } ||
+            !trimmedPassword.any { symbol -> symbol.isUpperCase() }
+        ) {
+            _passwordState.update { it.copy(validation = ValidationState.InvalidFormat) }
+        } else {
+            _passwordState.update {
+                it.copy(validation = ValidationState.Valid)
+            }
+        }
+
+
+        val isAllValid = _emailState.value.validation is ValidationState.Valid &&
+                _passwordState.value.validation is ValidationState.Valid
+
+        if (isAllValid) {
+            launchSave(
+                operation = {
+                    _accountRepository.login(
+                        trimmedEmail,
+                        trimmedPassword,
+                    )
+                },
+                onSuccess = { role ->
+                    mainViewModel.initializeNavigationBarSettings(
+                        NavigationBars.fromAccountRole(role)
+                    )
+
+                    mainViewModel.navigate(
+                        To(
+                            NavigationRoute.fromAccountRole(role),
+                            Route(NavigationRoute.Login::class)
+                        )
+                    )
+                }
+            )
+        }
     }
 }

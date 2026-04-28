@@ -315,6 +315,10 @@ class ShelterAnimalViewModel(
         val birthDate = _birthDateState.value.date
         val isBirthDateValid = birthDate != null && birthDate < System.currentTimeMillis()
 
+        _birthDateState.update {
+            it.copy(isValid = isBirthDateValid)
+        }
+
         val isAllValid = _nameState.value.validation is ValidationState.Valid &&
                 _descriptionState.value.validation is ValidationState.Valid &&
                 _typeState.value.isValid && _breedState.value.isValid &&

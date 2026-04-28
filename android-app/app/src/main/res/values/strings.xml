@@ -4,6 +4,9 @@
     <string name="error_title">Упс.. Ошибка!</string>
     <string name="error_ok">Ок</string>
 
+    <string name="required_field">Обязательное поле</string>
+    <string name="not_empty">Поле не должно быть пустым</string>
+
     <!-- Login -->
     <string name="login_title">Вход</string>
 
@@ -26,10 +29,8 @@
     <string name="register_name_label">Имя пользователя</string>
 
     <string name="register_email_invalid">Неверная электронная почта</string>
-    <string name="register_email_is_empty">Поле не должно быть пустым</string>
     <string name="register_email_label">Электронная почта</string>
 
-    <string name="register_password_is_empty">Поле не должно быть пустым</string>
     <string name="register_password_invalid">Пароль должен содержать не менее 12 символов, заглавную букву и цифру.</string>
     <string name="register_password_label">Пароль</string>
 
@@ -127,7 +128,10 @@
     <string name="add_animal_cancel_clicked">Отмена</string>
 
 
-    <string name="add_animal_birth_date_invalid">Добавьте дату рождения</string>
+    <string name="add_animal_birth_date_label">Дата рождения</string>
+    <string name="add_animal_birth_date_choose">Выберите дату рождения</string>
+    <string name="add_animal_birth_date_error">Выберите корректную дату рождения</string>
+
 
     <string name="remove_animal_title">Удалить животное?</string>
     <string name="warning_remove_animal">Это действие нельзя отменить.</string>
@@ -150,9 +154,6 @@
 
     <!-- Form -->
     <string name="form_title">Анкета</string>
-
-    <string name="required_field">Обязательное поле</string>
-    <string name="not_empty">Поле не должно быть пустым</string>
 
 
     <string name="full_name_label">Ваши Ф.И.О.</string>

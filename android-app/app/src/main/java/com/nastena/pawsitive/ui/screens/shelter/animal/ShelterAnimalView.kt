@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,9 +16,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -26,6 +30,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -98,23 +103,48 @@ private fun BirthDatePicker(
     )
 
     Column {
-        AnimatedVisibility(visible = !birthDateState.isValid) {
-            OutlinedTextField(
-                value = "Выберите корректную дату рождения",
-                onValueChange = {},
-                readOnly = true,
-                isError = true
-            )
-        }
+        Text(
+            text = stringResource(R.string.add_animal_birth_date_label),
+            style = MaterialTheme.typography.labelMedium,
+            color = if (!birthDateState.isValid)
+                MaterialTheme.colorScheme.error
+            else
+                MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+        )
 
         OutlinedButton(
             onClick = { openDialog.value = true },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            border = if (!birthDateState.isValid)
+                androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.error
+                )
+            else null
         ) {
+
+            Icon(
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
+
+            Spacer(Modifier.size(8.dp))
+
             Text(
                 text = birthDateState.date?.let {
                     SimpleDateFormat("dd.MM.yyyy").format(Date(it))
-                } ?: "Выберите дату рождения"
+                } ?: stringResource(R.string.add_animal_birth_date_choose)
+            )
+        }
+
+        AnimatedVisibility(visible = !birthDateState.isValid) {
+            Text(
+                text = stringResource(R.string.add_animal_birth_date_error),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
         }
 
@@ -160,13 +190,21 @@ private fun ShelterAnimalView(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .padding(24.dp)
+                .widthIn(max = 420.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Spacer(Modifier.height(32.dp))
+
+
             // ------------- Title --------------------
             Text(
                 text = when (modeState) {
@@ -180,36 +218,33 @@ private fun ShelterAnimalView(
 
 
             // ------------- Name --------------------
-            AnimatedVisibility(
-                visible = nameState.validation != ValidationState.Valid
-            ) {
-                OutlinedTextField(
-                    value = when (nameState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.add_animal_name_is_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.add_animal_name_invalid)
-                        ValidationState.Valid -> ""
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
-                )
-            }
 
             OutlinedTextField(
                 value = nameState.text,
-                onValueChange = { newText ->
-                    onViewEvent(ShelterAnimalEvents.Name.TextUpdated(newText))
-
+                onValueChange = {
+                    onViewEvent(ShelterAnimalEvents.Name.TextUpdated(it))
                 },
                 label = { Text(stringResource(R.string.add_animal_name_label)) },
                 modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(Icons.Default.Pets, contentDescription = null)
+                },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = nameState.validation != ValidationState.Valid
+                isError = nameState.validation != ValidationState.Valid,
+                supportingText = {
+                    when (nameState.validation) {
+                        ValidationState.Empty ->
+                            Text(stringResource(R.string.not_empty))
+
+                        ValidationState.InvalidFormat ->
+                            Text(stringResource(R.string.add_animal_name_invalid))
+
+                        else -> {}
+                    }
+                }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
             // ------------- Birth date --------------------
 
@@ -224,6 +259,7 @@ private fun ShelterAnimalView(
 
 
             // ------------- Choosing types --------------------
+
             AnimatedVisibility(
                 visible = !typeState.isValid
             ) {
