@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -226,9 +225,6 @@ private fun ShelterAnimalView(
                 },
                 label = { Text(stringResource(R.string.add_animal_name_label)) },
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = {
-                    Icon(Icons.Default.Pets, contentDescription = null)
-                },
                 singleLine = true,
                 isError = nameState.validation != ValidationState.Valid,
                 supportingText = {
