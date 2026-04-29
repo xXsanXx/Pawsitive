@@ -17,7 +17,7 @@ object NavigationBars {
 
     data class Item(
         val navigation: Navigation,
-        val icon: ImageVector
+        val icon: ImageVector,
     )
 
     val EMPTY = Settings(0, listOf())

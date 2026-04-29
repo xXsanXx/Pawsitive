@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -98,6 +100,9 @@ private fun UserProfileView(
                     label = { Text(stringResource(R.string.user_profile_name)) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Person, contentDescription = null)
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -108,6 +113,9 @@ private fun UserProfileView(
                     label = { Text(stringResource(R.string.user_profile_email)) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Email, contentDescription = null)
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))

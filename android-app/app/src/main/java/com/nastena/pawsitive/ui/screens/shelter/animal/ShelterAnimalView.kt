@@ -1,15 +1,12 @@
 package com.nastena.pawsitive.ui.screens.shelter.animal
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,19 +14,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -44,13 +48,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
@@ -95,48 +97,48 @@ private fun BirthDatePicker(
     birthDateState: ShelterAnimalState.BirthDate,
     onDateSelected: (Long) -> Unit
 ) {
-    val openDialog = remember { mutableStateOf(false) }
+
+    var openDialog by remember { mutableStateOf(false) }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = birthDateState.date
     )
 
+    val formattedDate = birthDateState.date?.let {
+        SimpleDateFormat("dd.MM.yyyy").format(Date(it))
+    } ?: ""
+
     Column {
-        Text(
-            text = stringResource(R.string.add_animal_birth_date_label),
-            style = MaterialTheme.typography.labelMedium,
-            color = if (!birthDateState.isValid)
-                MaterialTheme.colorScheme.error
-            else
-                MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
-        )
 
-        OutlinedButton(
-            onClick = { openDialog.value = true },
+        OutlinedTextField(
+            value = formattedDate,
+            onValueChange = {},
+            readOnly = true,
             modifier = Modifier.fillMaxWidth(),
-            border = if (!birthDateState.isValid)
-                androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.error
+            label = {
+                Text(stringResource(R.string.add_animal_birth_date_label))
+            },
+            placeholder = {
+                Text(stringResource(R.string.add_animal_birth_date_choose))
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Cake,
+                    contentDescription = null
                 )
-            else null
-        ) {
-
-            Icon(
-                imageVector = Icons.Default.CalendarMonth,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp)
-            )
-
-            Spacer(Modifier.size(8.dp))
-
-            Text(
-                text = birthDateState.date?.let {
-                    SimpleDateFormat("dd.MM.yyyy").format(Date(it))
-                } ?: stringResource(R.string.add_animal_birth_date_choose)
-            )
-        }
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = { openDialog = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarMonth,
+                        contentDescription = null
+                    )
+                }
+            },
+            isError = !birthDateState.isValid
+        )
 
         AnimatedVisibility(visible = !birthDateState.isValid) {
             Text(
@@ -147,21 +149,25 @@ private fun BirthDatePicker(
             )
         }
 
-        if (openDialog.value) {
+        if (openDialog) {
             DatePickerDialog(
-                onDismissRequest = { openDialog.value = false },
+                onDismissRequest = { openDialog = false },
                 confirmButton = {
-                    TextButton(onClick = {
-                        datePickerState.selectedDateMillis?.let { selected ->
-                            onDateSelected(selected)
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                onDateSelected(it)
+                            }
+                            openDialog = false
                         }
-                        openDialog.value = false
-                    }) {
+                    ) {
                         Text("OK")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { openDialog.value = false }) {
+                    TextButton(
+                        onClick = { openDialog = false }
+                    ) {
                         Text("Отмена")
                     }
                 }
@@ -225,6 +231,9 @@ private fun ShelterAnimalView(
                 },
                 label = { Text(stringResource(R.string.add_animal_name_label)) },
                 modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(Icons.Default.Badge, contentDescription = null)
+                },
                 singleLine = true,
                 isError = nameState.validation != ValidationState.Valid,
                 supportingText = {
@@ -256,22 +265,6 @@ private fun ShelterAnimalView(
 
             // ------------- Choosing types --------------------
 
-            AnimatedVisibility(
-                visible = !typeState.isValid
-            ) {
-                OutlinedTextField(
-                    value = if (typeState.isValid) {
-                        ""
-                    } else {
-                        stringResource(R.string.add_animal_choose_type_invalid)
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
-                )
-            }
-
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
@@ -286,6 +279,14 @@ private fun ShelterAnimalView(
                 Text(
                     text = selectedTypeText,
                     style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            AnimatedVisibility(visible = !typeState.isValid) {
+                Text(
+                    text = stringResource(R.string.add_animal_choose_type_invalid),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
                 )
             }
 
@@ -322,22 +323,6 @@ private fun ShelterAnimalView(
 
 
             // ------------- Choosing genders --------------------
-            AnimatedVisibility(
-                visible = !genderState.isValid
-            ) {
-                OutlinedTextField(
-                    value = if (genderState.isValid) {
-                        ""
-                    } else {
-                        stringResource(R.string.add_animal_choose_gender_invalid)
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
-                )
-            }
-
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
@@ -354,6 +339,15 @@ private fun ShelterAnimalView(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+            AnimatedVisibility(visible = !genderState.isValid) {
+                Text(
+                    text = stringResource(R.string.add_animal_choose_gender_invalid),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                )
+            }
+
 
             DropdownMenu(
                 modifier = Modifier.fillMaxWidth(),
@@ -401,21 +395,6 @@ private fun ShelterAnimalView(
 
 
             // ------------- Choosing breeds --------------------
-            AnimatedVisibility(
-                visible = !breedState.isValid
-            ) {
-                OutlinedTextField(
-                    value = if (breedState.isValid) {
-                        ""
-                    } else {
-                        stringResource(R.string.add_animal_choose_breed_invalid)
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
-                )
-            }
 
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
@@ -435,6 +414,15 @@ private fun ShelterAnimalView(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+            AnimatedVisibility(visible = !breedState.isValid) {
+                Text(
+                    text = stringResource(R.string.add_animal_choose_breed_invalid),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                )
+            }
+
 
             DropdownMenu(
                 modifier = Modifier.fillMaxWidth(),
@@ -478,36 +466,34 @@ private fun ShelterAnimalView(
             Spacer(modifier = Modifier.height(24.dp))
 
             // ------------- Description --------------------
-            AnimatedVisibility(
-                visible = descriptionState.validation != ValidationState.Valid
-            ) {
-                OutlinedTextField(
-                    value = when (descriptionState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.add_animal_description_is_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.add_animal_description_invalid)
-                        ValidationState.Valid -> ""
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
-                )
-            }
 
             OutlinedTextField(
                 value = descriptionState.text,
-                onValueChange = { newText ->
-                    onViewEvent(ShelterAnimalEvents.Description.TextUpdated(newText))
-
+                onValueChange = {
+                    onViewEvent(ShelterAnimalEvents.Description.TextUpdated(it))
                 },
                 label = { Text(stringResource(R.string.add_animal_description_label)) },
                 modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(Icons.Default.Description, contentDescription = null)
+                },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = descriptionState.validation != ValidationState.Valid
+                isError = descriptionState.validation != ValidationState.Valid,
+                supportingText = {
+                    when (descriptionState.validation) {
+                        ValidationState.Empty ->
+                            Text(stringResource(R.string.not_empty))
+
+                        ValidationState.InvalidFormat ->
+                            Text(stringResource(R.string.add_animal_description_invalid))
+
+                        else -> {}
+                    }
+                }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
+            
 
             // ------------- PHOTOS --------------------
             AnimalPhotosSection(
@@ -569,94 +555,169 @@ private fun AnimalPhotosSection(
     onAddPhoto: (String) -> Unit,
     onRemovePhoto: (String) -> Unit
 ) {
-    var photoToDelete by remember { mutableStateOf<String?>(null) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(title, style = MaterialTheme.typography.bodyLarge)
+    val context = LocalContext.current
 
-        Spacer(modifier = Modifier.height(8.dp))
+    Card {
 
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent()
-        ) { uri: Uri? ->
-            uri?.let {
-                onAddPhoto(it.toString())
-            }
-        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            photos.forEach { uri ->
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(end = 8.dp)
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(uri)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .matchParentSize()
-                            .border(
-                                1.dp,
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                                shape = MaterialTheme.shapes.small
-                            ),
-                        error = painterResource(R.drawable.ic_image_error)
-                    )
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium
+            )
 
-                    Text(
-                        text = "✕",
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(4.dp)
-                            .clickable {
-                                photoToDelete = uri
-                            },
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+            Spacer(Modifier.height(12.dp))
+
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { uri ->
+                uri?.let { onAddPhoto(it.toString()) }
             }
 
-            if (photos.size < maxPhotos) {
-                OutlinedButton(
-                    onClick = { launcher.launch("image/*") },
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(end = 8.dp)
-                ) {
-                    Text("+", style = MaterialTheme.typography.headlineSmall)
-                }
-            }
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
 
-            if (photoToDelete != null) {
-                AlertDialog(
-                    onDismissRequest = { photoToDelete = null },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                onRemovePhoto(photoToDelete!!)
-                                photoToDelete = null
-                            }
+                items(photos) { uri ->
+
+                    Box(
+                        modifier = Modifier.size(70.dp)
+                    ) {
+
+                        AsyncImage(
+                            model = uri,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+
+                        IconButton(
+                            onClick = { onRemovePhoto(uri) },
+                            modifier = Modifier.align(Alignment.TopEnd)
                         ) {
-                            Text(stringResource(R.string.remove_animal_photo))
+                            Icon(Icons.Default.Close, null)
                         }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            onClick = { photoToDelete = null }
+                    }
+                }
+
+                if (photos.size < maxPhotos) {
+                    item {
+                        OutlinedButton(
+                            onClick = { launcher.launch("image/*") },
+                            modifier = Modifier.size(70.dp)
                         ) {
-                            Text(stringResource(R.string.cancel_remove_animal_photo))
+                            Icon(Icons.Default.Add, null)
                         }
-                    },
-                    title = { Text(stringResource(R.string.question_remove_animal_photo)) },
-                    text = { Text(stringResource(R.string.warning_remove_animal_photo)) }
-                )
+                    }
+                }
             }
         }
     }
 }
+
+//@Composable
+//private fun AnimalPhotosSection(
+//    title: String,
+//    photos: List<String>,
+//    maxPhotos: Int,
+//    onAddPhoto: (String) -> Unit,
+//    onRemovePhoto: (String) -> Unit
+//) {
+//    var photoToDelete by remember { mutableStateOf<String?>(null) }
+//
+//    Column(modifier = Modifier.fillMaxWidth()) {
+//        Text(title, style = MaterialTheme.typography.bodyLarge)
+//
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        val launcher = rememberLauncherForActivityResult(
+//            contract = ActivityResultContracts.GetContent()
+//        ) { uri: Uri? ->
+//            uri?.let {
+//                onAddPhoto(it.toString())
+//            }
+//        }
+//
+//        Row(verticalAlignment = Alignment.CenterVertically) {
+//            photos.forEach { uri ->
+//                Box(
+//                    modifier = Modifier
+//                        .size(80.dp)
+//                        .padding(end = 8.dp)
+//                ) {
+//                    AsyncImage(
+//                        model = ImageRequest.Builder(LocalContext.current)
+//                            .data(uri)
+//                            .build(),
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .matchParentSize()
+//                            .border(
+//                                1.dp,
+//                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+//                                shape = MaterialTheme.shapes.small
+//                            ),
+//                        error = painterResource(R.drawable.ic_image_error)
+//                    )
+//
+//                    Text(
+//                        text = "✕",
+//                        modifier = Modifier
+//                            .align(Alignment.TopEnd)
+//                            .padding(4.dp)
+//                            .clickable {
+//                                photoToDelete = uri
+//                            },
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                }
+//            }
+//
+//            if (photos.size < maxPhotos) {
+//                OutlinedButton(
+//                    onClick = { launcher.launch("image/*") },
+//                    modifier = Modifier
+//                        .size(80.dp)
+//                        .padding(end = 8.dp)
+//                ) {
+//                    Text("+", style = MaterialTheme.typography.headlineSmall)
+//                }
+//            }
+//
+//            if (photoToDelete != null) {
+//                AlertDialog(
+//                    onDismissRequest = { photoToDelete = null },
+//                    confirmButton = {
+//                        TextButton(
+//                            onClick = {
+//                                onRemovePhoto(photoToDelete!!)
+//                                photoToDelete = null
+//                            }
+//                        ) {
+//                            Text(stringResource(R.string.remove_animal_photo))
+//                        }
+//                    },
+//                    dismissButton = {
+//                        TextButton(
+//                            onClick = { photoToDelete = null }
+//                        ) {
+//                            Text(stringResource(R.string.cancel_remove_animal_photo))
+//                        }
+//                    },
+//                    title = { Text(stringResource(R.string.question_remove_animal_photo)) },
+//                    text = { Text(stringResource(R.string.warning_remove_animal_photo)) }
+//                )
+//            }
+//        }
+//    }
+//}
 
 
 

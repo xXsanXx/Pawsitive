@@ -11,31 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-//private val DarkColorScheme = darkColorScheme(
-//    primary = LightPurple,
-//    secondary = LightPurpleGrey,
-//    tertiary = LightPink,
-//    background = AlmostBlack
-//)
-//
-//private val LightColorScheme = lightColorScheme(
-//    primary = DarkPurple,
-//    secondary = DarkPurpleGrey,
-//    tertiary = DarkPink,
-//    background = White
-//
-//    /* Other default colors to override
-//    background = Color(0xFFFFFBFE),
-//    surface = Color(0xFFFFFBFE),
-//    onPrimary = Color.White,
-//    onSecondary = Color.White,
-//    onTertiary = Color.White,
-//    onBackground = Color(0xFF1C1B1F),
-//    onSurface = Color(0xFF1C1B1F),
-//    */
-//)
-
-private val LightColorScheme = lightColorScheme(
+private val LightColorsScheme = lightColorScheme(
 
     primary = PrimaryOrange,
     secondary = SecondarySand,
@@ -43,17 +19,14 @@ private val LightColorScheme = lightColorScheme(
     background = BackgroundCream,
     surface = BackgroundCream,
 
-    onPrimary = Color.White,
-    onSecondary = TextPrimary,
-
+    onPrimary = TextPrimary,
     onBackground = TextPrimary,
     onSurface = TextPrimary,
 
-    error = ErrorCoral,
-    onError = Color.White
+    error = DangerCoral
 )
 
-private val DarkColorScheme = darkColorScheme(
+private val DarkColorsScheme = darkColorScheme(
 
     primary = PrimaryOrange,
     secondary = SecondarySand,
@@ -67,7 +40,7 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = Color.White,
     onSurface = Color.White,
 
-    error = ErrorCoral
+    error = DangerCoral
 )
 
 @Composable
@@ -83,8 +56,8 @@ fun PawsitiveTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> DarkColorsScheme
+        else -> LightColorsScheme
     }
 
     MaterialTheme(
