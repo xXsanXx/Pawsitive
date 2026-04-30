@@ -13,7 +13,9 @@ object AnimalDetailsState {
         val breed: AnimalBreed,
         val gender: AnimalGender,
         val birthDate: Long,
+        val description: String,
         val photosUrl: List<String> = emptyList(),
+        val passportPhotosUrl: List<String> = emptyList(),
 
         val adoptionStatus: AdoptionStatus = AdoptionStatus.NONE
     )

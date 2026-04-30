@@ -60,7 +60,7 @@
     <string name="shelter_profile_title">Профиль</string>
     <string name="shelter_profile_logout_submit">Выйти из профиля</string>
 
-    <string name="shelter_profile_name">Имя пользователя</string>
+    <string name="shelter_profile_name">Название приюта</string>
     <string name="shelter_profile_email">Электронная почта</string>
     <string name="shelter_profile_address">Адрес</string>
     <string name="shelter_profile_phone">Номер телефона</string>
@@ -153,6 +153,8 @@
     <string name="animal_birth_date">Дата рождения: %s</string>
 
     <string name="shelter_info_clicked">Узнать о приюте</string>
+    <string name="shelter_info_label">Информация о приюте</string>
+
     <string name="form_clicked">Отправить заявку на животное</string>
 
     <!-- Form -->

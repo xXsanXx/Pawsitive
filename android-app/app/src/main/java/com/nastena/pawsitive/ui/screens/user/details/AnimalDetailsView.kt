@@ -1,5 +1,6 @@
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,6 +27,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
+import com.nastena.pawsitive.dto.AnimalGender
+import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsEvents
@@ -54,18 +58,33 @@ fun AnimalDetailsView(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
 
-                    items(animalState.photosUrl) { photos ->
+                    items(animalState.photosUrl) { photo ->
 
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(photos)
+                                .data(photo)
                                 .build(),
                             contentDescription = null,
-                            modifier = Modifier.size(200.dp),
+                            modifier = Modifier
+                                .size(300.dp)
+                                .padding(horizontal = 8.dp),
+                            error = painterResource(R.drawable.ic_image_error)
+                        )
+                    }
+                    items(animalState.passportPhotosUrl) { photo ->
+
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(photo)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(300.dp)
+                                .padding(horizontal = 8.dp),
                             error = painterResource(R.drawable.ic_image_error)
                         )
                     }
@@ -75,76 +94,149 @@ fun AnimalDetailsView(
             item {
 
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
                 ) {
 
-                    Text(text = animalState.name)
-
-                    Text(
-                        text = stringResource(
-                            LocalizationUtils.getAnimalTypeStringId(animalState.type)
-                        )
-                    )
-                    Text(
-                        text = stringResource(
-                            R.string.animal_birth_date,
-                            Utils.formatDate(animalState.birthDate),
-                        )
-                    )
-
-                    Text(
-                        text = stringResource(
-                            LocalizationUtils.getAnimalBreedStringId(animalState.breed)
-                        )
-                    )
-
-                    Text(
-                        text = stringResource(
-                            LocalizationUtils.getAnimalGenderStringId(animalState.gender)
-                        )
-                    )
-
-                    Button(
-                        onClick = {
-                            viewModel.onViewEvent(
-                                AnimalDetailsEvents.ShelterInfoClicked
-                            )
-                        },
+                    androidx.compose.material3.Card(
                         modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large
                     ) {
-                        Text(
-                            stringResource(R.string.shelter_info_clicked)
-                        )
-                    }
 
-                    if (animalState.adoptionStatus == AdoptionStatus.NONE) {
-                        Button(
-                            onClick = {
-                                viewModel.onViewEvent(
-                                    AnimalDetailsEvents.GoToFormClicked
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth(),
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Text(stringResource(R.string.form_clicked))
+
+                            Text(
+                                text = animalState.name,
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                                Text(
+                                    text = when (animalState.type) {
+                                        AnimalType.DOG -> "🐶"
+                                        AnimalType.CAT -> "🐱"
+                                    }
+                                )
+
+                                Text(
+                                    text = stringResource(
+                                        LocalizationUtils.getAnimalTypeStringId(animalState.type)
+                                    )
+                                )
+                            }
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "🎂"
+                                )
+
+                                Text(
+                                    text = stringResource(
+                                        R.string.animal_birth_date,
+                                        Utils.formatDate(animalState.birthDate)
+                                    )
+                                )
+                            }
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                                Text(
+                                    text = "🐾"
+                                )
+
+                                Text(
+                                    text = stringResource(
+                                        LocalizationUtils.getAnimalBreedStringId(animalState.breed)
+                                    )
+                                )
+                            }
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                                Text(
+                                    text = when (animalState.gender) {
+                                        AnimalGender.MALE -> "♂️"
+                                        AnimalGender.FEMALE -> "♀️"
+                                    }
+                                )
+
+                                Text(
+                                    text = stringResource(
+                                        LocalizationUtils.getAnimalGenderStringId(animalState.gender)
+                                    )
+                                )
+                            }
+                            Text(text = animalState.description)
+
+
                         }
-                    } else {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = when (animalState.adoptionStatus) {
-                                AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
-                                AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
-                                AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
-                                else -> ""
-                            },
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
                     }
                 }
             }
-        }
 
+            item {
+
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+
+                    Button(
+                        onClick = {
+                            viewModel.onViewEvent(AnimalDetailsEvents.ShelterInfoClicked)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.shelter_info_clicked))
+                    }
+
+                    if (animalState.adoptionStatus == AdoptionStatus.NONE) {
+
+                        Button(
+                            onClick = {
+                                viewModel.onViewEvent(AnimalDetailsEvents.GoToFormClicked)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.form_clicked))
+                        }
+
+                    } else {
+
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+
+                            Text(
+                                text = when (animalState.adoptionStatus) {
+                                    AdoptionStatus.PENDING ->
+                                        stringResource(R.string.adoption_status_pending)
+
+                                    AdoptionStatus.APPROVED ->
+                                        stringResource(R.string.adoption_status_approved)
+
+                                    AdoptionStatus.REJECTED ->
+                                        stringResource(R.string.adoption_status_rejected)
+
+                                    else -> ""
+                                },
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
     }
 }

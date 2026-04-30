@@ -1,20 +1,23 @@
 package com.nastena.pawsitive.ui.screens.user.favorite
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,92 +44,46 @@ fun UserFavoriteView(
     modifier: Modifier = Modifier,
     viewModel: UserFavoriteViewModel
 ) {
+
     val animalsState by viewModel.animalsState.collectAsState()
-
     val confirmAnimalDeleteState by viewModel.confirmAnimalDelete.collectAsState()
-
-
 
     Scaffold(
         modifier = modifier.fillMaxSize()
-    ) { paddingValues: PaddingValues ->
+    ) { paddingValues ->
+
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Top,
-            contentPadding = PaddingValues(vertical = 16.dp)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 8.dp)
         ) {
+
             item {
                 Text(
                     text = stringResource(R.string.favorite_title),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
             }
 
-            items(animalsState.size) { index: Int ->
-                val animalState: UserFavoriteState.Animal = animalsState[index]
+            itemsIndexed(animalsState) { index, animal ->
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    if (animalState.photoUrl != null) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(animalState.photoUrl)
-                                .transformations(CircleCropTransformation())
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            error = painterResource(R.drawable.ic_image_error)
-                        )
+                FavoriteAnimalCard(
+                    animal = animal,
+                    onGoTo = {
+                        viewModel.onViewEvent(UserFavoriteEvents.GoToAnimalClicked(index))
+                    },
+                    onDelete = {
+                        viewModel.onViewEvent(UserFavoriteEvents.RemoveClicked(index))
                     }
-
-                    Column(
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.Start
-                    ) {
-
-                        Text(text = animalState.name)
-                        Text(
-                            text = stringResource(
-                                LocalizationUtils.getAnimalTypeStringId(animalState.type)
-                            )
-                        )
-                        Text("${animalState.age} ${stringResource(R.string.common_years)}")
-                    }
-                    IconButton(
-                        onClick = {
-                            viewModel.onViewEvent(UserFavoriteEvents.RemoveClicked(index))
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = null
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            viewModel.onViewEvent(UserFavoriteEvents.GoToAnimalClicked(index))
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null
-                        )
-                    }
-
-                }
+                )
             }
         }
-
     }
+
     if (confirmAnimalDeleteState?.isVisible == true) {
+
         AlertDialog(
             onDismissRequest = { viewModel.onConfirmDelete(false) },
             title = { Text(stringResource(R.string.favorite_remove_animal_title)) },
@@ -143,6 +100,199 @@ fun UserFavoriteView(
             }
         )
     }
-
-
 }
+
+
+@Composable
+private fun FavoriteAnimalCard(
+    animal: UserFavoriteState.Animal,
+    onGoTo: () -> Unit,
+    onDelete: () -> Unit
+) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+
+        shape = RoundedCornerShape(16.dp),
+
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(animal.photoUrl)
+                    .transformations(CircleCropTransformation())
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier.size(72.dp),
+                error = painterResource(R.drawable.ic_image_error)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+
+                Text(
+                    text = animal.name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = stringResource(
+                        LocalizationUtils.getAnimalTypeStringId(animal.type)
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "${animal.age} ${stringResource(R.string.common_years)}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            IconButton(onClick = onGoTo) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = null
+                )
+            }
+
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+
+
+        }
+    }
+}
+
+//@Composable
+//fun UserFavoriteView(
+//    modifier: Modifier = Modifier,
+//    viewModel: UserFavoriteViewModel
+//) {
+//    val animalsState by viewModel.animalsState.collectAsState()
+//
+//    val confirmAnimalDeleteState by viewModel.confirmAnimalDelete.collectAsState()
+//
+//
+//
+//    Scaffold(
+//        modifier = modifier.fillMaxSize()
+//    ) { paddingValues: PaddingValues ->
+//        LazyColumn(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(paddingValues)
+//                .padding(horizontal = 16.dp),
+//            verticalArrangement = Arrangement.Top,
+//            contentPadding = PaddingValues(vertical = 16.dp)
+//        ) {
+//            item {
+//                Text(
+//                    text = stringResource(R.string.favorite_title),
+//                    style = MaterialTheme.typography.headlineMedium
+//                )
+//                Spacer(modifier = Modifier.height(24.dp))
+//            }
+//
+//            items(animalsState.size) { index: Int ->
+//                val animalState: UserFavoriteState.Animal = animalsState[index]
+//
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//
+//                    if (animalState.photoUrl != null) {
+//                        AsyncImage(
+//                            model = ImageRequest.Builder(LocalContext.current)
+//                                .data(animalState.photoUrl)
+//                                .transformations(CircleCropTransformation())
+//                                .build(),
+//                            contentDescription = null,
+//                            modifier = Modifier.size(80.dp),
+//                            error = painterResource(R.drawable.ic_image_error)
+//                        )
+//                    }
+//
+//                    Column(
+//                        verticalArrangement = Arrangement.SpaceEvenly,
+//                        horizontalAlignment = Alignment.Start
+//                    ) {
+//
+//                        Text(text = animalState.name)
+//                        Text(
+//                            text = stringResource(
+//                                LocalizationUtils.getAnimalTypeStringId(animalState.type)
+//                            )
+//                        )
+//                        Text("${animalState.age} ${stringResource(R.string.common_years)}")
+//                    }
+//                    IconButton(
+//                        onClick = {
+//                            viewModel.onViewEvent(UserFavoriteEvents.RemoveClicked(index))
+//                        }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Delete,
+//                            contentDescription = null
+//                        )
+//                    }
+//                    IconButton(
+//                        onClick = {
+//                            viewModel.onViewEvent(UserFavoriteEvents.GoToAnimalClicked(index))
+//                        }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.MoreVert,
+//                            contentDescription = null
+//                        )
+//                    }
+//
+//                }
+//            }
+//        }
+//
+//    }
+//    if (confirmAnimalDeleteState?.isVisible == true) {
+//        AlertDialog(
+//            onDismissRequest = { viewModel.onConfirmDelete(false) },
+//            title = { Text(stringResource(R.string.favorite_remove_animal_title)) },
+//            text = { Text(stringResource(R.string.favorite_warning_remove_animal)) },
+//            confirmButton = {
+//                TextButton(onClick = { viewModel.onConfirmDelete(true) }) {
+//                    Text(stringResource(R.string.favorite_remove_animal_button))
+//                }
+//            },
+//            dismissButton = {
+//                TextButton(onClick = { viewModel.onConfirmDelete(false) }) {
+//                    Text(stringResource(R.string.favorite_cancel_remove_animal))
+//                }
+//            }
+//        )
+//    }
+//
+//
+//}

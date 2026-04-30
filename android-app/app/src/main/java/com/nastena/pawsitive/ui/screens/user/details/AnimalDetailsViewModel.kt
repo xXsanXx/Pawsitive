@@ -30,7 +30,9 @@ class AnimalDetailsViewModel(
             breed = AnimalBreed.METIS,
             gender = AnimalGender.MALE,
             birthDate = 0,
-            photosUrl = emptyList()
+            description = "",
+            photosUrl = emptyList(),
+            passportPhotosUrl = emptyList()
         )
     )
 
@@ -61,7 +63,11 @@ class AnimalDetailsViewModel(
                         breed = response.breed,
                         gender = response.gender,
                         birthDate = response.birthDate,
+                        description = response.description,
                         photosUrl = response.animalPhotos
+                            ?.map { NetworkUtils.getAbsoluteFileUrl(it) }
+                            ?: emptyList(),
+                        passportPhotosUrl = response.passportPhotos
                             ?.map { NetworkUtils.getAbsoluteFileUrl(it) }
                             ?: emptyList(),
                         adoptionStatus = response.status

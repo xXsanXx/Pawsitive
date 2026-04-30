@@ -1,7 +1,5 @@
 package com.nastena.pawsitive.ui.screens.user.details.shelter_info
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +9,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +39,7 @@ import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShelterInfoView(
     modifier: Modifier = Modifier,
@@ -43,91 +49,146 @@ fun ShelterInfoView(
     val animalsState by viewModel.animalsState.collectAsState()
     val shelterState by viewModel.shelterState.collectAsState()
 
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
+
         topBar = {
-            IconButton(
-                onClick = {
-                    viewModel.onViewEvent(
-                        ShelterInfoEvents.BackClicked
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null
-                )
-            }
+            androidx.compose.material3.TopAppBar(
+                title = { Text(stringResource(R.string.shelter_info_label)) },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            viewModel.onViewEvent(ShelterInfoEvents.BackClicked)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
         }
+
     ) { paddingValues ->
-        Column {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
 
-                Text(text = shelterState.name)
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
-                Text(text = shelterState.email)
+            item {
 
-                Text(text = shelterState.phone)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
 
-                Text(text = shelterState.address)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
 
-                Text(text = shelterState.info)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Pets, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = shelterState.name,
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        }
 
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Email, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = shelterState.email)
+                        }
 
+                        ShelterInfoRow(Icons.Default.Phone, shelterState.phone)
+
+                        ShelterInfoRow(Icons.Default.LocationOn, shelterState.address)
+
+                        Text(text = shelterState.info)
+                    }
+                }
             }
 
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .scrollable(rememberScrollState(), Orientation.Vertical)
-                    .fillMaxWidth()
-            ) {
-                items(animalsState.size) { index: Int ->
-                    val animalState: ShelterInfoState.Animal = animalsState[index]
+            items(animalsState.size) { index ->
+
+                val animal = animalsState[index]
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (animalState.photoUrls.isNotEmpty()) {
+
+                        if (animal.photoUrls.isNotEmpty()) {
+
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(animalState.photoUrls[0])
+                                    .data(animal.photoUrls.first())
                                     .transformations(CircleCropTransformation())
                                     .build(),
                                 contentDescription = null,
-                                modifier = Modifier.size(80.dp),
+                                modifier = Modifier.size(72.dp),
                                 error = painterResource(R.drawable.ic_image_error)
                             )
                         }
 
+                        Spacer(modifier = Modifier.size(12.dp))
+
                         Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.Start
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(text = animalState.name)
+
+                            Text(
+                                text = animal.name,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+
                             Text(
                                 text = stringResource(
-                                    LocalizationUtils.getAnimalTypeStringId(
-                                        animalState.type
-                                    )
+                                    LocalizationUtils.getAnimalTypeStringId(animal.type)
                                 )
                             )
-                            Text(text = "${animalState.age} ${stringResource(R.string.common_years)}")
+
+                            Text(
+                                text = "${animal.age} ${stringResource(R.string.common_years)}"
+                            )
                         }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-
                     }
                 }
             }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShelterInfoRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String?
+) {
+    if (!text.isNullOrBlank()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = text)
         }
     }
 }

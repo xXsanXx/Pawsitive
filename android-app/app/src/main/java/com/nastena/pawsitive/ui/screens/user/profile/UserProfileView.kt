@@ -112,29 +112,6 @@ private fun UserProfileView(
                     }
                 }
 
-//                OutlinedTextField(
-//                    value = name,
-//                    onValueChange = {},
-//                    label = { Text(stringResource(R.string.user_profile_name)) },
-//                    readOnly = true,
-//                    modifier = Modifier.fillMaxWidth(),
-//                    leadingIcon = {
-//                        Icon(Icons.Default.Person, contentDescription = null)
-//                    },
-//                )
-//
-//                Spacer(modifier = Modifier.height(12.dp))
-//
-//                OutlinedTextField(
-//                    value = email,
-//                    onValueChange = {},
-//                    label = { Text(stringResource(R.string.user_profile_email)) },
-//                    readOnly = true,
-//                    modifier = Modifier.fillMaxWidth(),
-//                    leadingIcon = {
-//                        Icon(Icons.Default.Email, contentDescription = null)
-//                    },
-//                )
                 Spacer(modifier = Modifier.height(12.dp))
 
                 HorizontalDivider(
