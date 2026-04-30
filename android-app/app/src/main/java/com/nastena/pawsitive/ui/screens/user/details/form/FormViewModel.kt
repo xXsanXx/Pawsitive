@@ -140,8 +140,6 @@ class FormViewModel(
 
         _isUserFormChanged = false
 
-        mainViewModel.hideNavigationBar()
-
         val formRoute = route as NavigationRoute.Form
         _animalId = formRoute.animalId
 

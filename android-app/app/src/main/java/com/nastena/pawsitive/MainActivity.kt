@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         val authDataStore = AuthDataStore(applicationContext)
         val okHttpClient = OkHttpClient.get(authDataStore)
         val retrofit = RetrofitClient.create(okHttpClient)

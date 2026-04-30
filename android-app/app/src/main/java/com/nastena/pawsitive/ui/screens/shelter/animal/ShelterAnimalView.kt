@@ -29,9 +29,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -249,7 +250,7 @@ private fun ShelterAnimalView(
                 }
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // ------------- Birth date --------------------
 
@@ -260,210 +261,238 @@ private fun ShelterAnimalView(
                 }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
 
             // ------------- Choosing types --------------------
 
-            OutlinedButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    onViewEvent(ShelterAnimalEvents.Type.ClickedType)
-                }
-            ) {
-                val selectedTypeText: String = when (typeState.selected) {
-                    AnimalType.CAT -> stringResource(R.string.add_animal_type_cat)
-                    AnimalType.DOG -> stringResource(R.string.add_animal_type_dog)
-                    null -> stringResource(R.string.add_animal_choose_type_label)
-                }
-                Text(
-                    text = selectedTypeText,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            AnimatedVisibility(visible = !typeState.isValid) {
-                Text(
-                    text = stringResource(R.string.add_animal_choose_type_invalid),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-                )
-            }
+            Column {
 
-            DropdownMenu(
-                modifier = Modifier.fillMaxWidth(),
-                expanded = typeState.isExpended,
-                onDismissRequest = {
-                    onViewEvent(ShelterAnimalEvents.Type.MenuDismissed)
-                }
-            ) {
-                AnimalType.entries.forEach { animalType: AnimalType ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = when (animalType) {
-                                    AnimalType.DOG -> stringResource(R.string.add_animal_type_dog)
-                                    AnimalType.CAT -> stringResource(R.string.add_animal_type_cat)
-                                },
-                                style = MaterialTheme.typography.bodyMedium
+                @OptIn(ExperimentalMaterial3Api::class)
+                ExposedDropdownMenuBox(
+                    expanded = typeState.isExpended,
+                    onExpandedChange = {
+                        onViewEvent(ShelterAnimalEvents.Type.ClickedType)
+                    }
+                ) {
+
+                    OutlinedTextField(
+                        value = when (typeState.selected) {
+                            AnimalType.CAT -> stringResource(R.string.add_animal_type_cat)
+                            AnimalType.DOG -> stringResource(R.string.add_animal_type_dog)
+                            null -> stringResource(R.string.add_animal_choose_type_label)
+                        },
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth(),
+                        label = { Text(stringResource(R.string.add_animal_type_label)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = typeState.isExpended
                             )
                         },
-                        onClick = {
-                            onViewEvent(
-                                ShelterAnimalEvents.Type.TypeSelected(
-                                    animalType
-                                )
+                        isError = !typeState.isValid
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = typeState.isExpended,
+                        onDismissRequest = {
+                            onViewEvent(ShelterAnimalEvents.Type.MenuDismissed)
+                        }
+                    ) {
+                        AnimalType.entries.forEach { animalType ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        when (animalType) {
+                                            AnimalType.DOG -> stringResource(R.string.add_animal_type_dog)
+                                            AnimalType.CAT -> stringResource(R.string.add_animal_type_cat)
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    onViewEvent(
+                                        ShelterAnimalEvents.Type.TypeSelected(animalType)
+                                    )
+                                }
                             )
                         }
+                    }
+                }
+
+                AnimatedVisibility(visible = !typeState.isValid) {
+                    Text(
+                        text = stringResource(R.string.required_field),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 4.dp)
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(24.dp))
 
 
             // ------------- Choosing genders --------------------
-            OutlinedButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    onViewEvent(ShelterAnimalEvents.Gender.ClickedGender)
-                }
-            ) {
-                val selectedGenderText: String = when (genderState.selected) {
-                    AnimalGender.FEMALE -> stringResource(R.string.add_animal_gender_female)
-                    AnimalGender.MALE -> stringResource(R.string.add_animal_gender_male)
-                    null -> stringResource(R.string.add_animal_choose_gender_label)
-                }
-                Text(
-                    text = selectedGenderText,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            AnimatedVisibility(visible = !genderState.isValid) {
-                Text(
-                    text = stringResource(R.string.add_animal_choose_gender_invalid),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-                )
-            }
 
+            Column {
 
-            DropdownMenu(
-                modifier = Modifier.fillMaxWidth(),
-                expanded = genderState.isExpended,
-                onDismissRequest = {
-                    onViewEvent(ShelterAnimalEvents.Gender.MenuDismissed)
-                }
-            ) {
-                // ------------- FEMALE --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_gender_female),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAnimalEvents.Gender.GenderSelected(
-                                AnimalGender.FEMALE
+                @OptIn(ExperimentalMaterial3Api::class)
+                ExposedDropdownMenuBox(
+                    expanded = genderState.isExpended,
+                    onExpandedChange = {
+                        onViewEvent(ShelterAnimalEvents.Gender.ClickedGender)
+                    }
+                ) {
+
+                    OutlinedTextField(
+                        value = when (genderState.selected) {
+                            AnimalGender.FEMALE -> stringResource(R.string.add_animal_gender_female)
+                            AnimalGender.MALE -> stringResource(R.string.add_animal_gender_male)
+                            null -> stringResource(R.string.add_animal_choose_gender_label)
+                        },
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth(),
+                        label = { Text(stringResource(R.string.add_animal_gender_label)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = genderState.isExpended
                             )
+                        },
+                        isError = !genderState.isValid
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = genderState.isExpended,
+                        onDismissRequest = {
+                            onViewEvent(ShelterAnimalEvents.Gender.MenuDismissed)
+                        }
+                    ) {
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(stringResource(R.string.add_animal_gender_female))
+                            },
+                            onClick = {
+                                onViewEvent(
+                                    ShelterAnimalEvents.Gender.GenderSelected(AnimalGender.FEMALE)
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(stringResource(R.string.add_animal_gender_male))
+                            },
+                            onClick = {
+                                onViewEvent(
+                                    ShelterAnimalEvents.Gender.GenderSelected(AnimalGender.MALE)
+                                )
+                            }
                         )
                     }
-                )
+                }
 
-                // ------------- MALE --------------------
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.add_animal_gender_male),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    onClick = {
-                        onViewEvent(
-                            ShelterAnimalEvents.Gender.GenderSelected(
-                                AnimalGender.MALE
-                            )
-                        )
-                    }
-                )
+                AnimatedVisibility(visible = !genderState.isValid) {
+                    Text(
+                        text = stringResource(R.string.required_field),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
             }
-
             Spacer(modifier = Modifier.height(24.dp))
-
 
             // ------------- Choosing breeds --------------------
 
-            OutlinedButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    onViewEvent(ShelterAnimalEvents.Breed.ClickedBreed)
-                }
-            ) {
-                val selectedBreedText: String = when (breedState.selected) {
-                    AnimalBreed.LABRADOR_RETRIEVER -> stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
-                    AnimalBreed.DACHSHUND -> stringResource(R.string.add_animal_breed_dog_DACHSHUND)
-                    AnimalBreed.METIS -> stringResource(R.string.add_animal_breed_cat_METIS)
-                    AnimalBreed.SIAMESE -> stringResource(R.string.add_animal_breed_cat_SIAMESE)
-                    null -> stringResource(R.string.add_animal_choose_breed_label)
-                }
-                Text(
-                    text = selectedBreedText,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            AnimatedVisibility(visible = !breedState.isValid) {
-                Text(
-                    text = stringResource(R.string.add_animal_choose_breed_invalid),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-                )
-            }
+            Column {
 
+                @OptIn(ExperimentalMaterial3Api::class)
+                ExposedDropdownMenuBox(
+                    expanded = breedState.isExpended,
+                    onExpandedChange = {
+                        onViewEvent(ShelterAnimalEvents.Breed.ClickedBreed)
+                    }
+                ) {
 
-            DropdownMenu(
-                modifier = Modifier.fillMaxWidth(),
-                expanded = breedState.isExpended,
-                onDismissRequest = {
-                    onViewEvent(ShelterAnimalEvents.Breed.MenuDismissed)
-                }
-            ) {
-                breedState.options.forEach { breed ->
-
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = when (breed) {
-                                    AnimalBreed.LABRADOR_RETRIEVER ->
-                                        stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
-
-                                    AnimalBreed.DACHSHUND ->
-                                        stringResource(R.string.add_animal_breed_dog_DACHSHUND)
-
-                                    AnimalBreed.METIS ->
-                                        stringResource(R.string.add_animal_breed_cat_METIS)
-
-                                    AnimalBreed.SIAMESE ->
-                                        stringResource(R.string.add_animal_breed_cat_SIAMESE)
-                                }
+                    OutlinedTextField(
+                        value = when (breedState.selected) {
+                            AnimalBreed.LABRADOR_RETRIEVER -> stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
+                            AnimalBreed.DACHSHUND -> stringResource(R.string.add_animal_breed_dog_DACHSHUND)
+                            AnimalBreed.METIS -> stringResource(R.string.add_animal_breed_cat_METIS)
+                            AnimalBreed.SIAMESE -> stringResource(R.string.add_animal_breed_cat_SIAMESE)
+                            null -> stringResource(R.string.add_animal_choose_breed_label)
+                        },
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = typeState.selected != null,
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth(),
+                        label = { Text(stringResource(R.string.add_animal_breed_label)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = breedState.isExpended
                             )
                         },
-                        onClick = {
-                            onViewEvent(
-                                ShelterAnimalEvents.Breed.BreedSelected(breed)
-                            )
-                        }
+                        isError = !breedState.isValid
                     )
 
+                    ExposedDropdownMenu(
+                        expanded = breedState.isExpended,
+                        onDismissRequest = {
+                            onViewEvent(ShelterAnimalEvents.Breed.MenuDismissed)
+                        }
+                    ) {
+
+                        breedState.options.forEach { breed ->
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = when (breed) {
+
+                                            AnimalBreed.LABRADOR_RETRIEVER ->
+                                                stringResource(R.string.add_animal_breed_dog_LABRADOR_RETRIEVER)
+
+                                            AnimalBreed.DACHSHUND ->
+                                                stringResource(R.string.add_animal_breed_dog_DACHSHUND)
+
+                                            AnimalBreed.METIS ->
+                                                stringResource(R.string.add_animal_breed_cat_METIS)
+
+                                            AnimalBreed.SIAMESE ->
+                                                stringResource(R.string.add_animal_breed_cat_SIAMESE)
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    onViewEvent(
+                                        ShelterAnimalEvents.Breed.BreedSelected(breed)
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
 
+                AnimatedVisibility(visible = !breedState.isValid) {
+                    Text(
+                        text = stringResource(R.string.required_field),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
             }
-
-
             Spacer(modifier = Modifier.height(24.dp))
+
 
             // ------------- Description --------------------
 
@@ -492,8 +521,8 @@ private fun ShelterAnimalView(
                 }
             )
 
-            Spacer(Modifier.height(16.dp))
-            
+            Spacer(modifier = Modifier.height(24.dp))
+
 
             // ------------- PHOTOS --------------------
             AnimalPhotosSection(
@@ -522,7 +551,7 @@ private fun ShelterAnimalView(
                 }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // ------------- Buttons --------------------
             Button(
@@ -621,105 +650,4 @@ private fun AnimalPhotosSection(
         }
     }
 }
-
-//@Composable
-//private fun AnimalPhotosSection(
-//    title: String,
-//    photos: List<String>,
-//    maxPhotos: Int,
-//    onAddPhoto: (String) -> Unit,
-//    onRemovePhoto: (String) -> Unit
-//) {
-//    var photoToDelete by remember { mutableStateOf<String?>(null) }
-//
-//    Column(modifier = Modifier.fillMaxWidth()) {
-//        Text(title, style = MaterialTheme.typography.bodyLarge)
-//
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        val launcher = rememberLauncherForActivityResult(
-//            contract = ActivityResultContracts.GetContent()
-//        ) { uri: Uri? ->
-//            uri?.let {
-//                onAddPhoto(it.toString())
-//            }
-//        }
-//
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            photos.forEach { uri ->
-//                Box(
-//                    modifier = Modifier
-//                        .size(80.dp)
-//                        .padding(end = 8.dp)
-//                ) {
-//                    AsyncImage(
-//                        model = ImageRequest.Builder(LocalContext.current)
-//                            .data(uri)
-//                            .build(),
-//                        contentDescription = null,
-//                        modifier = Modifier
-//                            .matchParentSize()
-//                            .border(
-//                                1.dp,
-//                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-//                                shape = MaterialTheme.shapes.small
-//                            ),
-//                        error = painterResource(R.drawable.ic_image_error)
-//                    )
-//
-//                    Text(
-//                        text = "✕",
-//                        modifier = Modifier
-//                            .align(Alignment.TopEnd)
-//                            .padding(4.dp)
-//                            .clickable {
-//                                photoToDelete = uri
-//                            },
-//                        style = MaterialTheme.typography.bodyMedium
-//                    )
-//                }
-//            }
-//
-//            if (photos.size < maxPhotos) {
-//                OutlinedButton(
-//                    onClick = { launcher.launch("image/*") },
-//                    modifier = Modifier
-//                        .size(80.dp)
-//                        .padding(end = 8.dp)
-//                ) {
-//                    Text("+", style = MaterialTheme.typography.headlineSmall)
-//                }
-//            }
-//
-//            if (photoToDelete != null) {
-//                AlertDialog(
-//                    onDismissRequest = { photoToDelete = null },
-//                    confirmButton = {
-//                        TextButton(
-//                            onClick = {
-//                                onRemovePhoto(photoToDelete!!)
-//                                photoToDelete = null
-//                            }
-//                        ) {
-//                            Text(stringResource(R.string.remove_animal_photo))
-//                        }
-//                    },
-//                    dismissButton = {
-//                        TextButton(
-//                            onClick = { photoToDelete = null }
-//                        ) {
-//                            Text(stringResource(R.string.cancel_remove_animal_photo))
-//                        }
-//                    },
-//                    title = { Text(stringResource(R.string.question_remove_animal_photo)) },
-//                    text = { Text(stringResource(R.string.warning_remove_animal_photo)) }
-//                )
-//            }
-//        }
-//    }
-//}
-
-
-
-
 

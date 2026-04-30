@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -82,12 +84,15 @@ private fun RegisterView(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState()),
+            .imePadding()
+            .navigationBarsPadding(),
         contentAlignment = Alignment.TopCenter
     ) {
 
         Column(
             modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp)
                 .widthIn(max = 420.dp)
                 .fillMaxWidth(),
@@ -273,7 +278,9 @@ private fun RegisterView(
             Spacer(Modifier.height(32.dp))
 
             Button(
-                onClick = { onEvent(RegisterEvents.RegisterClicked) },
+                onClick = {
+                    onEvent(RegisterEvents.RegisterClicked)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -289,8 +296,7 @@ private fun RegisterView(
             ) {
                 Text(stringResource(R.string.register_go_to_login))
             }
-
-            Spacer(Modifier.height(24.dp))
+            
         }
     }
 }

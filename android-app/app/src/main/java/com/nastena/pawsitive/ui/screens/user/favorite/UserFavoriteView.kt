@@ -132,13 +132,13 @@ fun UserFavoriteView(
             title = { Text(stringResource(R.string.favorite_remove_animal_title)) },
             text = { Text(stringResource(R.string.favorite_warning_remove_animal)) },
             confirmButton = {
-                TextButton(onClick = { viewModel.onConfirmDelete(false) }) {
-                    Text(stringResource(R.string.favorite_cancel_remove_animal))
+                TextButton(onClick = { viewModel.onConfirmDelete(true) }) {
+                    Text(stringResource(R.string.favorite_remove_animal_button))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.onConfirmDelete(true) }) {
-                    Text(stringResource(R.string.favorite_remove_animal_button))
+                TextButton(onClick = { viewModel.onConfirmDelete(false) }) {
+                    Text(stringResource(R.string.favorite_cancel_remove_animal))
                 }
             }
         )

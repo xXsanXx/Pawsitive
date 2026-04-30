@@ -201,6 +201,7 @@ class ShelterAnimalViewModel(
             }
 
             ShelterAnimalEvents.Breed.ClickedBreed -> {
+                if (_typeState.value.selected == null) return
                 _breedState.update { it.copy(isExpended = !it.isExpended) }
             }
 
@@ -239,7 +240,9 @@ class ShelterAnimalViewModel(
                 _breedState.update {
                     it.copy(
                         selected = null,
-                        options = AnimalUtils.getBreedForAnimalType(event.type) ?: emptySet()
+                        options = AnimalUtils.getBreedForAnimalType(event.type) ?: emptySet(),
+                        isExpended = false,
+                        isValid = true
                     )
                 }
             }

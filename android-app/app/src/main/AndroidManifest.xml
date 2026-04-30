@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nastena.pawsitive"
-    xmlns:tools="http://schemas.android.com/tools">
+    package="com.nastena.pawsitive">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -21,6 +20,7 @@
         android:theme="@style/Theme.Pawsitive">
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Pawsitive">

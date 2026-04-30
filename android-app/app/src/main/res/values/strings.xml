@@ -98,6 +98,7 @@
 
     <string name="add_animal_choose_type_invalid">Выбор обязателен</string>
     <string name="add_animal_choose_type_label">Выберите тип животного</string>
+    <string name="add_animal_type_label">Тип</string>
     <string name="add_animal_type_cat">Кошка</string>
     <string name="add_animal_type_dog">Собака</string>
     <string name="add_animal_photo_title">Фото животного</string>
@@ -110,11 +111,13 @@
 
     <string name="add_animal_choose_gender_invalid">Выбор обязателен</string>
     <string name="add_animal_choose_gender_label">Выберите пол животного</string>
+    <string name="add_animal_gender_label">Пол</string>
     <string name="add_animal_gender_male">Мужской</string>
     <string name="add_animal_gender_female">Женский</string>
 
     <string name="add_animal_choose_breed_invalid">Выбор обязателен</string>
     <string name="add_animal_choose_breed_label">Выберите породу животного</string>
+    <string name="add_animal_breed_label">Порода</string>
     <string name="add_animal_breed_dog_LABRADOR_RETRIEVER">Лабрадор ретривер</string>
     <string name="add_animal_breed_dog_DACHSHUND">Такса</string>
     <string name="add_animal_breed_cat_METIS">Метис</string>
@@ -196,6 +199,8 @@
     <string name="form_sent">Заявка отправлена. Следите за изменением в профиле</string>
 
     <string name="user_forms_title">Мои заявки</string>
+
+    <string name="no_requests">У вас пока нет заявок</string>
 
     <string name="cancel_request_button">Отменить заявку?</string>
     <string name="warning_cancel_request">Это действие нельзя отменить.</string>

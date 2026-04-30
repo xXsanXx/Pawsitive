@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
@@ -17,16 +18,17 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -94,31 +96,50 @@ private fun UserProfileView(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = {},
-                    label = { Text(stringResource(R.string.user_profile_name)) },
-                    readOnly = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Person, contentDescription = null)
-                    },
-                )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = name)
+                    }
 
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Email, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = email)
+                    }
+                }
+
+//                OutlinedTextField(
+//                    value = name,
+//                    onValueChange = {},
+//                    label = { Text(stringResource(R.string.user_profile_name)) },
+//                    readOnly = true,
+//                    modifier = Modifier.fillMaxWidth(),
+//                    leadingIcon = {
+//                        Icon(Icons.Default.Person, contentDescription = null)
+//                    },
+//                )
+//
+//                Spacer(modifier = Modifier.height(12.dp))
+//
+//                OutlinedTextField(
+//                    value = email,
+//                    onValueChange = {},
+//                    label = { Text(stringResource(R.string.user_profile_email)) },
+//                    readOnly = true,
+//                    modifier = Modifier.fillMaxWidth(),
+//                    leadingIcon = {
+//                        Icon(Icons.Default.Email, contentDescription = null)
+//                    },
+//                )
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = {},
-                    label = { Text(stringResource(R.string.user_profile_email)) },
-                    readOnly = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(Icons.Default.Email, contentDescription = null)
-                    },
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 16.dp)
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
                     text = stringResource(R.string.user_forms_title),
@@ -128,61 +149,70 @@ private fun UserProfileView(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            items(requests.size) { index ->
+            if (requests.isEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(R.string.no_requests),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            } else {
+                items(requests.size) { index ->
 
-                val requestState = requests[index]
+                    val requestState = requests[index]
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    if (requestState.photoUrls.isNotEmpty()) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(requestState.photoUrls[0])
-                                .transformations(CircleCropTransformation())
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            error = painterResource(R.drawable.ic_image_error)
-                        )
-                    }
-
-                    Column {
-
-                        Text(
-                            text = requestState.animalName,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        Text(
-                            text = requestState.shelterName,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-
-                        Text(
-                            text = when (requestState.status) {
-                                AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
-                                AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
-                                AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
-                                else -> ""
-                            }
-
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
-                            onViewEvent(UserProfileEvents.CancelRequestClicked(index))
-                        }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Cancel,
-                            contentDescription = null
-                        )
+
+                        if (requestState.photoUrls.isNotEmpty()) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(requestState.photoUrls[0])
+                                    .transformations(CircleCropTransformation())
+                                    .build(),
+                                contentDescription = null,
+                                modifier = Modifier.size(80.dp),
+                                error = painterResource(R.drawable.ic_image_error)
+                            )
+                        }
+
+                        Column {
+
+                            Text(
+                                text = requestState.animalName,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+
+                            Text(
+                                text = requestState.shelterName,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            Text(
+                                text = when (requestState.status) {
+                                    AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
+                                    AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
+                                    AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
+                                    else -> ""
+                                }
+
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                onViewEvent(UserProfileEvents.CancelRequestClicked(index))
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Cancel,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
             }
