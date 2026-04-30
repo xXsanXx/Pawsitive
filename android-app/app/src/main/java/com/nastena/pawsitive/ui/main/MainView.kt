@@ -1,8 +1,9 @@
 package com.nastena.pawsitive.ui.main
 
 import AnimalDetailsView
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,9 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -209,6 +213,7 @@ fun MainContent(
             Box(modifier = Modifier.padding(innerPadding)) {
                 Navigation(
                     navController = navController,
+                    currentViewModel = mainViewModel.currentViewModel,
                     splashViewModel = splashViewModel,
                     registerViewModel = registerViewModel,
                     loginViewModel = loginViewModel,
@@ -223,13 +228,16 @@ fun MainContent(
                     shelterInfoViewModel = shelterInfoViewModel,
                     shelterRequestsViewModel = shelterRequestsViewModel,
                     shelterDetailsRequestsViewModel = shelterDetailsRequestsViewModel,
-                    formViewModel = formViewModel
+                    formViewModel = formViewModel,
+                    onViewEvent = onViewEvent
                 )
             }
         }
 
         AnimatedVisibility(
-            visible = screenState is MainState.Loading
+            visible = screenState is MainState.Loading,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
             Loading()
         }
@@ -262,6 +270,9 @@ fun MainContent(
 @Composable
 private fun Navigation(
     navController: NavHostController,
+
+    currentViewModel: BaseScreenViewModel?,
+
     splashViewModel: SplashViewModel,
     registerViewModel: RegisterViewModel,
     loginViewModel: LoginViewModel,
@@ -278,7 +289,9 @@ private fun Navigation(
     shelterHomeViewModel: ShelterHomeViewModel,
     shelterAnimalViewModel: ShelterAnimalViewModel,
     shelterRequestsViewModel: ShelterRequestsViewModel,
-    shelterDetailsRequestsViewModel: ShelterDetailsRequestsViewModel
+    shelterDetailsRequestsViewModel: ShelterDetailsRequestsViewModel,
+
+    onViewEvent: (MainViewEvents) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -286,39 +299,66 @@ private fun Navigation(
     ) {
 
         composable<NavigationRoute.Splash> { backStackEntry: NavBackStackEntry ->
-            ScreenView(splashViewModel, backStackEntry.toRoute<NavigationRoute.Splash>()) {
+            ScreenView(
+                currentViewModel,
+                splashViewModel,
+                backStackEntry.toRoute<NavigationRoute.Splash>(),
+                onViewEvent
+            ) {
                 SplashView(viewModel = splashViewModel)
             }
         }
 
         composable<NavigationRoute.Register> { backStackEntry: NavBackStackEntry ->
-            ScreenView(registerViewModel, backStackEntry.toRoute<NavigationRoute.Register>()) {
+            ScreenView(
+                currentViewModel,
+                registerViewModel,
+                backStackEntry.toRoute<NavigationRoute.Register>(),
+                onViewEvent
+            ) {
                 RegisterView(viewModel = registerViewModel)
             }
         }
 
         composable<NavigationRoute.Login> { backStackEntry: NavBackStackEntry ->
-            ScreenView(loginViewModel, backStackEntry.toRoute<NavigationRoute.Login>()) {
+            ScreenView(
+                currentViewModel,
+                loginViewModel,
+                backStackEntry.toRoute<NavigationRoute.Login>(),
+                onViewEvent
+            ) {
                 LoginView(viewModel = loginViewModel)
             }
         }
 
         composable<NavigationRoute.UserHome> { backStackEntry: NavBackStackEntry ->
-            ScreenView(userHomeViewModel, backStackEntry.toRoute<NavigationRoute.UserHome>()) {
+            ScreenView(
+                currentViewModel,
+                userHomeViewModel,
+                backStackEntry.toRoute<NavigationRoute.UserHome>(),
+                onViewEvent
+            ) {
                 UserHomeView(viewModel = userHomeViewModel)
             }
         }
 
         composable<NavigationRoute.Favorite> { backStackEntry: NavBackStackEntry ->
-            ScreenView(userFavoriteViewModel, backStackEntry.toRoute<NavigationRoute.Favorite>()) {
+            ScreenView(
+                currentViewModel,
+                userFavoriteViewModel,
+                backStackEntry.toRoute<NavigationRoute.Favorite>(),
+                onViewEvent
+            ) {
                 UserFavoriteView(viewModel = userFavoriteViewModel)
             }
         }
 
         composable<NavigationRoute.AnimalDetails> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 animalDetailsViewModel,
-                backStackEntry.toRoute<NavigationRoute.AnimalDetails>()
+                backStackEntry.toRoute<NavigationRoute.AnimalDetails>(),
+                onViewEvent
             ) {
                 AnimalDetailsView(viewModel = animalDetailsViewModel)
             }
@@ -326,8 +366,10 @@ private fun Navigation(
 
         composable<NavigationRoute.ShelterInfo> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterInfoViewModel,
-                backStackEntry.toRoute<NavigationRoute.ShelterInfo>()
+                backStackEntry.toRoute<NavigationRoute.ShelterInfo>(),
+                onViewEvent
             ) {
                 ShelterInfoView(viewModel = shelterInfoViewModel)
             }
@@ -335,8 +377,10 @@ private fun Navigation(
 
         composable<NavigationRoute.Form> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 formViewModel,
-                backStackEntry.toRoute<NavigationRoute.Form>()
+                backStackEntry.toRoute<NavigationRoute.Form>(),
+                onViewEvent
             ) {
                 FormView(viewModel = formViewModel)
             }
@@ -344,8 +388,10 @@ private fun Navigation(
 
         composable<NavigationRoute.UserProfile> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 userProfileViewModel,
-                backStackEntry.toRoute<NavigationRoute.UserProfile>()
+                backStackEntry.toRoute<NavigationRoute.UserProfile>(),
+                onViewEvent
             ) {
                 UserProfileView(viewModel = userProfileViewModel)
             }
@@ -353,8 +399,10 @@ private fun Navigation(
 
         composable<NavigationRoute.ShelterHome> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterHomeViewModel,
-                backStackEntry.toRoute<NavigationRoute.ShelterHome>()
+                backStackEntry.toRoute<NavigationRoute.ShelterHome>(),
+                onViewEvent
             ) {
                 ShelterHomeView(viewModel = shelterHomeViewModel)
             }
@@ -362,8 +410,10 @@ private fun Navigation(
 
         composable<NavigationRoute.ShelterRequests> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterRequestsViewModel,
-                backStackEntry.toRoute<NavigationRoute.ShelterRequests>()
+                backStackEntry.toRoute<NavigationRoute.ShelterRequests>(),
+                onViewEvent
             ) {
                 ShelterRequestsView(viewModel = shelterRequestsViewModel)
             }
@@ -371,8 +421,10 @@ private fun Navigation(
 
         composable<NavigationRoute.ShelterFormDetails> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterDetailsRequestsViewModel,
-                backStackEntry.toRoute<NavigationRoute.ShelterFormDetails>()
+                backStackEntry.toRoute<NavigationRoute.ShelterFormDetails>(),
+                onViewEvent
             ) {
                 ShelterDetailsRequestsView(viewModel = shelterDetailsRequestsViewModel)
             }
@@ -380,8 +432,10 @@ private fun Navigation(
 
         composable<NavigationRoute.ShelterProfile> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterProfileViewModel,
-                backStackEntry.toRoute<NavigationRoute.ShelterProfile>()
+                backStackEntry.toRoute<NavigationRoute.ShelterProfile>(),
+                onViewEvent
             ) {
                 ShelterProfileView(viewModel = shelterProfileViewModel)
             }
@@ -389,8 +443,10 @@ private fun Navigation(
 
         composable<NavigationRoute.EditingShelterProfile> { backStackEntry ->
             ScreenView(
+                currentViewModel,
                 editingShelterProfileViewModel,
-                backStackEntry.toRoute<NavigationRoute.EditingShelterProfile>()
+                backStackEntry.toRoute<NavigationRoute.EditingShelterProfile>(),
+                onViewEvent
             ) {
                 EditingShelterProfileView(viewModel = editingShelterProfileViewModel)
             }
@@ -398,8 +454,10 @@ private fun Navigation(
 
         composable<NavigationRoute.Shelter.Animal.Add> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterAnimalViewModel,
-                backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Add>()
+                backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Add>(),
+                onViewEvent
             ) {
                 ShelterAnimalView(viewModel = shelterAnimalViewModel)
             }
@@ -407,8 +465,10 @@ private fun Navigation(
 
         composable<NavigationRoute.Shelter.Animal.Edit> { backStackEntry: NavBackStackEntry ->
             ScreenView(
+                currentViewModel,
                 shelterAnimalViewModel,
-                backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Edit>()
+                backStackEntry.toRoute<NavigationRoute.Shelter.Animal.Edit>(),
+                onViewEvent
             ) {
                 ShelterAnimalView(viewModel = shelterAnimalViewModel)
             }
@@ -476,13 +536,17 @@ private fun navigate(
 
 @Composable
 private fun ScreenView(
+    currentViewModel: BaseScreenViewModel?,
     viewModel: BaseScreenViewModel,
     route: NavigationRoute,
+    onViewEvent: (MainViewEvents) -> Unit,
     view: @Composable () -> Unit
 ) {
-    println("Navigating to ${viewModel::class.simpleName}")
-
     LaunchedEffect(Unit) {
+        println("Navigating to ${viewModel::class.simpleName}")
+
+        currentViewModel?.onExit()
+        onViewEvent(MainViewEvents.CurrentViewModelChanged(viewModel))
         viewModel.onEnter(route)
     }
 
@@ -491,19 +555,29 @@ private fun ScreenView(
 
 @Composable
 private fun Loading(modifier: Modifier = Modifier) {
-    BackHandler {}
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
-            .blur(4.dp),
-        contentAlignment = Alignment.Center
+    Dialog(
+        onDismissRequest = { },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary,
-            strokeWidth = 4.dp
-        )
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.1f))
+                .blur(4.dp)
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent()
+                        }
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 4.dp
+            )
+        }
     }
 }
 

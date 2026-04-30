@@ -19,7 +19,17 @@ abstract class BaseScreenViewModel(
             throw IllegalArgumentException("Expected $expectedRouteType, got ${route::class.simpleName}")
         }
 
-        Log.i("BaseScreenViewModel", "Entering screen ${this.javaClass.simpleName} with parameters: $route")
+        Log.i(
+            "BaseScreenViewModel",
+            "Entering screen ${this.javaClass.simpleName} with parameters: $route"
+        )
+    }
+
+    open fun onExit() {
+        Log.i(
+            "BaseScreenViewModel",
+            "Exiting screen ${this.javaClass.simpleName}"
+        )
     }
 
     fun <T> launchSave(

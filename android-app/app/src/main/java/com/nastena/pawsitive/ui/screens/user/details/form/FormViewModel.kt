@@ -138,6 +138,8 @@ class FormViewModel(
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
+        mainViewModel.hideNavigationBar()
+
         _isUserFormChanged = false
 
         val formRoute = route as NavigationRoute.Form
@@ -247,6 +249,12 @@ class FormViewModel(
 
             }
         )
+    }
+
+    override fun onExit() {
+        mainViewModel.showNavigationBar()
+
+        super.onExit()
     }
 
     fun onViewEvent(event: FormEvents) {

@@ -1,6 +1,11 @@
 package com.nastena.pawsitive.ui.main
 
+import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+
 sealed interface MainViewEvents {
+
+    data class CurrentViewModelChanged(val newCurrentVM: BaseScreenViewModel) : MainViewEvents
+
     sealed interface ErrorBox : MainViewEvents {
         object ClickedOk : ErrorBox
     }

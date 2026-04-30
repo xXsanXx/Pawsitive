@@ -3,10 +3,13 @@ package com.nastena.pawsitive.ui.main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nastena.pawsitive.common.ServerParsedException
 import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
+import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -25,6 +28,10 @@ class MainViewModel : ViewModel() {
     private val _mainState = MutableStateFlow<MainState>(MainState.Idle)
     internal val mainState: StateFlow<MainState> = _mainState.asStateFlow()
 
+    var currentViewModel: BaseScreenViewModel? = null
+        private set
+
+
     private val _navigationBarState = MutableStateFlow(
         NavigationBarState(
             isVisible = false,
@@ -37,6 +44,10 @@ class MainViewModel : ViewModel() {
 
     internal fun onViewEvent(viewEvent: MainViewEvents) {
         when (viewEvent) {
+            is MainViewEvents.CurrentViewModelChanged -> {
+                currentViewModel = viewEvent.newCurrentVM
+            }
+
             MainViewEvents.ErrorBox.ClickedOk -> {
                 if (_mainState.value is MainState.Error) {
                     _mainState.update { MainState.Idle }
@@ -86,13 +97,22 @@ class MainViewModel : ViewModel() {
         Log.i("MainView", "Handling error", throwable)
 
         when (throwable) {
-            is ServerUnknownErrorCodeException -> {
-                if (throwable.httpCode == 403) {
+            is ServerParsedException -> {
+                if (throwable.errorCode == ErrorCode.UNAUTHORIZED) {
                     navigate(
                         Navigation.To(
                             NavigationRoute.Login,
                             Navigation.To.PopUpType.Origin
                         )
+                    )
+                }
+            }
+
+            is ServerUnknownErrorCodeException -> {
+                if (throwable.httpCode == 403) {
+                    Navigation.To(
+                        NavigationRoute.Login,
+                        Navigation.To.PopUpType.Origin
                     )
                 }
             }
@@ -104,6 +124,10 @@ class MainViewModel : ViewModel() {
 
     fun hideNavigationBar() {
         _navigationBarState.update { it.copy(isVisible = false) }
+    }
+
+    fun showNavigationBar() {
+        _navigationBarState.update { it.copy(isVisible = true) }
     }
 
     fun initializeNavigationBarSettings(settings: NavigationBars.Settings) {

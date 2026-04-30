@@ -31,8 +31,9 @@ class UserHomeViewModel(
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
 
-        loadAnimalsRation()
-
+        if (_animals.isEmpty()) {
+            loadAnimalsRation()
+        }
     }
 
     fun onViewEvent(event: UserHomeEvents) {

@@ -216,13 +216,13 @@ private fun UserProfileView(
             title = { Text(stringResource(R.string.cancel_request_button)) },
             text = { Text(stringResource(R.string.warning_cancel_request)) },
             confirmButton = {
-                TextButton(onClick = { onConfirmCancel(false) }) {
-                    Text(stringResource(R.string.cancel_cancel_request_no))
+                TextButton(onClick = { onConfirmCancel(true) }) {
+                    Text(stringResource(R.string.cancel_request_button_yes))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onConfirmCancel(true) }) {
-                    Text(stringResource(R.string.cancel_request_button_yes))
+                TextButton(onClick = { onConfirmCancel(false) }) {
+                    Text(stringResource(R.string.cancel_cancel_request_no))
                 }
             }
         )
