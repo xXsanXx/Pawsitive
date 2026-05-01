@@ -35,8 +35,7 @@ class MainViewModel : ViewModel() {
     private val _navigationBarState = MutableStateFlow(
         NavigationBarState(
             isVisible = false,
-            settings = NavigationBars.EMPTY,
-            selected = 0
+            settings = NavigationBars.EMPTY
         )
     )
     internal val navigationBarState: StateFlow<NavigationBarState> =
@@ -52,10 +51,6 @@ class MainViewModel : ViewModel() {
                 if (_mainState.value is MainState.Error) {
                     _mainState.update { MainState.Idle }
                 }
-            }
-
-            is MainViewEvents.NavigationBar.ClickedItem -> {
-                _navigationBarState.update { it.copy(selected = viewEvent.index) }
             }
 
             MainViewEvents.MessageBox.ClickedOk -> {
@@ -110,9 +105,11 @@ class MainViewModel : ViewModel() {
 
             is ServerUnknownErrorCodeException -> {
                 if (throwable.httpCode == 403) {
-                    Navigation.To(
-                        NavigationRoute.Login,
-                        Navigation.To.PopUpType.Origin
+                    navigate(
+                        Navigation.To(
+                            NavigationRoute.Login,
+                            Navigation.To.PopUpType.Origin
+                        )
                     )
                 }
             }
@@ -132,7 +129,7 @@ class MainViewModel : ViewModel() {
 
     fun initializeNavigationBarSettings(settings: NavigationBars.Settings) {
         _navigationBarState.update {
-            it.copy(isVisible = true, settings = settings, selected = settings.initialSelected)
+            it.copy(isVisible = true, settings = settings)
         }
         val initialItem: NavigationBars.Item = settings.items[settings.initialSelected]
         viewModelScope.launch {

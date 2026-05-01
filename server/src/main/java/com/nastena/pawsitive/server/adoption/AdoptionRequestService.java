@@ -45,7 +45,9 @@ public class AdoptionRequestService {
             throw new ServerRuntimeException("Can't create form on active or resolved request", ErrorCode.INVALID_INPUT);
         }
 
-        AdoptionRequest adoptionRequest = new AdoptionRequest();
+        AdoptionRequest adoptionRequest;
+        adoptionRequest = maybeRequest.orElseGet(AdoptionRequest::new);
+
         adoptionRequest.setUser(user);
         adoptionRequest.setAnimal(animal);
         adoptionRequest.setStatus(AdoptionStatus.PENDING);
@@ -100,7 +102,9 @@ public class AdoptionRequestService {
 
 
     public List<AdoptionRequest> getRequestsByUser(User user) {
-        return repository.findByUser(user);
+        return repository.findByUser(user).stream()
+                .filter(request -> request.getStatus() != AdoptionStatus.CANCELED)
+                .toList();
     }
 
     public List<AdoptionRequest> getShelterRequestsByUser(Shelter shelter) {

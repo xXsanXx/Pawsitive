@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -14,13 +15,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -36,6 +40,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.nastena.pawsitive.R
@@ -43,6 +48,7 @@ import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
@@ -91,6 +97,7 @@ import com.nastena.pawsitive.ui.screens.user.home.UserHomeViewModelFactory
 import com.nastena.pawsitive.ui.screens.user.profile.UserProfileView
 import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModel
 import com.nastena.pawsitive.ui.screens.user.profile.UserProfileViewModelFactory
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainContent(
@@ -203,14 +210,19 @@ fun MainContent(
 
             bottomBar = {
                 MainNavigationBar(
+                    modifier = Modifier.height(50.dp),
                     navigationBarState = navigationBarState,
-                    navController = navController,
-                    onViewEvent = onViewEvent
+                    navController = navController
                 )
             }
 
         ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
                 Navigation(
                     navController = navController,
                     currentViewModel = mainViewModel.currentViewModel,
@@ -234,8 +246,19 @@ fun MainContent(
             }
         }
 
+        var showLoading by remember { mutableStateOf(false) }
+
+        LaunchedEffect(screenState) {
+            if (screenState is MainState.Loading) {
+                delay(300)
+                showLoading = true
+            } else {
+                showLoading = false
+            }
+        }
+
         AnimatedVisibility(
-            visible = screenState is MainState.Loading,
+            visible = showLoading,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -480,25 +503,30 @@ private fun Navigation(
 private fun MainNavigationBar(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    navigationBarState: NavigationBarState,
-    onViewEvent: (MainViewEvents) -> Unit
+    navigationBarState: NavigationBarState
 ) {
     AnimatedVisibility(
         visible = navigationBarState.isVisible
     ) {
         Box(modifier = modifier) {
-            NavigationBar {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.background
+            ) {
+                val currentBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
+
                 navigationBarState.settings.items.forEachIndexed { index: Int, item: NavigationBars.Item ->
                     NavigationBarItem(
-                        selected = index == navigationBarState.selected,
+                        selected = currentBackStackEntry?.destination?.route == item.route::class.qualifiedName,
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.secondary
+                        ),
                         onClick = {
-                            onViewEvent(MainViewEvents.NavigationBar.ClickedItem(index))
                             navigate(navController, item.navigation)
                         },
                         icon = {
                             Icon(
                                 imageVector = item.icon,
-                                contentDescription = null // TODO: add content description everywhere
+                                contentDescription = null
                             )
                         }
                     )
@@ -563,7 +591,11 @@ private fun Loading(modifier: Modifier = Modifier) {
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = 0.1f))
-                .blur(4.dp)
+                .blur(10.dp)
+        )
+        Box(
+            modifier = modifier
+                .fillMaxSize()
                 .pointerInput(Unit) {
                     awaitPointerEventScope {
                         while (true) {
@@ -595,7 +627,7 @@ private fun ErrorBox(
             Text(text = "${throwable.message}")
         },
         confirmButton = {
-            TextButton(
+            PawsitiveTextButton(
                 onClick = { onViewEvent(MainViewEvents.ErrorBox.ClickedOk) }
             ) {
                 Text(text = stringResource(R.string.error_ok))
@@ -617,7 +649,7 @@ private fun MessageBox(
             Text(text = stringResource(messageId))
         },
         confirmButton = {
-            TextButton(
+            PawsitiveTextButton(
                 onClick = { onOkayClicked() }
             ) {
                 Text(text = stringResource(R.string.error_ok))

@@ -1,9 +1,7 @@
 package com.nastena.pawsitive.repository
 
 import android.util.Log
-import com.nastena.pawsitive.common.ServerParsedException
 import com.nastena.pawsitive.dto.AccountRole
-import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.dto.LoginRequest
 import com.nastena.pawsitive.dto.LoginResponse
 import com.nastena.pawsitive.dto.MeResponse
@@ -24,7 +22,10 @@ class AccountRepository(
         password: String,
         role: AccountRole
     ): Result<Unit> = runCatching {
-        Log.i("Account Repository", "[register] name: $name, email: $email, password: $password, role: $role")
+        Log.i(
+            "Account Repository",
+            "[register] name: $name, email: $email, password: $password, role: $role"
+        )
 
         val response: Response<Unit> = _api.register(RegisterRequest(name, email, password, role))
         if (response.isSuccessful) {
@@ -55,13 +56,13 @@ class AccountRepository(
         }
     }
 
-    suspend fun getAuthorizedRole(): Result<AccountRole> = runCatching {
+    suspend fun getAuthorizedRole(): Result<AccountRole?> = runCatching {
         val token = _authDataStore.getToken();
 
         Log.i("Account Repository", "[getAuthorizedRole] current token: $token")
 
         if (token == null) {
-            return Result.failure(ServerParsedException("", ErrorCode.UNAUTHORIZED))
+            return Result.success(null)
         }
 
         val response: Response<MeResponse> = _api.me()

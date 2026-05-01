@@ -11,6 +11,10 @@ android {
     namespace = "com.nastena.pawsitive"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.nastena.pawsitive"
         minSdk = 24
@@ -22,12 +26,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://192.168.0.15:8080/\"")
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "BASE_URL", "\"https://api.pawsitive.com/\"")
         }
     }
     compileOptions {
@@ -87,7 +97,7 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
-        // Coil для Jetpack Compose
+    // Coil для Jetpack Compose
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation(libs.kotlinx.serialization.json)

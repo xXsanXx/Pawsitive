@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 
 @Composable
 fun ShelterProfileView(
@@ -124,7 +124,7 @@ private fun ShelterProfileView(
             Spacer(Modifier.height(16.dp))
 
             ProfileField(
-                
+
                 value = info,
                 label = R.string.shelter_profile_info,
                 icon = Icons.Default.Info
@@ -143,7 +143,7 @@ private fun ShelterProfileView(
 
             Spacer(Modifier.height(12.dp))
 
-            TextButton(
+            PawsitiveTextButton(
                 onClick = { onViewEvent(ShelterProfileEvents.LogoutClicked) }
             ) {
                 Text(stringResource(R.string.shelter_profile_logout_submit))

@@ -2,6 +2,7 @@ package com.nastena.pawsitive.ui.screens.splash
 
 import com.nastena.pawsitive.dto.AccountRole
 import com.nastena.pawsitive.repository.AccountRepository
+import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
@@ -22,12 +23,18 @@ class SplashViewModel(
 
         launchSave(
             operation = { _accountRepository.getAuthorizedRole() },
-            onSuccess = { role: AccountRole ->
-                mainViewModel.initializeNavigationBarSettings(
-                    NavigationBars.fromAccountRole(
-                        role
+            onSuccess = { role: AccountRole? ->
+                if (role == null) {
+                    mainViewModel.navigate(
+                        Navigation.To(NavigationRoute.Login, Navigation.To.PopUpType.Origin)
                     )
-                )
+                } else {
+                    mainViewModel.initializeNavigationBarSettings(
+                        NavigationBars.fromAccountRole(
+                            role
+                        )
+                    )
+                }
             }
         )
     }

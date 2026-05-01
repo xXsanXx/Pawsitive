@@ -1,7 +1,6 @@
 package com.nastena.pawsitive.ui.screens.user.home
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,7 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,14 +38,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.ui.common.AnimalImage
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
@@ -60,10 +55,12 @@ fun UserHomeView(
 ) {
 
     val currentAnimalState by viewModel.currentAnimalState.collectAsState()
+    val showHintState by viewModel.showHintState.collectAsState()
 
     UserHomeView(
         modifier = modifier,
         currentAnimalState = currentAnimalState,
+        showHintState = showHintState,
         onViewEvent = { viewModel.onViewEvent(it) }
     )
 }
@@ -71,6 +68,7 @@ fun UserHomeView(
 @Composable
 private fun UserHomeView(
     modifier: Modifier = Modifier,
+    showHintState: Boolean,
     currentAnimalState: UserHomeState.Animal?,
     onViewEvent: (UserHomeEvents) -> Unit
 ) {
@@ -87,8 +85,6 @@ private fun UserHomeView(
 
     var offsetX by remember { mutableFloatStateOf(0f) }
     var cardWidth by remember { mutableFloatStateOf(1f) }
-
-    var showHint by remember { mutableStateOf(true) }
 
     val animatedOffsetX by animateFloatAsState(offsetX)
     val rotation = animatedOffsetX / 40
@@ -151,27 +147,11 @@ private fun UserHomeView(
         ) {
 
             Box {
-                if (currentAnimalState.photoUrl != null) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(currentAnimalState.photoUrl)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        error = painterResource(R.drawable.paw)
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(R.drawable.paw),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(48.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                }
-
+                AnimalImage(
+                    Modifier.fillMaxSize(),
+                    currentAnimalState.photoUrl,
+                    ContentScale.Crop
+                )
 
                 Box(
                     modifier = Modifier
@@ -288,14 +268,14 @@ private fun UserHomeView(
             }
         }
 
-        if (showHint) {
+        if (showHintState) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))
                     .pointerInput(Unit) {
                         detectTapGestures {
-                            showHint = false
+                            onViewEvent(UserHomeEvents.HintClicked)
                         }
                     },
                 contentAlignment = Alignment.Center

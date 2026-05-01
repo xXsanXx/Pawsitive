@@ -11,7 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,16 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
+import com.nastena.pawsitive.ui.common.AnimalImage
 import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 import com.nastena.pawsitive.ui.screens.user.details.AnimalDetailsEvents
@@ -63,29 +62,20 @@ fun AnimalDetailsView(
                 ) {
 
                     items(animalState.photosUrl) { photo ->
-
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(photo)
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier
+                        AnimalImage(
+                            Modifier
                                 .size(300.dp)
                                 .padding(horizontal = 8.dp),
-                            error = painterResource(R.drawable.ic_image_error)
+                            photo
                         )
                     }
-                    items(animalState.passportPhotosUrl) { photo ->
 
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(photo)
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier
+                    items(animalState.passportPhotosUrl) { photo ->
+                        AnimalImage(
+                            Modifier
                                 .size(300.dp)
                                 .padding(horizontal = 8.dp),
-                            error = painterResource(R.drawable.ic_image_error)
+                            photo
                         )
                     }
                 }
@@ -98,9 +88,13 @@ fun AnimalDetailsView(
                         .padding(16.dp)
                 ) {
 
-                    androidx.compose.material3.Card(
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.large
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     ) {
 
                         Column(
@@ -196,28 +190,23 @@ fun AnimalDetailsView(
                         Text(stringResource(R.string.shelter_info_clicked))
                     }
 
-                    if (animalState.adoptionStatus == AdoptionStatus.NONE ||
-                        animalState.adoptionStatus == AdoptionStatus.CANCELED
+                    val isFormRequestEnabled = animalState.adoptionStatus == AdoptionStatus.NONE ||
+                            animalState.adoptionStatus == AdoptionStatus.CANCELED
+
+                    Button(
+                        onClick = {
+                            viewModel.onViewEvent(AnimalDetailsEvents.GoToFormClicked)
+                        },
+                        colors = ButtonDefaults.buttonColors(),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = isFormRequestEnabled
                     ) {
 
-                        Button(
-                            onClick = {
-                                viewModel.onViewEvent(AnimalDetailsEvents.GoToFormClicked)
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(stringResource(R.string.form_clicked))
-                        }
-
-                    } else {
-
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.medium
-                        ) {
-
-                            Text(
-                                text = when (animalState.adoptionStatus) {
+                        Text(
+                            text = if (isFormRequestEnabled) {
+                                stringResource(R.string.form_clicked)
+                            } else {
+                                when (animalState.adoptionStatus) {
                                     AdoptionStatus.PENDING ->
                                         stringResource(R.string.adoption_status_pending)
 
@@ -228,13 +217,32 @@ fun AnimalDetailsView(
                                         stringResource(R.string.adoption_status_rejected)
 
                                     else -> ""
-                                },
-                                modifier = Modifier.padding(16.dp),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                                }
+                            }
+                        )
                     }
+
+//                    if (animalState.adoptionStatus == AdoptionStatus.NONE ||
+//                        animalState.adoptionStatus == AdoptionStatus.CANCELED
+//                    ) {
+//
+//
+//
+//                    } else {
+//
+//                        Card(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            shape = MaterialTheme.shapes.medium
+//                        ) {
+//
+//                            Text(
+//                                text = ,
+//                                modifier = Modifier.padding(16.dp),
+//                                color = MaterialTheme.colorScheme.primary,
+//                                style = MaterialTheme.typography.bodyLarge
+//                            )
+//                        }
+//                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }

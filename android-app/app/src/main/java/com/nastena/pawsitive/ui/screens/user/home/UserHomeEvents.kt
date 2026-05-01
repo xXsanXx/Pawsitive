@@ -7,5 +7,6 @@ sealed interface UserHomeEvents {
     object DislikeClicked : UserHomeEvents
 
     object DetailsClicked : UserHomeEvents
+    object HintClicked : UserHomeEvents
 
 }

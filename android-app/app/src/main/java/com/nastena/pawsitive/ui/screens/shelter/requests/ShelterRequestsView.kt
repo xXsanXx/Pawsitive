@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
@@ -23,15 +24,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
+import com.nastena.pawsitive.ui.common.AnimalImage
 
 @Composable
 fun ShelterRequestsView(
@@ -69,17 +68,13 @@ fun ShelterRequestsView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    if (formState.photoUrls.isNotEmpty()) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(formState.photoUrls[0])
-                                .transformations(CircleCropTransformation())
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            error = painterResource(R.drawable.ic_image_error)
-                        )
-                    }
+                    AnimalImage(
+                        Modifier
+                            .size(80.dp)
+                            .clip(CircleShape),
+                        formState.photoUrls.firstOrNull(),
+                        ContentScale.Crop
+                    )
 
                     Column(
                         verticalArrangement = Arrangement.SpaceEvenly,

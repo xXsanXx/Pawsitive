@@ -11,6 +11,7 @@ import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+import com.nastena.pawsitive.ui.screens.user.profile.UserProfileState.ConfirmFormCancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -107,8 +108,17 @@ class UserProfileViewModel(
 
                 if (request.status == AdoptionStatus.PENDING) {
                     _confirmFormCancel.value =
-                        UserProfileState.ConfirmFormCancel(event.index)
+                        ConfirmFormCancel(event.index)
                 }
+            }
+
+            is UserProfileEvents.GoToAnimalClicked -> {
+                mainViewModel.navigate(
+                    To(
+                        NavigationRoute.AnimalDetails(_animalIds[event.index]),
+                        To.PopUpType.Route(NavigationRoute.UserProfile::class)
+                    )
+                )
             }
         }
     }

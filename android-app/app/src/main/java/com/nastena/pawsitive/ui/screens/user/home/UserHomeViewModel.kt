@@ -5,10 +5,13 @@ import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.repository.UserRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute.AnimalDetails
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlin.reflect.KClass
 
 class UserHomeViewModel(
@@ -20,6 +23,9 @@ class UserHomeViewModel(
 
     private val _currentAnimalState = MutableStateFlow<UserHomeState.Animal?>(null)
     val currentAnimalState = _currentAnimalState.asStateFlow()
+
+    private val _showHintState = MutableStateFlow(true)
+    val showHintState: StateFlow<Boolean> = _showHintState.asStateFlow()
 
     private var _currentIndex = 0
 
@@ -40,7 +46,7 @@ class UserHomeViewModel(
             UserHomeEvents.DetailsClicked -> {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoute.AnimalDetails(_currentId!!)
+                        AnimalDetails(_currentId!!)
                     )
                 )
             }
@@ -56,6 +62,10 @@ class UserHomeViewModel(
                         showNextAnimal()
                     }
                 )
+            }
+
+            UserHomeEvents.HintClicked -> {
+                _showHintState.update { false }
             }
         }
     }

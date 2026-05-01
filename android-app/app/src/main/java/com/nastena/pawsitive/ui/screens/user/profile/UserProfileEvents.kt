@@ -5,4 +5,5 @@ sealed interface UserProfileEvents {
 
     data class CancelRequestClicked(val index: Int) : UserProfileEvents
 
+    data class GoToAnimalClicked(val index: Int) : UserProfileEvents
 }

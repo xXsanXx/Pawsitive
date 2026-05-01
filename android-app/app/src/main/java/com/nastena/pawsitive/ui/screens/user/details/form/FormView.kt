@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,7 +43,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -56,6 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -166,7 +167,7 @@ private fun BirthDatePicker(
             DatePickerDialog(
                 onDismissRequest = { openDialog = false },
                 confirmButton = {
-                    TextButton(
+                    PawsitiveTextButton(
                         onClick = {
                             datePickerState.selectedDateMillis?.let {
                                 onDateSelected(it)
@@ -178,7 +179,7 @@ private fun BirthDatePicker(
                     }
                 },
                 dismissButton = {
-                    TextButton(
+                    PawsitiveTextButton(
                         onClick = { openDialog = false }
                     ) {
                         Text("Отмена")
@@ -217,6 +218,7 @@ private fun FormView(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .imePadding()
             .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.TopCenter
     ) {

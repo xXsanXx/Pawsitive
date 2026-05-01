@@ -40,6 +40,7 @@ class ShelterInfoViewModel(
 
     val animalsState: StateFlow<List<ShelterInfoState.Animal>> = _animalsState.asStateFlow()
 
+    private val _animalIds: MutableList<Long> = mutableListOf()
 
     override fun onEnter(route: NavigationRoute) {
         super.onEnter(route)
@@ -54,6 +55,18 @@ class ShelterInfoViewModel(
             is ShelterInfoEvents.BackClicked -> {
                 mainViewModel.navigate(
                     Navigation.Back
+                )
+            }
+
+            is ShelterInfoEvents.OnGoToAnimalClicked -> {
+                val animalId: Long = _animalIds[event.index]
+                mainViewModel.navigate(
+                    Navigation.To(
+                        NavigationRoute.AnimalDetails(animalId),
+                        Navigation.To.PopUpType.Route(
+                            NavigationRoute.ShelterInfo::class
+                        )
+                    ),
                 )
             }
         }
@@ -76,8 +89,10 @@ class ShelterInfoViewModel(
                     )
                 }
 
+                _animalIds.clear()
                 _animalsState.update {
                     shelterResponse.animals?.map { response: AnimalResponse ->
+                        _animalIds.add(response.id)
                         ShelterInfoState.Animal(
                             response.name,
                             response.type,

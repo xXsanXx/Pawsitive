@@ -1,15 +1,13 @@
 package com.nastena.pawsitive.ui.theme
 
-import android.os.Build
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowInsetsControllerCompat
 
 private val LightColorsScheme = lightColorScheme(
 
@@ -20,25 +18,11 @@ private val LightColorsScheme = lightColorScheme(
     surface = BackgroundCream,
 
     onPrimary = TextPrimary,
+    onSecondary = TextPrimary,
     onBackground = TextPrimary,
-    onSurface = TextPrimary,
-
-    error = DangerCoral
-)
-
-private val DarkColorsScheme = darkColorScheme(
-
-    primary = PrimaryOrange,
-    secondary = SecondarySand,
-
-    background = Color(0xFF1A1A1A),
-    surface = Color(0xFF1A1A1A),
-
-    onPrimary = Color.Black,
-    onSecondary = Color.Black,
-
-    onBackground = Color.White,
-    onSurface = Color.White,
+    onSurface = OnSurface,
+    onSurfaceVariant = OnSurfaceVariant,
+    surfaceContainerHigh = BackgroundCream,
 
     error = DangerCoral
 )
@@ -50,14 +34,17 @@ fun PawsitiveTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme = LightColorsScheme
+    // dark color scheme not support for now
 
-        darkTheme -> DarkColorsScheme
-        else -> LightColorsScheme
+    val activity = LocalContext.current as Activity
+
+    SideEffect {
+        val window = activity.window
+
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true
+        }
     }
 
     MaterialTheme(

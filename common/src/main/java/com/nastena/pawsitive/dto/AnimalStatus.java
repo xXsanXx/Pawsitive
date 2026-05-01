@@ -2,6 +2,6 @@ package com.nastena.pawsitive.dto;
 
 public enum AnimalStatus {
     DELETED,
-    TAKED,
+    TAKEN,
     IN_SHELTER
 }

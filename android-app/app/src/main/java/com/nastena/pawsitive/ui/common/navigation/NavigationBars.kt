@@ -17,6 +17,7 @@ object NavigationBars {
 
     data class Item(
         val navigation: Navigation,
+        val route: NavigationRoute,
         val icon: ImageVector,
     )
 
@@ -26,14 +27,17 @@ object NavigationBars {
         items = listOf(
             Item(
                 navigation = Navigation.To(NavigationRoute.UserHome),
+                route = NavigationRoute.UserHome,
                 icon = Icons.Default.Home
             ),
             Item(
                 navigation = Navigation.To(NavigationRoute.Favorite),
+                route = NavigationRoute.Favorite,
                 icon = Icons.Default.Favorite
             ),
             Item(
                 navigation = Navigation.To(NavigationRoute.UserProfile),
+                route = NavigationRoute.UserProfile,
                 icon = Icons.Default.AccountCircle
             )
 
@@ -45,14 +49,17 @@ object NavigationBars {
         items = listOf(
             Item(
                 navigation = Navigation.To(NavigationRoute.ShelterHome),
+                route = NavigationRoute.ShelterHome,
                 icon = Icons.Default.Home
             ),
             Item(
                 navigation = Navigation.To(NavigationRoute.ShelterRequests),
+                route = NavigationRoute.ShelterRequests,
                 icon = Icons.Default.Description
             ),
             Item(
                 navigation = Navigation.To(NavigationRoute.ShelterProfile),
+                route = NavigationRoute.ShelterProfile,
                 icon = Icons.Default.AccountCircle
             )
         )

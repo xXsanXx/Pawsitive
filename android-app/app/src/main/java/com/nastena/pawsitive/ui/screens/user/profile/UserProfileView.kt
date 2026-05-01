@@ -1,6 +1,8 @@
 package com.nastena.pawsitive.ui.screens.user.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,33 +14,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
+import com.nastena.pawsitive.ui.common.AnimalImage
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 
 @Composable
 fun UserProfileView(
@@ -138,60 +142,79 @@ private fun UserProfileView(
 
                     val requestState = requests[index]
 
-                    Row(
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(vertical = 8.dp)
+                            .clickable(
+                                onClick = { onViewEvent(UserProfileEvents.GoToAnimalClicked(index)) }
+                            ),
+
+                        shape = RoundedCornerShape(16.dp),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+
+                        elevation = CardDefaults.cardElevation(4.dp)
                     ) {
 
-                        AsyncImage(
-                            model = if (requestState.photoUrls.isNotEmpty()) {
-                                ImageRequest.Builder(LocalContext.current)
-                                    .data(requestState.photoUrls[0])
-                                    .transformations(CircleCropTransformation())
-                                    .build()
-                            } else {
-                                painterResource(R.drawable.paw)
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            error = painterResource(R.drawable.ic_image_error)
-                        )
-
-                        Column {
-
-                            Text(
-                                text = requestState.animalName,
-                                style = MaterialTheme.typography.titleMedium
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AnimalImage(
+                                Modifier
+                                    .size(72.dp)
+                                    .clip(CircleShape),
+                                requestState.photoUrls.firstOrNull(),
+                                ContentScale.Crop
                             )
 
-                            Text(
-                                text = requestState.shelterName,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            Spacer(modifier = Modifier.width(16.dp))
 
-                            Text(
-                                text = when (requestState.status) {
-                                    AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
-                                    AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
-                                    AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
-                                    else -> ""
-                                }
+                            Column {
 
-                            )
-                        }
-
-                        if (requestState.status == AdoptionStatus.PENDING) {
-                            IconButton(
-                                onClick = {
-                                    onViewEvent(UserProfileEvents.CancelRequestClicked(index))
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = null
+                                Text(
+                                    text = requestState.animalName,
+                                    style = MaterialTheme.typography.titleMedium
                                 )
+
+                                Text(
+                                    text = requestState.shelterName,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+
+                                Text(
+                                    text = when (requestState.status) {
+                                        AdoptionStatus.PENDING -> stringResource(R.string.adoption_status_pending)
+                                        AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
+                                        AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
+                                        else -> ""
+                                    }
+
+                                )
+                            }
+
+                            if (requestState.status == AdoptionStatus.PENDING) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            onViewEvent(UserProfileEvents.CancelRequestClicked(index))
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Cancel,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -220,12 +243,12 @@ private fun UserProfileView(
             title = { Text(stringResource(R.string.cancel_request_button)) },
             text = { Text(stringResource(R.string.warning_cancel_request)) },
             confirmButton = {
-                TextButton(onClick = { onConfirmCancel(true) }) {
+                PawsitiveTextButton(onClick = { onConfirmCancel(true) }) {
                     Text(stringResource(R.string.cancel_request_button_yes))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onConfirmCancel(false) }) {
+                PawsitiveTextButton(onClick = { onConfirmCancel(false) }) {
                     Text(stringResource(R.string.cancel_cancel_request_no))
                 }
             }

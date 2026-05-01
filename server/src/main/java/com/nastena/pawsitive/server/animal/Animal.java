@@ -6,6 +6,7 @@ import com.nastena.pawsitive.dto.AnimalStatus;
 import com.nastena.pawsitive.dto.AnimalType;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +49,8 @@ public class Animal {
 
     @Setter
     @Enumerated(EnumType.STRING)
-    private AnimalStatus status;
+    @Column(nullable = false)
+    private AnimalStatus status = AnimalStatus.IN_SHELTER;
 
     // ------PHOTOS------
     @Setter

@@ -39,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -53,11 +52,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
+import com.nastena.pawsitive.ui.common.AnimalImage
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -154,7 +154,7 @@ private fun BirthDatePicker(
             DatePickerDialog(
                 onDismissRequest = { openDialog = false },
                 confirmButton = {
-                    TextButton(
+                    PawsitiveTextButton(
                         onClick = {
                             datePickerState.selectedDateMillis?.let {
                                 onDateSelected(it)
@@ -166,7 +166,7 @@ private fun BirthDatePicker(
                     }
                 },
                 dismissButton = {
-                    TextButton(
+                    PawsitiveTextButton(
                         onClick = { openDialog = false }
                     ) {
                         Text("Отмена")
@@ -178,7 +178,6 @@ private fun BirthDatePicker(
         }
     }
 }
-
 
 @Composable
 private fun ShelterAnimalView(
@@ -565,7 +564,7 @@ private fun ShelterAnimalView(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            TextButton(
+            PawsitiveTextButton(
                 onClick = { onViewEvent(ShelterAnimalEvents.CancelClicked) },
             ) {
                 Text(stringResource(R.string.add_animal_cancel_clicked))
@@ -619,12 +618,13 @@ private fun AnimalPhotosSection(
                         modifier = Modifier.size(70.dp)
                     ) {
 
-                        AsyncImage(
-                            model = uri,
-                            contentDescription = null,
-                            modifier = Modifier
+                        AnimalImage(
+                            Modifier
                                 .fillMaxSize()
-                                .clip(MaterialTheme.shapes.medium)
+                                .clip(
+                                    MaterialTheme.shapes.medium,
+                                ),
+                            uri
                         )
 
                         IconButton(

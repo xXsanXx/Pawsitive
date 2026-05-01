@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,20 +26,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.ui.common.AnimalImage
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 
 @Composable
@@ -111,7 +110,7 @@ fun ShelterHomeView(
             },
 
             confirmButton = {
-                TextButton(
+                PawsitiveTextButton(
                     onClick = { viewModel.onConfirmDelete(true) }
                 ) {
                     Text(stringResource(R.string.remove_animal_button))
@@ -119,7 +118,7 @@ fun ShelterHomeView(
             },
 
             dismissButton = {
-                TextButton(
+                PawsitiveTextButton(
                     onClick = { viewModel.onConfirmDelete(false) }
                 ) {
                     Text(stringResource(R.string.cancel_remove_animal))
@@ -158,17 +157,12 @@ private fun AnimalCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(animal.photoUrls.firstOrNull())
-                    .transformations(CircleCropTransformation())
-                    .build(),
-
-                contentDescription = null,
-
-                modifier = Modifier.size(72.dp),
-
-                error = painterResource(R.drawable.ic_image_error)
+            AnimalImage(
+                Modifier
+                    .clip(CircleShape)
+                    .size(72.dp),
+                animal.photoUrls.firstOrNull(),
+                ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(16.dp))

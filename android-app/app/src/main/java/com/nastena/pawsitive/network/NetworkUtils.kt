@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import androidx.core.net.toUri
 import com.google.gson.Gson
+import com.nastena.pawsitive.BuildConfig
 import com.nastena.pawsitive.utils.FileUtils
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -14,7 +15,7 @@ import java.io.File
 import java.io.InputStream
 
 object NetworkUtils {
-    const val BASE_URL = "https://10.0.2.2:8080/"
+    const val BASE_URL = BuildConfig.BASE_URL
 
     fun getAbsoluteFileUrl(localFileUrl: String): String {
         return FileUtils.getAbsoluteFileUrl(BASE_URL, localFileUrl);

@@ -90,7 +90,9 @@ public class AnimalController {
 
         log.info("[remove] id {}", id);
 
-        animalService.removeAnimalOrThrow(id);
+        Animal animal = animalService.getAnimalOrThrow(id);
+        animalService.removeAnimalOrThrow(animal);
+        adoptionRequestService.rejectAllByAnimal(animal);
 
         return ResponseEntity.ok("Animal removed");
     }
@@ -108,6 +110,7 @@ public class AnimalController {
         List<Animal> animals = animalService.getShelterAnimals(shelter);
 
         List<ShelterAnimalResponse> animalResponses = animals.stream()
+                .filter(animal -> animal.getStatus() == AnimalStatus.IN_SHELTER)
                 .map(animal -> new ShelterAnimalResponse(
                                 animal.getId(), animal.getName(), animal.getType(),
                                 animal.getBreed(), animal.getBirthDate(), animal.getGender(),
@@ -147,6 +150,8 @@ public class AnimalController {
     public ResponseEntity<AnimalsResponse> getRandomUserAnimalsRation(Authentication authentication) {
         Account account = accountService.getAccountOrThrow(authentication.getName());
         User user = userService.getUserOrThrow(account);
+
+        log.info("[random user animals] getting new ration of animals for {}", authentication.getName());
 
         List<AnimalResponse> animals = userAnimalsQueueService.getNextRation(user).stream()
                 .map(animal -> {

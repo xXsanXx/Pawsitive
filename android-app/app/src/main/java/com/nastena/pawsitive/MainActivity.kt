@@ -3,6 +3,8 @@ package com.nastena.pawsitive
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.nastena.pawsitive.network.OkHttpClient
 import com.nastena.pawsitive.network.RetrofitClient
 import com.nastena.pawsitive.network.api.AccountApi
@@ -42,6 +44,9 @@ class MainActivity : ComponentActivity() {
         val shelterRepository = ShelterRepository(shelterApi, animalApi, contentResolver)
         val filesRepository = FilesRepository()
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+        
         setContent {
             PawsitiveTheme {
                 MainContent(

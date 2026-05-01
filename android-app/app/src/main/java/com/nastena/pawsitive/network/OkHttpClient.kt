@@ -1,13 +1,18 @@
 package com.nastena.pawsitive.network
 
-import okhttp3.OkHttpClient
+import com.nastena.pawsitive.BuildConfig
 import com.nastena.pawsitive.repository.datastores.AuthDataStore
+import okhttp3.OkHttpClient
 
 object OkHttpClient {
-    private var _instance: OkHttpClient? = null
-
-    fun get(authDataStore: AuthDataStore): OkHttpClient =
-        OkHttpClient.Builder()
+    fun get(authDataStore: AuthDataStore): OkHttpClient {
+        var builder: OkHttpClient.Builder = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(authDataStore))
-            .build()
+
+        if (BuildConfig.DEBUG) {
+            builder = builder.hostnameVerifier { _, _ -> true }
+        }
+
+        return builder.build()
+    }
 }

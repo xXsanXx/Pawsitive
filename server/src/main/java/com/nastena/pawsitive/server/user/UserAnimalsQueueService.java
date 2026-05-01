@@ -80,10 +80,7 @@ public class UserAnimalsQueueService {
         for (Shelter shelter : sheltersToUse) {
             animalsQueue.animals.addAll(
                     animalRepository.findAnimalsByShelter(shelter).stream()
-                            .filter(
-                                    animal -> filterAnimal(user, animal)
-                            )
-                            .filter(animal -> adoptionRequestRepository.findByUserAndAnimal(user, animal).isEmpty())
+                            .filter(animal -> filterAnimal(user, animal))
                             .map(Animal::getId)
                             .toList()
             );
@@ -98,10 +95,10 @@ public class UserAnimalsQueueService {
     }
 
     private boolean filterAnimal(User user, Animal animal) {
-        boolean isInFavorites =
+        boolean isNotInFavorites =
                 favoriteRepository.findByUserAndAnimal(user, animal).isEmpty();
         boolean isInShelter = animal.getStatus() == AnimalStatus.IN_SHELTER;
-        return !isInFavorites && isInShelter;
+        return isNotInFavorites && isInShelter;
     }
 
     public void removeAnimalFromQueue(User user, Long animalId) {

@@ -11,6 +11,5 @@ sealed interface MainState {
 
 data class NavigationBarState(
     val isVisible: Boolean,
-    val selected: Int,
     val settings: NavigationBars.Settings
 )

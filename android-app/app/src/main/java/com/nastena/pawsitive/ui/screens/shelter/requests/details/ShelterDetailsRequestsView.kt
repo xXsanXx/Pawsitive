@@ -22,14 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
+import com.nastena.pawsitive.ui.common.AnimalImage
 import com.nastena.pawsitive.ui.common.Utils
 
 @Composable
@@ -64,15 +61,10 @@ fun ShelterDetailsRequestsView(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    items(formState.photoUrls) { photos ->
-
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(photos)
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier.size(200.dp),
-                            error = painterResource(R.drawable.ic_image_error)
+                    items(formState.photoUrls) { photo ->
+                        AnimalImage(
+                            Modifier.size(200.dp),
+                            photo
                         )
                     }
                 }

@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 
 @Composable
@@ -171,7 +171,7 @@ private fun EditingShelterProfileView(
 
             Spacer(Modifier.height(12.dp))
 
-            TextButton(
+            PawsitiveTextButton(
                 onClick = { onEvent(EditingShelterProfileEvents.CancelClicked) }
             ) {
                 Text(stringResource(R.string.editing_shelter_profile_cancel))

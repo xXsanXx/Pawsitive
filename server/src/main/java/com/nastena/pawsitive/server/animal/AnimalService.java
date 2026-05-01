@@ -23,17 +23,13 @@ import java.util.stream.Stream;
 public class AnimalService {
     private final AnimalRepository animalRepository;
     private final FileStorageService fileStorageService;
-    private final UserAnimalsQueueService userAnimalsQueueService;
-    private final AdoptionRequestService adoptionRequestService;
 
     private static final Pattern NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$");
 
 
-    public AnimalService(AnimalRepository animalRepository, FileStorageService fileStorageService, UserAnimalsQueueService userAnimalsQueueService, AdoptionRequestService adoptionRequestService) {
+    public AnimalService(AnimalRepository animalRepository, FileStorageService fileStorageService) {
         this.animalRepository = animalRepository;
         this.fileStorageService = fileStorageService;
-        this.userAnimalsQueueService = userAnimalsQueueService;
-        this.adoptionRequestService = adoptionRequestService;
     }
 
     public Animal createAnimalOrThrow(
@@ -63,6 +59,7 @@ public class AnimalService {
         animal.setBirthDate(birthDate);
         animal.setGender(gender);
         animal.setDescription(description);
+        animal.setStatus(AnimalStatus.IN_SHELTER);
 
         if (animalPhotos != null) {
             List<String> photos = new ArrayList<>();
@@ -148,7 +145,9 @@ public class AnimalService {
     }
 
     public List<Animal> getShelterAnimals(Shelter shelter) {
-        return animalRepository.findAnimalsByShelter(shelter);
+        return animalRepository.findAnimalsByShelter(shelter).stream()
+                .filter(animal ->  animal.getStatus() == AnimalStatus.IN_SHELTER)
+                .toList();
     }
 
     public Animal getShelterAnimalOrThrow(Shelter shelter, Long id) {
@@ -169,24 +168,17 @@ public class AnimalService {
     }
 
     public Animal getAnimalInShelterOrThrow(Long id) {
-        return animalRepository.findById(id).
+        return animalRepository.findById(id)
+                .orElseThrow(() -> new ServerRuntimeException("Can't find animal in shelter by id", ErrorCode.INVALID_INPUT));
     }
 
-    public void removeAnimalOrThrow(Long id) {
-        Animal animal = animalRepository.findById(id)
-                .orElseThrow(() -> new ServerRuntimeException(
-                        "Can not find animal by id",
-                        ErrorCode.INVALID_INPUT
-                ));
-
+    public void removeAnimalOrThrow(Animal animal) {
         if (animal.getStatus() != AnimalStatus.IN_SHELTER) {
             throw new ServerRuntimeException("Can't remove animal not being in shelter", ErrorCode.INVALID_INPUT);
         }
 
         animal.setStatus(AnimalStatus.DELETED);
         animalRepository.save(animal);
-
-        adoptionRequestService.rejectAllByAnimal(animal);
     }
 
     private void validateNameOrThrow(String name) throws ServerRuntimeException {
