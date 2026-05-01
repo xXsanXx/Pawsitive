@@ -196,7 +196,9 @@ fun AnimalDetailsView(
                         Text(stringResource(R.string.shelter_info_clicked))
                     }
 
-                    if (animalState.adoptionStatus == AdoptionStatus.NONE) {
+                    if (animalState.adoptionStatus == AdoptionStatus.NONE ||
+                        animalState.adoptionStatus == AdoptionStatus.CANCELED
+                    ) {
 
                         Button(
                             onClick = {

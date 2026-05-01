@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +38,11 @@ public class AdoptionRequestService {
 
         Animal animal = animalService.getAnimalOrThrow(animalId);
 
-        if (repository.findByUserAndAnimal(user, animal).isPresent()) {
-            throw new ServerRuntimeException("Form already exists", ErrorCode.INVALID_INPUT);
+        Optional<AdoptionRequest> maybeRequest = repository.findByUserAndAnimal(user, animal);
+        if (maybeRequest.isPresent() &&
+                maybeRequest.get().getStatus() != AdoptionStatus.NONE &&
+                maybeRequest.get().getStatus() != AdoptionStatus.CANCELED) {
+            throw new ServerRuntimeException("Can't create form on active or resolved request", ErrorCode.INVALID_INPUT);
         }
 
         AdoptionRequest adoptionRequest = new AdoptionRequest();
@@ -58,10 +62,26 @@ public class AdoptionRequestService {
         AdoptionRequest request = repository.findByUserAndAnimal(user, animal)
                 .orElseThrow(() -> new ServerRuntimeException("Adoption request not found", ErrorCode.INVALID_INPUT));
 
-        repository.delete(request);
+        if (request.getStatus() != AdoptionStatus.PENDING) {
+            throw new ServerRuntimeException(
+                    "Can't cancel adoption request in not pending status!", ErrorCode.INVALID_INPUT
+            );
+        }
+
+        request.setStatus(AdoptionStatus.CANCELED);
+        repository.save(request);
 
         userAnimalsQueueService.addAnimalToQueue(user, animalId);
+    }
 
+    public void rejectAllByAnimal(Animal animal) {
+        List<AdoptionRequest> requests = repository.findByAnimal(animal);
+
+        for (AdoptionRequest r : requests) {
+            r.setStatus(AdoptionStatus.REJECTED);
+        }
+
+        repository.saveAll(requests);
     }
 
     public AdoptionStatus getStatus(User user, Long animalId) {

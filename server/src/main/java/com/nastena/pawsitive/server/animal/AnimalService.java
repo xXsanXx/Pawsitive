@@ -1,9 +1,11 @@
 package com.nastena.pawsitive.server.animal;
 
 import com.nastena.pawsitive.dto.*;
+import com.nastena.pawsitive.server.adoption.AdoptionRequestService;
 import com.nastena.pawsitive.server.exceptions.ServerRuntimeException;
 import com.nastena.pawsitive.server.files.FileStorageService;
 import com.nastena.pawsitive.server.shelter.Shelter;
+import com.nastena.pawsitive.server.user.UserAnimalsQueueService;
 import com.nastena.pawsitive.utils.AnimalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,17 @@ import java.util.stream.Stream;
 public class AnimalService {
     private final AnimalRepository animalRepository;
     private final FileStorageService fileStorageService;
+    private final UserAnimalsQueueService userAnimalsQueueService;
+    private final AdoptionRequestService adoptionRequestService;
 
     private static final Pattern NAME_REGEX = Pattern.compile("^[A-Za-zА-Яа-я\\s]{2,50}$");
 
 
-    public AnimalService(AnimalRepository animalRepository, FileStorageService fileStorageService) {
+    public AnimalService(AnimalRepository animalRepository, FileStorageService fileStorageService, UserAnimalsQueueService userAnimalsQueueService, AdoptionRequestService adoptionRequestService) {
         this.animalRepository = animalRepository;
         this.fileStorageService = fileStorageService;
+        this.userAnimalsQueueService = userAnimalsQueueService;
+        this.adoptionRequestService = adoptionRequestService;
     }
 
     public Animal createAnimalOrThrow(
@@ -162,9 +168,25 @@ public class AnimalService {
                 .orElseThrow(() -> new ServerRuntimeException("Can't find animal by id", ErrorCode.INVALID_INPUT));
     }
 
+    public Animal getAnimalInShelterOrThrow(Long id) {
+        return animalRepository.findById(id).
+    }
+
     public void removeAnimalOrThrow(Long id) {
-        Animal animal = animalRepository.findById(id).orElseThrow(() -> new ServerRuntimeException("Can not find animal by id", ErrorCode.INVALID_INPUT));
-        animalRepository.delete(animal);
+        Animal animal = animalRepository.findById(id)
+                .orElseThrow(() -> new ServerRuntimeException(
+                        "Can not find animal by id",
+                        ErrorCode.INVALID_INPUT
+                ));
+
+        if (animal.getStatus() != AnimalStatus.IN_SHELTER) {
+            throw new ServerRuntimeException("Can't remove animal not being in shelter", ErrorCode.INVALID_INPUT);
+        }
+
+        animal.setStatus(AnimalStatus.DELETED);
+        animalRepository.save(animal);
+
+        adoptionRequestService.rejectAllByAnimal(animal);
     }
 
     private void validateNameOrThrow(String name) throws ServerRuntimeException {

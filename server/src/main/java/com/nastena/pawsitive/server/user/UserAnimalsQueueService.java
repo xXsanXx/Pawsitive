@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.server.user;
 
+import com.nastena.pawsitive.dto.AnimalStatus;
 import com.nastena.pawsitive.server.adoption.AdoptionRequestRepository;
 import com.nastena.pawsitive.server.animal.Animal;
 import com.nastena.pawsitive.server.animal.AnimalRepository;
@@ -51,11 +52,11 @@ public class UserAnimalsQueueService {
         int beginIndex = queue.lastAnimalIndex;
         int endIndex = Math.min(beginIndex + RATION_SIZE, queue.animals.size());
         List<Animal> animals = queue.animals.subList(beginIndex, endIndex).stream()
-                .filter(
-                        animalId -> favoriteRepository.findByUserAndAnimalId(user, animalId).isEmpty()
-                )
                 .map(animalRepository::findById)
                 .flatMap(Optional::stream)
+                .filter(
+                        animal -> filterAnimal(user, animal)
+                )
                 .toList();
 
 
@@ -80,7 +81,7 @@ public class UserAnimalsQueueService {
             animalsQueue.animals.addAll(
                     animalRepository.findAnimalsByShelter(shelter).stream()
                             .filter(
-                                    animal -> favoriteRepository.findByUserAndAnimal(user, animal).isEmpty()
+                                    animal -> filterAnimal(user, animal)
                             )
                             .filter(animal -> adoptionRequestRepository.findByUserAndAnimal(user, animal).isEmpty())
                             .map(Animal::getId)
@@ -94,6 +95,13 @@ public class UserAnimalsQueueService {
         if (animalsQueue.animals.size() > QUEUE_SIZE) {
             animalsQueue.animals.subList(animalsSize - QUEUE_SIZE, animalsSize).clear();
         }
+    }
+
+    private boolean filterAnimal(User user, Animal animal) {
+        boolean isInFavorites =
+                favoriteRepository.findByUserAndAnimal(user, animal).isEmpty();
+        boolean isInShelter = animal.getStatus() == AnimalStatus.IN_SHELTER;
+        return !isInFavorites && isInShelter;
     }
 
     public void removeAnimalFromQueue(User user, Long animalId) {

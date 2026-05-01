@@ -2,6 +2,7 @@ package com.nastena.pawsitive.server.favorite;
 
 import com.nastena.pawsitive.dto.AdoptionStatus;
 import com.nastena.pawsitive.dto.AnimalResponse;
+import com.nastena.pawsitive.dto.AnimalStatus;
 import com.nastena.pawsitive.dto.AnimalsResponse;
 import com.nastena.pawsitive.server.account.Account;
 import com.nastena.pawsitive.server.account.AccountService;
@@ -71,8 +72,9 @@ public class FavoriteController {
         List<Favorite> favorites = favoriteService.getUserFavorites(user);
 
         List<AnimalResponse> animals = favorites.stream()
-                .map(favorite -> {
-                    Animal animal = favorite.getAnimal();
+                .map(Favorite::getAnimal)
+                .filter(animal -> animal.getStatus() == AnimalStatus.IN_SHELTER)
+                .map(animal -> {
                     AdoptionStatus status = adoptionRequestService.getStatus(user, animal);
                     return new AnimalResponse(
                             animal.getId(),

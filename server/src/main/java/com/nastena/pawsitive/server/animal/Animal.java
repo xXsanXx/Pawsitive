@@ -2,6 +2,7 @@ package com.nastena.pawsitive.server.animal;
 
 import com.nastena.pawsitive.dto.AnimalBreed;
 import com.nastena.pawsitive.dto.AnimalGender;
+import com.nastena.pawsitive.dto.AnimalStatus;
 import com.nastena.pawsitive.dto.AnimalType;
 import com.nastena.pawsitive.server.shelter.Shelter;
 import jakarta.persistence.*;
@@ -44,6 +45,10 @@ public class Animal {
     @Setter
     @Enumerated(EnumType.STRING)
     private AnimalGender gender;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private AnimalStatus status;
 
     // ------PHOTOS------
     @Setter

@@ -15,6 +15,8 @@ public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequest
 
     List<AdoptionRequest> findByUser(User user);
 
+    List<AdoptionRequest> findByAnimal(Animal animal);
+
     @Query("SELECT a FROM AdoptionRequest  a WHERE a.animal.shelter = :shelter")
     List<AdoptionRequest> findByShelter(@Param("shelter") Shelter shelter);
 

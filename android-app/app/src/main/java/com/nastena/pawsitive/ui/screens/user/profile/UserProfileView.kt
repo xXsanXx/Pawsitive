@@ -145,17 +145,19 @@ private fun UserProfileView(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        if (requestState.photoUrls.isNotEmpty()) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
+                        AsyncImage(
+                            model = if (requestState.photoUrls.isNotEmpty()) {
+                                ImageRequest.Builder(LocalContext.current)
                                     .data(requestState.photoUrls[0])
                                     .transformations(CircleCropTransformation())
-                                    .build(),
-                                contentDescription = null,
-                                modifier = Modifier.size(80.dp),
-                                error = painterResource(R.drawable.ic_image_error)
-                            )
-                        }
+                                    .build()
+                            } else {
+                                painterResource(R.drawable.paw)
+                            },
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp),
+                            error = painterResource(R.drawable.ic_image_error)
+                        )
 
                         Column {
 
@@ -180,15 +182,17 @@ private fun UserProfileView(
                             )
                         }
 
-                        IconButton(
-                            onClick = {
-                                onViewEvent(UserProfileEvents.CancelRequestClicked(index))
+                        if (requestState.status == AdoptionStatus.PENDING) {
+                            IconButton(
+                                onClick = {
+                                    onViewEvent(UserProfileEvents.CancelRequestClicked(index))
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Cancel,
+                                    contentDescription = null
+                                )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Cancel,
-                                contentDescription = null
-                            )
                         }
                     }
                 }
