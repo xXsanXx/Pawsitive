@@ -1,22 +1,45 @@
 package com.nastena.pawsitive.ui.screens.user.details.form
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.QuestionAnswer
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,6 +49,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,7 +57,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.ui.common.validation.ValidationState
-import com.nastena.pawsitive.ui.screens.shelter.editing.PhoneVisualTransformation
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -87,48 +110,77 @@ private fun BirthDatePicker(
     birthDateState: FormState.BirthDate,
     onDateSelected: (Long) -> Unit
 ) {
-    val openDialog = remember { mutableStateOf(false) }
+
+    var openDialog by remember { mutableStateOf(false) }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = birthDateState.date
     )
 
+    val formattedDate = birthDateState.date?.let {
+        SimpleDateFormat("dd.MM.yyyy").format(Date(it))
+    } ?: ""
+
     Column {
+
+        OutlinedTextField(
+            value = formattedDate,
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            label = {
+                Text(stringResource(R.string.add_animal_birth_date_label))
+            },
+            placeholder = {
+                Text(stringResource(R.string.add_animal_birth_date_choose))
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Cake,
+                    contentDescription = null
+                )
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = { openDialog = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarMonth,
+                        contentDescription = null
+                    )
+                }
+            },
+            isError = !birthDateState.isValid
+        )
+
         AnimatedVisibility(visible = !birthDateState.isValid) {
-            OutlinedTextField(
-                value = "Выберите корректную дату рождения",
-                onValueChange = {},
-                readOnly = true,
-                isError = true
-            )
-        }
-
-        OutlinedButton(
-            onClick = { openDialog.value = true },
-            modifier = Modifier.fillMaxWidth()
-        ) {
             Text(
-                text = birthDateState.date?.let {
-                    SimpleDateFormat("dd.MM.yyyy").format(Date(it))
-                } ?: "Выберите дату рождения"
+                text = stringResource(R.string.add_animal_birth_date_error),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
         }
 
-        if (openDialog.value) {
+        if (openDialog) {
             DatePickerDialog(
-                onDismissRequest = { openDialog.value = false },
+                onDismissRequest = { openDialog = false },
                 confirmButton = {
-                    TextButton(onClick = {
-                        datePickerState.selectedDateMillis?.let { selected ->
-                            onDateSelected(selected)
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                onDateSelected(it)
+                            }
+                            openDialog = false
                         }
-                        openDialog.value = false
-                    }) {
+                    ) {
                         Text("OK")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { openDialog.value = false }) {
+                    TextButton(
+                        onClick = { openDialog = false }
+                    ) {
                         Text("Отмена")
                     }
                 }
@@ -164,11 +216,15 @@ private fun FormView(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .padding(24.dp)
+                .widthIn(max = 420.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // ------------- Title --------------------
@@ -179,419 +235,395 @@ private fun FormView(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ------------- Animal name --------------------
-
-            Text(text = animalState.animalName)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(text = animalState.shelterName)
-
-            // ------------- Full name --------------------
-            AnimatedVisibility(
-                visible = fullNameState.validation != ValidationState.Valid
-            ) {
-                OutlinedTextField(
-                    value = when (fullNameState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
-                )
-            }
-
-            OutlinedTextField(
-                value = fullNameState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.FullName.TextUpdated(newText))
-
-                },
-                label = { Text(stringResource(R.string.full_name_label)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = fullNameState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Birth date --------------------
-
-            BirthDatePicker(
-                birthDateState = birthDateState,
-                onDateSelected = { selectedDate ->
-                    onViewEvent(FormEvents.BirthDate.DateSelected(selectedDate))
+            // ------------- Animal and Shelter names --------------------
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        Icons.Default.Star,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = animalState.animalName,
+                        modifier = Modifier.weight(1f),
+                        softWrap = true
+                    )
                 }
-            )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // ------------- Profession --------------------
-            AnimatedVisibility(
-                visible = professionState.validation != ValidationState.Valid
-            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = animalState.shelterName,
+                        modifier = Modifier.weight(1f),
+                        softWrap = true
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+
+                // ------------- Full name --------------------
+
                 OutlinedTextField(
-                    value = when (professionState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = fullNameState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.FullName.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.full_name_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Person, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = fullNameState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (fullNameState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.full_name_label_invalid))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = professionState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.Profession.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.profession_label)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = professionState.validation != ValidationState.Valid
-            )
+                // ------------- Birth date --------------------
 
-            Spacer(modifier = Modifier.height(12.dp))
+                BirthDatePicker(
+                    birthDateState = birthDateState,
+                    onDateSelected = { selectedDate ->
+                        onViewEvent(FormEvents.BirthDate.DateSelected(selectedDate))
+                    }
+                )
 
-            // ------------- Current pets --------------------
-            AnimatedVisibility(
-                visible = currentPetsState.validation != ValidationState.Valid
-            ) {
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // ------------- Profession --------------------
                 OutlinedTextField(
-                    value = when (currentPetsState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = professionState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.Profession.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.profession_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Work, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = professionState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (professionState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = currentPetsState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.CurrentPets.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_current_pets)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = currentPetsState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Previous pets --------------------
-            AnimatedVisibility(
-                visible = previousPetsState.validation != ValidationState.Valid
-            ) {
+                // ------------- Current pets --------------------
                 OutlinedTextField(
-                    value = when (previousPetsState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = currentPetsState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.CurrentPets.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_current_pets)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Pets, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = currentPetsState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (currentPetsState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = previousPetsState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.PreviousPets.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_previous_pets)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = previousPetsState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Feeding experience --------------------
-            AnimatedVisibility(
-                visible = feedingExperienceState.validation != ValidationState.Valid
-            ) {
+                // ------------- Previous pets --------------------
                 OutlinedTextField(
-                    value = when (feedingExperienceState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = previousPetsState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.PreviousPets.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_previous_pets)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.History, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = previousPetsState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (previousPetsState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = feedingExperienceState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.FeedingExperience.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_feeding_experience)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = feedingExperienceState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Vaccination --------------------
-            AnimatedVisibility(
-                visible = vaccinationState.validation != ValidationState.Valid
-            ) {
+                // ------------- Feeding experience --------------------
                 OutlinedTextField(
-                    value = when (vaccinationState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = feedingExperienceState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.FeedingExperience.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_feeding_experience)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Restaurant, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = feedingExperienceState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (feedingExperienceState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = vaccinationState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.Vaccination.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_vaccination)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = vaccinationState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Reason --------------------
-            AnimatedVisibility(
-                visible = reasonState.validation != ValidationState.Valid
-            ) {
+                // ------------- Vaccination --------------------
                 OutlinedTextField(
-                    value = when (reasonState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = vaccinationState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.Vaccination.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_vaccination)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.MedicalServices, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = vaccinationState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (vaccinationState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = reasonState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.Reason.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_reason)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = reasonState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Pet Care When Away --------------------
-            AnimatedVisibility(
-                visible = petCareWhenAwayState.validation != ValidationState.Valid
-            ) {
+                // ------------- Reason --------------------
                 OutlinedTextField(
-                    value = when (petCareWhenAwayState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = reasonState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.Reason.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_reason)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.QuestionAnswer, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = reasonState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (reasonState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = petCareWhenAwayState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.PetCareWhenAway.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_pet_care_when_away)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = petCareWhenAwayState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Problem Character --------------------
-            AnimatedVisibility(
-                visible = problemCharacterState.validation != ValidationState.Valid
-            ) {
+                // ------------- Pet Care When Away --------------------
                 OutlinedTextField(
-                    value = when (problemCharacterState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = petCareWhenAwayState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.PetCareWhenAway.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_pet_care_when_away)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Home, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = petCareWhenAwayState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (petCareWhenAwayState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = problemCharacterState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.ProblemCharacter.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_problem_character)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = problemCharacterState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Health Issues --------------------
-            AnimatedVisibility(
-                visible = healthIssuesState.validation != ValidationState.Valid
-            ) {
+                // ------------- Problem Character --------------------
                 OutlinedTextField(
-                    value = when (healthIssuesState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = problemCharacterState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.ProblemCharacter.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_problem_character)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Warning, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = problemCharacterState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (problemCharacterState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = healthIssuesState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.HealthIssues.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_health_issues)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = healthIssuesState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Additional info --------------------
-            AnimatedVisibility(
-                visible = additionalInfoState.validation != ValidationState.Valid
-            ) {
+                // ------------- Health Issues --------------------
                 OutlinedTextField(
-                    value = when (additionalInfoState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.required_field)
-                        ValidationState.Valid -> ""
+                    value = healthIssuesState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.HealthIssues.TextUpdated(it))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
+                    label = { Text(stringResource(R.string.adoption_form_health_issues)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.HealthAndSafety, contentDescription = null)
+                    },
+                    singleLine = false,
+                    isError = healthIssuesState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (healthIssuesState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
 
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
                 )
-            }
 
-            OutlinedTextField(
-                value = additionalInfoState.text,
-                onValueChange = { newText ->
-                    onViewEvent(FormEvents.AdditionalInfo.TextUpdated(newText))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                },
-                label = { Text(stringResource(R.string.adoption_form_additional_info)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = additionalInfoState.validation != ValidationState.Valid
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Phone --------------------
-            AnimatedVisibility(
-                visible = phoneState.validation != ValidationState.Valid
-            ) {
+                // ------------- Additional info --------------------
                 OutlinedTextField(
-                    value = when (phoneState.validation) {
-                        ValidationState.Empty -> stringResource(R.string.not_empty)
-                        ValidationState.InvalidFormat -> stringResource(R.string.phone_invalid)
-                        ValidationState.Valid -> ""
+                    value = additionalInfoState.text,
+                    onValueChange = { newText ->
+                        onViewEvent(FormEvents.AdditionalInfo.TextUpdated(newText))
                     },
-                    onValueChange = {},
-                    readOnly = true,
-                    isError = true
-
+                    label = { Text(stringResource(R.string.adoption_form_additional_info)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Info, contentDescription = null)
+                    },
+                    singleLine = false,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // ------------- Phone --------------------
+                OutlinedTextField(
+                    value = phoneState.text,
+                    onValueChange = {
+                        onViewEvent(FormEvents.Phone.TextUpdated(it))
+                    },
+                    label = { Text(stringResource(R.string.phone_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.Default.Phone, contentDescription = null)
+                    },
+                    singleLine = true,
+                    isError = phoneState.validation != ValidationState.Valid,
+                    supportingText = {
+                        when (phoneState.validation) {
+                            ValidationState.Empty ->
+                                Text(stringResource(R.string.not_empty))
+
+                            ValidationState.InvalidFormat ->
+                                Text(stringResource(R.string.required_field))
+
+                            else -> {}
+                        }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // ------------- Button --------------------
+
+                Button(
+                    onClick = { onViewEvent(FormEvents.SendForm) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.form_send_button))
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
             }
-
-            OutlinedTextField(
-                value = phoneState.text,
-                onValueChange = { newText ->
-                    val digits = newText.filter { it.isDigit() }.take(10)
-                    onViewEvent(FormEvents.Phone.TextUpdated(digits))
-                },
-                label = { Text(stringResource(R.string.phone_label)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                isError = phoneState.validation != ValidationState.Valid,
-                visualTransformation = PhoneVisualTransformation("+7-000-000-00-00", '0')
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ------------- Button --------------------
-
-            Button(
-                onClick = { onViewEvent(FormEvents.SendForm) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(R.string.form_send_button))
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }

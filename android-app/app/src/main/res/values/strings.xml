@@ -149,6 +149,7 @@
     <string name="favorite_title">Избранное</string>
 
     <string name="no_animal">Животное не найдено</string>
+    <string name="hint">Свайпни карточку или используй кнопки ↓</string>
 
     <string name="animal_birth_date">Дата рождения: %s</string>
 
@@ -162,37 +163,29 @@
 
 
     <string name="full_name_label">Ваши Ф.И.О.</string>
+    <string name="full_name_label_invalid">Ф.И.О от 2 до 300 букв</string>
 
-    <string name="profession_label">Род занятий, профессия.</string>
+    <string name="profession_label">Род занятий, профессия</string>
 
     <string name="phone_invalid">Неверный формат</string>
     <string name="phone_label">Номер телефона для связи</string>
 
     <string name="adoption_form_current_pets">Какие домашние животные есть у вас сейчас? (вид, возраст, пол, характер, заболевания)</string>
 
-    <string name="adoption_form_previous_pets">Какие домашние животные были у вас в прошлом, где они сейчас?\n
-        Расскажите об уходе за ними, о болезнях.\n
-        Если умерли, то в каком возрасте, и какова причина?</string>
+    <string name="adoption_form_previous_pets">Какие домашние животные были у вас в прошлом, где они сейчас?</string>
 
-    <string name="adoption_form_feeding_experience">Расскажите про ваш опыт кормления домашних питомцев.\n
-        Натуральная пища или специализированный корм (какие именно).\n
-        Какие витамины/добавки/вкусняшки получают (получали) ваши питомцы?</string>
+    <string name="adoption_form_feeding_experience">Расскажите про ваш опыт кормления домашних питомцев.</string>
 
-    <string name="adoption_form_vaccination">Расскажите про ваше отношение к прививкам.\n
-        Прививали ли вы своих животных?</string>
+    <string name="adoption_form_vaccination">Расскажите про ваше отношение к прививкам.\nПрививали ли вы своих животных?</string>
 
 
-    <string name="adoption_form_reason">Для чего вы хотите взять животное?\n
-        Для себя или как компаньона для других животных?</string>
+    <string name="adoption_form_reason">Для чего вы хотите взять животное? Для себя или как компаньона для других животных?</string>
 
-    <string name="adoption_form_pet_care_when_away">Если вы уедете на несколько дней (например, в отпуск/командировку),\n
-        кто будет заботиться о животном?</string>
+    <string name="adoption_form_pet_care_when_away">Если вы уедете на несколько дней (например, в отпуск/командировку), кто будет заботиться о животном?</string>
 
-    <string name="adoption_form_problem_character">Вы готовы взять животное с проблемным характером?\n
-        Что для вас является проблемным поведением?</string>
+    <string name="adoption_form_problem_character">Вы готовы взять животное с проблемным характером? Что для вас является проблемным поведением?</string>
 
-    <string name="adoption_form_health_issues">Вы готовы взять животное с проблемами по здоровью?\n
-        Что вы считаете проблемным здоровьем?</string>
+    <string name="adoption_form_health_issues">Вы готовы взять животное с проблемами по здоровью? Что вы считаете проблемным здоровьем?</string>
 
     <string name="adoption_form_additional_info">Что вы ещё хотели бы нам сообщить? :)</string>
 

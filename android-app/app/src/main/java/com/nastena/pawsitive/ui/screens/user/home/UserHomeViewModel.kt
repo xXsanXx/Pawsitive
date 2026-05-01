@@ -3,7 +3,6 @@ package com.nastena.pawsitive.ui.screens.user.home
 import com.nastena.pawsitive.dto.AnimalResponse
 import com.nastena.pawsitive.network.NetworkUtils
 import com.nastena.pawsitive.repository.UserRepository
-import com.nastena.pawsitive.ui.common.Utils
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
 import com.nastena.pawsitive.ui.main.MainViewModel
@@ -99,7 +98,8 @@ class UserHomeViewModel(
         UserHomeState.Animal(
             name = animalResponse.name,
             type = animalResponse.type,
-            age = Utils.dateToAge(animalResponse.birthDate),
+            gender = animalResponse.gender,
+            breed = animalResponse.breed,
             photoUrl = animalResponse.animalPhotos.getOrNull(0)?.let { photo: String ->
                 NetworkUtils.getAbsoluteFileUrl(photo)
             }

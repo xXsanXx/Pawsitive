@@ -16,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -133,7 +135,10 @@ private fun EditingShelterProfileView(
                 },
                 label = { Text(stringResource(R.string.editing_shelter_profile_address)) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                leadingIcon = {
+                    Icon(Icons.Default.LocationOn, contentDescription = null)
+                },
+                singleLine = false,
             )
 
             Spacer(Modifier.height(16.dp))
@@ -146,8 +151,10 @@ private fun EditingShelterProfileView(
                 },
                 label = { Text(stringResource(R.string.editing_shelter_profile_info)) },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                maxLines = 5
+                leadingIcon = {
+                    Icon(Icons.Default.Info, contentDescription = null)
+                },
+                singleLine = false,
             )
 
             Spacer(Modifier.height(32.dp))

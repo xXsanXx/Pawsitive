@@ -506,7 +506,7 @@ private fun ShelterAnimalView(
                 leadingIcon = {
                     Icon(Icons.Default.Description, contentDescription = null)
                 },
-                singleLine = true,
+                singleLine = false,
                 isError = descriptionState.validation != ValidationState.Valid,
                 supportingText = {
                     when (descriptionState.validation) {

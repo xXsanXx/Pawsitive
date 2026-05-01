@@ -119,7 +119,8 @@ class FormViewModel(
 
     private val _additionalInfoState = MutableStateFlow(
         FormState.AdditionalInfo(
-            text = "", validation = ValidationState.Valid
+            text = "",
+            validation = ValidationState.Valid
         )
     )
     val additionalInfoState: StateFlow<FormState.AdditionalInfo> =
@@ -234,8 +235,7 @@ class FormViewModel(
 
                 _additionalInfoState.update {
                     it.copy(
-                        text = response.additionalInfo,
-                        validation = ValidationState.Valid
+                        text = response.additionalInfo
                     )
                 }
 
@@ -491,18 +491,7 @@ class FormViewModel(
                 it.copy(validation = ValidationState.Valid)
             }
         }
-
-        // -------- Additional Info validation --------
-        if (trimmedAdditionalInfo.isBlank()) {
-            _additionalInfoState.update {
-                it.copy(validation = ValidationState.Empty)
-            }
-            return
-        } else {
-            _additionalInfoState.update {
-                it.copy(validation = ValidationState.Valid)
-            }
-        }
+        
 
         // -------- Phone validation --------
         if (!PHONE_REGEX.matcher(trimmedPhone).matches()) {
