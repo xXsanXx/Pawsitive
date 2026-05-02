@@ -10,4 +10,8 @@ object ShelterRequestsState {
         val photoUrls: List<String> = emptyList(),
         val status: AdoptionStatus
     )
+
+    data class ConfirmForm(
+        val requestIndex: Int
+    )
 }

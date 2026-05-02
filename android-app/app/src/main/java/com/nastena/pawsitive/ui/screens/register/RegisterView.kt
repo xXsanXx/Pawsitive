@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,7 +44,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AccountRole
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 
 @Composable
@@ -291,7 +291,7 @@ private fun RegisterView(
 
             Spacer(Modifier.height(12.dp))
 
-            PawsitiveTextButton(
+            TextButton(
                 onClick = { onEvent(RegisterEvents.GoToLoginClicked) }
             ) {
                 Text(stringResource(R.string.register_go_to_login))

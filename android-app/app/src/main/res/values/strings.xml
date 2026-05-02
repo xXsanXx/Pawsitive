@@ -4,6 +4,15 @@
     <string name="error_title">Упс.. Ошибка!</string>
     <string name="error_ok">Ок</string>
 
+    <string name="error_unknown">Произошла неизвестная ошибка. Пожалуйста, попробуйте позже.</string>
+    <string name="error_unauthorized">Вы не авторизованы. Пожалуйста, войдите в систему.</string>
+    <string name="error_invalid_request_body">Некорректные данные запроса. Пожалуйста, проверьте введенные данные.</string>
+    <string name="error_login_credentials_invalid">Неверный email или пароль. Пожалуйста, проверьте введенные данные.</string>
+    <string name="error_register_credentials_invalid">Некорректные данные для регистрации. Проверьте правильность заполнения полей.</string>
+    <string name="error_user_already_exists">Пользователь с таким email уже существует. Пожалуйста, используйте другой email или войдите в систему.</string>
+    <string name="error_invalid_input">Введены некорректные данные. Пожалуйста, проверьте правильность заполнения полей.</string>
+    <string name="error_internal_server_error">Внутренняя ошибка сервера. Пожалуйста, попробуйте позже.</string>
+
     <string name="required_field">Обязательное поле</string>
     <string name="not_empty">Поле не должно быть пустым</string>
 
@@ -55,7 +64,6 @@
 
     <!-- User Home -->
     <string name="user_home_animal_no_photo">Фотография отсутствует</string>
-    <string name="animal_details_title">Подробная информация о животном</string>
 
 
     <!-- Shelter Profile -->
@@ -195,13 +203,14 @@
 
 
     <string name="form_send_button">Отправить заявку</string>
-    <string name="form_sent">Заявка отправлена. Следите за изменением в профиле</string>
+    <string name="form_sent">Заявка отправлена\nСледите за изменением в профиле</string>
 
     <string name="user_forms_title">Мои заявки</string>
 
     <string name="no_requests">У вас пока нет заявок</string>
 
     <string name="cancel_request_button">Отменить заявку?</string>
+    <string name="hide_request_button">Удалить заявку?</string>
     <string name="warning_cancel_request">Это действие нельзя отменить.</string>
     <string name="cancel_request_button_yes">Да</string>
     <string name="cancel_cancel_request_no">Нет</string>
@@ -209,6 +218,7 @@
     <string name="adoption_status_pending">Заявка на рассмотрении</string>
     <string name="adoption_status_approved">Заявка одобрена</string>
     <string name="adoption_status_rejected">Заявка отклонена</string>
+    <string name="adoption_status_canceled">Пользователь отменил заявку</string>
 
     <string name="shelter_forms_title">Заявки на животных</string>
 

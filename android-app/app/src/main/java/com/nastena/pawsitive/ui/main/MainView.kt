@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,11 +45,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.nastena.pawsitive.R
+import com.nastena.pawsitive.common.ServerParsedException
+import com.nastena.pawsitive.common.ServerUnknownErrorCodeException
+import com.nastena.pawsitive.dto.ErrorCode
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.repository.UserRepository
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.navigation.Navigation
 import com.nastena.pawsitive.ui.common.navigation.NavigationBars
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
@@ -624,10 +627,35 @@ private fun ErrorBox(
             Text(text = stringResource(R.string.error_title))
         },
         text = {
-            Text(text = "${throwable.message}")
+            val textId: Int = when (throwable) {
+                is ServerParsedException -> {
+                    when (throwable.errorCode) {
+                        ErrorCode.UNKNOWN -> R.string.error_unknown
+                        ErrorCode.UNAUTHORIZED -> R.string.error_unauthorized
+                        ErrorCode.INVALID_REQUEST_BODY -> R.string.error_invalid_request_body
+                        ErrorCode.LOGIN_CREDENTIALS_INVALID -> R.string.error_login_credentials_invalid
+                        ErrorCode.REGISTER_CREDENTIALS_INVALID -> R.string.error_register_credentials_invalid
+                        ErrorCode.USER_ALREADY_EXISTS -> R.string.error_user_already_exists
+                        ErrorCode.INVALID_INPUT -> R.string.error_invalid_input
+                        ErrorCode.INTERNAL_SERVER_ERROR -> R.string.error_internal_server_error
+                    }
+                }
+
+                is ServerUnknownErrorCodeException -> {
+                    if (throwable.httpCode == 403) {
+                        R.string.error_unauthorized
+                    } else {
+                        R.string.error_unknown
+                    }
+                }
+
+                else -> R.string.error_unknown
+            }
+
+            Text(text = stringResource(textId))
         },
         confirmButton = {
-            PawsitiveTextButton(
+            Button(
                 onClick = { onViewEvent(MainViewEvents.ErrorBox.ClickedOk) }
             ) {
                 Text(text = stringResource(R.string.error_ok))
@@ -649,7 +677,7 @@ private fun MessageBox(
             Text(text = stringResource(messageId))
         },
         confirmButton = {
-            PawsitiveTextButton(
+            Button(
                 onClick = { onOkayClicked() }
             ) {
                 Text(text = stringResource(R.string.error_ok))

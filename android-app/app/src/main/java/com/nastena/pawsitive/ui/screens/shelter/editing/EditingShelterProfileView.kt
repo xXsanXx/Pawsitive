@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 
 @Composable
@@ -171,7 +170,7 @@ private fun EditingShelterProfileView(
 
             Spacer(Modifier.height(12.dp))
 
-            PawsitiveTextButton(
+            Button(
                 onClick = { onEvent(EditingShelterProfileEvents.CancelClicked) }
             ) {
                 Text(stringResource(R.string.editing_shelter_profile_cancel))

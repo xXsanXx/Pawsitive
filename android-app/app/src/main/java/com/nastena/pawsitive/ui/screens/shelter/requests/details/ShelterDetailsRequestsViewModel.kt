@@ -93,8 +93,12 @@ class ShelterDetailsRequestsViewModel(
     }
 
     fun onViewEvent(event: ShelterDetailsRequestsEvents) {
-        if (_formState.value.status != AdoptionStatus.NONE) return
-        
+        if (_formState.value.status != AdoptionStatus.NONE &&
+            _formState.value.status != AdoptionStatus.PENDING
+        ) {
+            return
+        }
+
         when (event) {
             ShelterDetailsRequestsEvents.ApprovedClicked -> {
                 _confirmDialogState.value =

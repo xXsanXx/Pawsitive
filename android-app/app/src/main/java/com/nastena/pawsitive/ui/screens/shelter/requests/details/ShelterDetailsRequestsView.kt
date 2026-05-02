@@ -225,7 +225,7 @@ fun ShelterDetailsRequestsView(
                 }
             }
 
-            if (formState.status == AdoptionStatus.NONE) {
+            if (formState.status == AdoptionStatus.NONE || formState.status == AdoptionStatus.PENDING) {
                 item {
 
                     Column(
@@ -264,18 +264,21 @@ fun ShelterDetailsRequestsView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = when (formState.status) {
                                 AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
                                 AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
+                                AdoptionStatus.CANCELED -> stringResource(R.string.adoption_status_canceled)
                                 else -> ""
                             },
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.bodyLarge,
                             color = when (formState.status) {
                                 AdoptionStatus.APPROVED -> MaterialTheme.colorScheme.primary
                                 AdoptionStatus.REJECTED -> MaterialTheme.colorScheme.error
+                                AdoptionStatus.CANCELED -> MaterialTheme.colorScheme.primary
                                 else -> MaterialTheme.colorScheme.onSurface
                             }
                         )

@@ -12,8 +12,6 @@ public enum ErrorCode {
 
     INVALID_INPUT,
 
-    FORM_CREDENTIALS_INVALID,
-
     INTERNAL_SERVER_ERROR
 
 }

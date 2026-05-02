@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 
 @Composable
 fun ShelterProfileView(
@@ -162,7 +161,7 @@ private fun ShelterProfileView(
                 Spacer(modifier = Modifier.height(12.dp))
 
 
-                PawsitiveTextButton(
+                Button(
                     onClick = { onViewEvent(ShelterProfileEvents.LogoutClicked) },
                     modifier = Modifier.fillMaxWidth(),
                 ) {

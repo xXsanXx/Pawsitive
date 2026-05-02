@@ -1,6 +1,7 @@
 package com.nastena.pawsitive.ui.screens.shelter.requests
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,10 +14,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.ui.common.AnimalImage
+import com.nastena.pawsitive.ui.common.isFinal
 
 @Composable
 fun ShelterRequestsView(
@@ -37,45 +44,77 @@ fun ShelterRequestsView(
     viewModel: ShelterRequestsViewModel
 ) {
     val form by viewModel.formState.collectAsState()
+    val confirmForm by viewModel.confirmFormState.collectAsState()
 
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(vertical = 8.dp)
+    ) {
 
-    Scaffold(
-        modifier = modifier.fillMaxSize()
-    ) { paddingValues: PaddingValues ->
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-
-            item {
-                Text(
-                    text = stringResource(R.string.shelter_forms_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-                )
-            }
-
-            items(form.size) { index ->
-                ShelterRequestCard(
-                    form = form[index],
-                    onClick = {
-                        viewModel.onViewEvent(
-                            ShelterRequestsEvents.GoToFormClicked(index)
-                        )
-                    }
-                )
-            }
+        item {
+            Text(
+                text = stringResource(R.string.shelter_forms_title),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+            )
         }
+
+        items(form.size) { index ->
+            ShelterRequestCard(
+                form = form[index],
+                onClick = {
+                    viewModel.onViewEvent(
+                        ShelterRequestsEvents.GoToFormClicked(index)
+                    )
+                },
+                onHide = {
+                    viewModel.onViewEvent(
+                        ShelterRequestsEvents.HideRequest(index)
+                    )
+                }
+            )
+        }
+    }
+
+    if (confirmForm != null) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.onViewEvent(ShelterRequestsEvents.ConfirmCancelClicked(false))
+            },
+            title = {
+                Text(
+                    stringResource(R.string.hide_request_button)
+                )
+            },
+            text = { Text(stringResource(R.string.warning_cancel_request)) },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.onViewEvent(
+                        ShelterRequestsEvents.ConfirmCancelClicked(true)
+                    )
+                }) {
+                    Text(stringResource(R.string.cancel_request_button_yes))
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    viewModel.onViewEvent(
+                        ShelterRequestsEvents.ConfirmCancelClicked(false)
+                    )
+                }) {
+                    Text(stringResource(R.string.cancel_cancel_request_no))
+                }
+            }
+        )
     }
 }
 
 @Composable
 private fun ShelterRequestCard(
     form: ShelterRequestsState.Form,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onHide: () -> Unit
 ) {
 
     Card(
@@ -98,7 +137,8 @@ private fun ShelterRequestCard(
                 .fillMaxWidth()
                 .padding(16.dp),
 
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         ) {
 
             AnimalImage(
@@ -136,10 +176,30 @@ private fun ShelterRequestCard(
                         AdoptionStatus.PENDING ->
                             stringResource(R.string.adoption_status_pending)
 
+                        AdoptionStatus.CANCELED ->
+                            stringResource(R.string.adoption_status_canceled)
+
                         else -> ""
                     },
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
+
+            if (form.status.isFinal()) {
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = onHide
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
 
         }

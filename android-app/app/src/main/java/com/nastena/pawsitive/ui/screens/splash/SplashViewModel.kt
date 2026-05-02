@@ -52,15 +52,15 @@ class SplashViewModel(
     fun onViewEvent(event: SplashEvents) {
         when (event) {
             SplashEvents.AnimationDone -> {
-                _role?.let {
-                    mainViewModel.initializeNavigationBarSettings(
-                        NavigationBars.fromAccountRole(
-                            it
-                        )
-                    )
-                } ?: {
+                if (_role == null) {
                     mainViewModel.navigate(
                         Navigation.To(NavigationRoute.Login, Navigation.To.PopUpType.Origin)
+                    )
+                } else {
+                    mainViewModel.initializeNavigationBarSettings(
+                        NavigationBars.fromAccountRole(
+                            _role!!
+                        )
                     )
                 }
             }

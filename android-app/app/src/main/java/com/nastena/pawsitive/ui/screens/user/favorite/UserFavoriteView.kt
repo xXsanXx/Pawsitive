@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.ui.common.AnimalImage
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 
 @Composable
@@ -88,12 +88,12 @@ fun UserFavoriteView(
             title = { Text(stringResource(R.string.favorite_remove_animal_title)) },
             text = { Text(stringResource(R.string.favorite_warning_remove_animal)) },
             confirmButton = {
-                PawsitiveTextButton(onClick = { viewModel.onConfirmDelete(true) }) {
+                Button(onClick = { viewModel.onConfirmDelete(true) }) {
                     Text(stringResource(R.string.favorite_remove_animal_button))
                 }
             },
             dismissButton = {
-                PawsitiveTextButton(onClick = { viewModel.onConfirmDelete(false) }) {
+                Button(onClick = { viewModel.onConfirmDelete(false) }) {
                     Text(stringResource(R.string.favorite_cancel_remove_animal))
                 }
             }

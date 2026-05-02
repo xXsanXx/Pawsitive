@@ -111,7 +111,7 @@ public class ShelterController {
         Shelter shelter = shelterService.getShelterOrThrow(account);
 
 
-        List<AdoptionRequest> requests = adoptionRequestService.getShelterRequestsByUser(shelter);
+        List<AdoptionRequest> requests = adoptionRequestService.getVisibleRequestsByShelter(shelter);
 
         List<ShelterFormResponse> responses = requests.stream()
                 .map(request -> new ShelterFormResponse(
@@ -161,7 +161,7 @@ public class ShelterController {
     }
     @PostMapping("/forms/update")
     public ResponseEntity<?> updateStatus(@RequestBody ShelterUpdateStatusRequest shelterUpdateStatusRequest) {
-        adoptionRequestService.updateStatus(
+        adoptionRequestService.updateStatusOrThrow(
                 shelterUpdateStatusRequest.getRequestId(),
                 shelterUpdateStatusRequest.getStatus()
         );

@@ -56,7 +56,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -167,7 +166,7 @@ private fun BirthDatePicker(
             DatePickerDialog(
                 onDismissRequest = { openDialog = false },
                 confirmButton = {
-                    PawsitiveTextButton(
+                    Button(
                         onClick = {
                             datePickerState.selectedDateMillis?.let {
                                 onDateSelected(it)
@@ -179,7 +178,7 @@ private fun BirthDatePicker(
                     }
                 },
                 dismissButton = {
-                    PawsitiveTextButton(
+                    Button(
                         onClick = { openDialog = false }
                     ) {
                         Text("Отмена")

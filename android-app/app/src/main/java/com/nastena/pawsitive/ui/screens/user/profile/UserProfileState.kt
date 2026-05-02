@@ -11,8 +11,14 @@ object UserProfileState {
         val photoUrls: List<String> = emptyList()
     )
 
-    data class ConfirmFormCancel(
+    data class ConfirmForm(
         val index: Int,
-        val isVisible: Boolean = true
+        val isVisible: Boolean = true,
+        val formType: ConfirmFormType
     )
+
+    enum class ConfirmFormType {
+        CANCEL,
+        HIDE
+    }
 }

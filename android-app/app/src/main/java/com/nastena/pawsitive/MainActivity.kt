@@ -39,14 +39,18 @@ class MainActivity : ComponentActivity() {
         val adoptionApi = retrofit.create(AdoptionApi::class.java)
 
         val accountRepository = AccountRepository(accountApi, authDataStore)
-        val userRepository =
-            UserRepository(userApi, shelterApi, animalApi, favoriteApi, adoptionApi)
-        val shelterRepository = ShelterRepository(shelterApi, animalApi, contentResolver)
+        val userRepository = UserRepository(
+            userApi, shelterApi, animalApi, favoriteApi,
+            adoptionApi
+        )
+        val shelterRepository = ShelterRepository(
+            shelterApi, animalApi, adoptionApi, contentResolver
+        )
         val filesRepository = FilesRepository()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
-        
+
         setContent {
             PawsitiveTheme {
                 MainContent(

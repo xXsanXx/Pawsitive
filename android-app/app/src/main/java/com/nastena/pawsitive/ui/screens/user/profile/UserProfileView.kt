@@ -2,7 +2,6 @@ package com.nastena.pawsitive.ui.screens.user.profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.dto.AdoptionStatus
 import com.nastena.pawsitive.ui.common.AnimalImage
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
+import com.nastena.pawsitive.ui.common.isFinal
 
 @Composable
 fun UserProfileView(
@@ -54,14 +54,14 @@ fun UserProfileView(
     val name by viewModel.nameState.collectAsState()
     val requests by viewModel.adoptionState.collectAsState()
 
-    val confirmFormCancel by viewModel.confirmFormCancel.collectAsState()
+    val confirmFormCancel by viewModel.confirmFormState.collectAsState()
 
     UserProfileView(
         modifier = modifier,
         email = email,
         name = name,
         requests = requests,
-        confirmFormCancel = confirmFormCancel,
+        confirmFormState = confirmFormCancel,
         onConfirmCancel = { viewModel.onConfirmCancel(it) },
         onViewEvent = { event -> viewModel.onViewEvent(event) }
     )
@@ -73,7 +73,7 @@ private fun UserProfileView(
     email: String,
     name: String,
     requests: List<UserProfileState.Requests>,
-    confirmFormCancel: UserProfileState.ConfirmFormCancel?,
+    confirmFormState: UserProfileState.ConfirmForm?,
     onConfirmCancel: (Boolean) -> Unit,
     onViewEvent: (UserProfileEvents) -> Unit
 ) {
@@ -163,7 +163,7 @@ private fun UserProfileView(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 12.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             AnimalImage(
@@ -194,24 +194,41 @@ private fun UserProfileView(
                                         AdoptionStatus.APPROVED -> stringResource(R.string.adoption_status_approved)
                                         AdoptionStatus.REJECTED -> stringResource(R.string.adoption_status_rejected)
                                         else -> ""
-                                    }
-
+                                    },
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
 
-                            if (requestState.status == AdoptionStatus.PENDING) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (requestState.status == AdoptionStatus.PENDING) {
                                     IconButton(
                                         onClick = {
-                                            onViewEvent(UserProfileEvents.CancelRequestClicked(index))
+                                            onViewEvent(
+                                                UserProfileEvents.CancelRequestClicked(index)
+                                            )
                                         }
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Cancel,
                                             contentDescription = null
+                                        )
+                                    }
+                                } else if (requestState.status.isFinal()) {
+                                    IconButton(
+                                        onClick = {
+                                            onViewEvent(
+                                                UserProfileEvents.HideRequestClicked(index)
+                                            )
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.error
                                         )
                                     }
                                 }
@@ -237,18 +254,29 @@ private fun UserProfileView(
         }
     }
 
-    if (confirmFormCancel?.isVisible == true) {
+    if (confirmFormState?.isVisible == true) {
         AlertDialog(
-            onDismissRequest = { onConfirmCancel(false) },
-            title = { Text(stringResource(R.string.cancel_request_button)) },
+            onDismissRequest = {
+                onConfirmCancel(false)
+            },
+            title = {
+                Text(
+                    stringResource(
+                        when (confirmFormState.formType) {
+                            UserProfileState.ConfirmFormType.CANCEL -> R.string.cancel_request_button
+                            UserProfileState.ConfirmFormType.HIDE -> R.string.hide_request_button
+                        }
+                    )
+                )
+            },
             text = { Text(stringResource(R.string.warning_cancel_request)) },
             confirmButton = {
-                PawsitiveTextButton(onClick = { onConfirmCancel(true) }) {
+                Button(onClick = { onConfirmCancel(true) }) {
                     Text(stringResource(R.string.cancel_request_button_yes))
                 }
             },
             dismissButton = {
-                PawsitiveTextButton(onClick = { onConfirmCancel(false) }) {
+                Button(onClick = { onConfirmCancel(false) }) {
                     Text(stringResource(R.string.cancel_cancel_request_no))
                 }
             }

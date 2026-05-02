@@ -7,11 +7,14 @@ import com.nastena.pawsitive.dto.UserProfileResponse
 import com.nastena.pawsitive.repository.AccountRepository
 import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.UserRepository
+import com.nastena.pawsitive.ui.common.isFinal
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
+import com.nastena.pawsitive.ui.common.navigation.Navigation.To.PopUpType.Route
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute.AnimalDetails
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
-import com.nastena.pawsitive.ui.screens.user.profile.UserProfileState.ConfirmFormCancel
+import com.nastena.pawsitive.ui.screens.user.profile.UserProfileState.ConfirmForm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,12 +41,13 @@ class UserProfileViewModel(
 
     val adoptionState: StateFlow<List<UserProfileState.Requests>> = _adoptionState.asStateFlow()
 
-    private val _confirmFormCancel = MutableStateFlow<UserProfileState.ConfirmFormCancel?>(null)
+    private val _confirmFormState = MutableStateFlow<ConfirmForm?>(null)
 
-    val confirmFormCancel: StateFlow<UserProfileState.ConfirmFormCancel?> =
-        _confirmFormCancel.asStateFlow()
+    val confirmFormState: StateFlow<ConfirmForm?> =
+        _confirmFormState.asStateFlow()
 
     private val _animalIds: MutableList<Long> = mutableListOf()
+    private val _requestIds: MutableList<Long> = mutableListOf()
 
 
     override fun onEnter(route: NavigationRoute) {
@@ -53,6 +57,7 @@ class UserProfileViewModel(
         _nameState.update { "" }
         _adoptionState.update { emptyList() }
         _animalIds.clear()
+        _requestIds.clear()
 
         launchSave(
             operation = {
@@ -82,6 +87,7 @@ class UserProfileViewModel(
                     userAdoptionsResponse.adoptionsResponse.map { userAdoptionResponse ->
 
                         _animalIds.add(userAdoptionResponse.animalId)
+                        _requestIds.add(userAdoptionResponse.id)
 
                         UserProfileState.Requests(
                             animalName = userAdoptionResponse.animalName,
@@ -107,18 +113,33 @@ class UserProfileViewModel(
                 val request = _adoptionState.value[event.index]
 
                 if (request.status == AdoptionStatus.PENDING) {
-                    _confirmFormCancel.value =
-                        ConfirmFormCancel(event.index)
+                    _confirmFormState.value =
+                        ConfirmForm(
+                            event.index, isVisible = true,
+                            formType = UserProfileState.ConfirmFormType.CANCEL
+                        )
                 }
             }
 
             is UserProfileEvents.GoToAnimalClicked -> {
                 mainViewModel.navigate(
                     To(
-                        NavigationRoute.AnimalDetails(_animalIds[event.index]),
-                        To.PopUpType.Route(NavigationRoute.UserProfile::class)
+                        AnimalDetails(_animalIds[event.index]),
+                        Route(NavigationRoute.UserProfile::class)
                     )
                 )
+            }
+
+            is UserProfileEvents.HideRequestClicked -> {
+                val request = _adoptionState.value[event.index]
+
+                if (request.status.isFinal()) {
+                    _confirmFormState.value =
+                        ConfirmForm(
+                            event.index, isVisible = true,
+                            formType = UserProfileState.ConfirmFormType.HIDE
+                        )
+                }
             }
         }
     }
@@ -138,9 +159,14 @@ class UserProfileViewModel(
     }
 
     fun onConfirmCancel(confirmed: Boolean) {
-        val dialogState = _confirmFormCancel.value ?: return
-        if (confirmed) cancelForm(dialogState.index)
-        _confirmFormCancel.value = null
+        val dialogState = _confirmFormState.value ?: return
+        if (confirmed) {
+            when (dialogState.formType) {
+                UserProfileState.ConfirmFormType.CANCEL -> cancelForm(dialogState.index)
+                UserProfileState.ConfirmFormType.HIDE -> hideForm(dialogState.index)
+            }
+        }
+        _confirmFormState.value = null
     }
 
     private fun cancelForm(index: Int) {
@@ -151,6 +177,23 @@ class UserProfileViewModel(
             onSuccess = {
                 _adoptionState.update { it.filterIndexed { i, _ -> i != index } }
                 _animalIds.removeAt(index)
+            }
+        )
+    }
+
+    private fun hideForm(index: Int) {
+        val requestId = _requestIds[index]
+
+        launchSave(
+            operation = {
+                _userRepository.hideRequest(requestId)
+            },
+            onSuccess = {
+                _adoptionState.update { requests ->
+                    requests.take(index) + requests.dropLast(index + 1)
+                }
+                _animalIds.removeAt(index)
+                _requestIds.removeAt(index)
             }
         )
     }

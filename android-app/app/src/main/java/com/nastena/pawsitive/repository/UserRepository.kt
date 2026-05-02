@@ -97,4 +97,10 @@ class UserRepository(
         _adoptionApi.cancelAdoptionRequest(animalId)
 
     }
+
+    suspend fun hideRequest(
+        requestId: Long
+    ): Result<Unit> = runSimpleRequest {
+        _adoptionApi.hideUserAdoptionRequest(requestId)
+    }
 }

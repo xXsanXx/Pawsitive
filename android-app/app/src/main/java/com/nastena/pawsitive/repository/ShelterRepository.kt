@@ -15,6 +15,7 @@ import com.nastena.pawsitive.dto.ShelterUpdateStatusRequest
 import com.nastena.pawsitive.dto.UpdateAnimalRequest
 import com.nastena.pawsitive.dto.UpdateShelterProfileRequest
 import com.nastena.pawsitive.network.NetworkUtils
+import com.nastena.pawsitive.network.api.AdoptionApi
 import com.nastena.pawsitive.network.api.AnimalApi
 import com.nastena.pawsitive.network.api.ShelterApi
 import com.nastena.pawsitive.repository.utils.handleServerErrorBody
@@ -27,6 +28,7 @@ import retrofit2.Response
 class ShelterRepository(
     private val _api: ShelterApi,
     private val _animalApi: AnimalApi,
+    private val _adoptionApi: AdoptionApi,
     private val _contentResolver: ContentResolver
 ) {
     suspend fun getProfileData(): Result<ShelterProfileResponse> = runSimpleRequest {
@@ -157,6 +159,12 @@ class ShelterRepository(
         val request = ShelterUpdateStatusRequest(requestId, status)
 
         _api.updateRequestStatus(request)
+    }
+
+    suspend fun hideRequest(
+        requestId: Long
+    ): Result<Unit> = runSimpleRequest {
+        _adoptionApi.hideShelterAdoptionRequest(requestId)
     }
 }
 

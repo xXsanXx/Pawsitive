@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +50,8 @@ public class AdoptionRequestService {
         adoptionRequest.setUser(user);
         adoptionRequest.setAnimal(animal);
         adoptionRequest.setStatus(AdoptionStatus.PENDING);
+        adoptionRequest.setHiddenByShelter(false);
+        adoptionRequest.setHiddenByUser(false);
 
         repository.save(adoptionRequest);
 
@@ -71,6 +72,8 @@ public class AdoptionRequestService {
         }
 
         request.setStatus(AdoptionStatus.CANCELED);
+        request.setHiddenByUser(false);
+        request.setHiddenByShelter(false);
         repository.save(request);
 
         userAnimalsQueueService.addAnimalToQueue(user, animalId);
@@ -81,6 +84,8 @@ public class AdoptionRequestService {
 
         for (AdoptionRequest r : requests) {
             r.setStatus(AdoptionStatus.REJECTED);
+            r.setHiddenByShelter(false);
+            r.setHiddenByUser(false);
         }
 
         repository.saveAll(requests);
@@ -103,25 +108,55 @@ public class AdoptionRequestService {
 
     public List<AdoptionRequest> getRequestsByUser(User user) {
         return repository.findByUser(user).stream()
-                .filter(request -> request.getStatus() != AdoptionStatus.CANCELED)
+                .filter(request -> request.getStatus() != AdoptionStatus.CANCELED && !request.isHiddenByUser())
                 .toList();
     }
 
-    public List<AdoptionRequest> getShelterRequestsByUser(Shelter shelter) {
-        return repository.findByShelter(shelter);
+    public List<AdoptionRequest> getVisibleRequestsByShelter(Shelter shelter) {
+        return repository.findByShelter(shelter).stream()
+                .filter(request -> !request.isHiddenByShelter())
+                .toList();
     }
 
     public AdoptionRequest getRequestOrThrow(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Adoption request not found"));
+                .orElseThrow(() -> new ServerRuntimeException("Adoption request not found", ErrorCode.INVALID_INPUT));
     }
 
-    public void updateStatus(Long requestId, AdoptionStatus status) {
+    public void updateStatusOrThrow(Long requestId, AdoptionStatus status) {
 
         AdoptionRequest request = repository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Request not found"));
+                .orElseThrow(() -> new ServerRuntimeException("Request not found", ErrorCode.INVALID_INPUT));
 
         request.setStatus(status);
+        request.setHiddenByShelter(false);
+        request.setHiddenByUser(false);
+
+        repository.save(request);
+    }
+
+    public void hideUserRequestOrThrow(Long requestId) {
+        AdoptionRequest request = repository.findById(requestId)
+                .orElseThrow(() -> new ServerRuntimeException("Request not found", ErrorCode.INVALID_INPUT));
+
+        if (request.getStatus() == AdoptionStatus.PENDING) {
+            throw new ServerRuntimeException("Can't hide pending request!", ErrorCode.INVALID_INPUT);
+        }
+
+        request.setHiddenByUser(true);
+
+        repository.save(request);
+    }
+
+    public void hideShelterRequestOrThrow(Long requestId) {
+        AdoptionRequest request = repository.findById(requestId)
+                .orElseThrow(() -> new ServerRuntimeException("Request not found", ErrorCode.INVALID_INPUT));
+
+        if (request.getStatus() == AdoptionStatus.PENDING) {
+            throw new ServerRuntimeException("Can't hide pending request!", ErrorCode.INVALID_INPUT);
+        }
+
+        request.setHiddenByShelter(true);
 
         repository.save(request);
     }

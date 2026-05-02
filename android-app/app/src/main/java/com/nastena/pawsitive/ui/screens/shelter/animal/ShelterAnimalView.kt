@@ -57,7 +57,6 @@ import com.nastena.pawsitive.dto.AnimalBreed
 import com.nastena.pawsitive.dto.AnimalGender
 import com.nastena.pawsitive.dto.AnimalType
 import com.nastena.pawsitive.ui.common.AnimalImage
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -154,7 +153,7 @@ private fun BirthDatePicker(
             DatePickerDialog(
                 onDismissRequest = { openDialog = false },
                 confirmButton = {
-                    PawsitiveTextButton(
+                    Button(
                         onClick = {
                             datePickerState.selectedDateMillis?.let {
                                 onDateSelected(it)
@@ -166,7 +165,7 @@ private fun BirthDatePicker(
                     }
                 },
                 dismissButton = {
-                    PawsitiveTextButton(
+                    Button(
                         onClick = { openDialog = false }
                     ) {
                         Text("Отмена")
@@ -564,7 +563,7 @@ private fun ShelterAnimalView(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            PawsitiveTextButton(
+            Button(
                 onClick = { onViewEvent(ShelterAnimalEvents.CancelClicked) },
             ) {
                 Text(stringResource(R.string.add_animal_cancel_clicked))

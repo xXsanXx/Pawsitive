@@ -6,8 +6,12 @@ import com.nastena.pawsitive.repository.FilesRepository
 import com.nastena.pawsitive.repository.ShelterRepository
 import com.nastena.pawsitive.ui.common.navigation.Navigation.To
 import com.nastena.pawsitive.ui.common.navigation.NavigationRoute
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute.ShelterFormDetails
+import com.nastena.pawsitive.ui.common.navigation.NavigationRoute.ShelterRequests
 import com.nastena.pawsitive.ui.main.MainViewModel
 import com.nastena.pawsitive.ui.screens.BaseScreenViewModel
+import com.nastena.pawsitive.ui.screens.shelter.requests.ShelterRequestsState.ConfirmForm
+import com.nastena.pawsitive.ui.screens.shelter.requests.ShelterRequestsState.Form
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,12 +25,17 @@ class ShelterRequestsViewModel(
 
     ) : BaseScreenViewModel(mainViewModel) {
 
-    override val expectedRouteType: KClass<*> = NavigationRoute.ShelterRequests::class
+    override val expectedRouteType: KClass<*> = ShelterRequests::class
 
     private val _formState: MutableStateFlow<List<ShelterRequestsState.Form>> =
         MutableStateFlow(emptyList())
 
     val formState: StateFlow<List<ShelterRequestsState.Form>> = _formState.asStateFlow()
+
+    private val _confirmFormState: MutableStateFlow<ShelterRequestsState.ConfirmForm?> =
+        MutableStateFlow(null)
+    val confirmFormState: StateFlow<ShelterRequestsState.ConfirmForm?> =
+        _confirmFormState.asStateFlow()
 
     private val _requestIds: MutableList<Long> = mutableListOf()
 
@@ -68,8 +77,31 @@ class ShelterRequestsViewModel(
         when (event) {
             is ShelterRequestsEvents.GoToFormClicked -> {
                 mainViewModel.navigate(
-                    To(NavigationRoute.ShelterFormDetails(requestId = _requestIds[event.index]))
+                    To(ShelterFormDetails(requestId = _requestIds[event.index]))
                 )
+            }
+
+            is ShelterRequestsEvents.HideRequest -> {
+                _confirmFormState.update { ConfirmForm(event.index) }
+            }
+
+            is ShelterRequestsEvents.ConfirmCancelClicked -> {
+                val index: Int = _confirmFormState.value!!.requestIndex
+                _confirmFormState.update { null }
+
+                if (event.confirm) {
+                    launchSave(
+                        operation = {
+                            _shelterRepository.hideRequest(_requestIds[index])
+                        },
+                        onSuccess = {
+                            _formState.update { requests: List<Form> ->
+                                requests.take(index) + requests.dropLast(index + 1)
+                            }
+                            _requestIds.removeAt(index)
+                        }
+                    )
+                }
             }
         }
     }

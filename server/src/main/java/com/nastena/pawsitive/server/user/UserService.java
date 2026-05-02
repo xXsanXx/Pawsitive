@@ -87,11 +87,11 @@ public class UserService {
         phone = phone.trim();
 
         if (phone.isBlank()) {
-            throw new ServerRuntimeException("Phone is blank", ErrorCode.FORM_CREDENTIALS_INVALID);
+            throw new ServerRuntimeException("Phone is blank", ErrorCode.INVALID_INPUT);
         }
 
         if (!PHONE_REGEX.matcher(phone).matches()) {
-            throw new ServerRuntimeException("Invalid phone format", ErrorCode.FORM_CREDENTIALS_INVALID);
+            throw new ServerRuntimeException("Invalid phone format", ErrorCode.INVALID_INPUT);
         }
     }
 

@@ -88,4 +88,22 @@ public class AdoptionRequestController {
 
         return ResponseEntity.ok("Request cancelled");
     }
+
+    @PostMapping("/user/hide")
+    public ResponseEntity<?> hideByUser(@RequestBody Long requestId, Authentication authentication) {
+        log.info("[adoption] Hiding {} by user {}", requestId, authentication.getName());
+
+        adoptionRequestService.hideUserRequestOrThrow(requestId);
+
+        return ResponseEntity.ok("Request hidden by user");
+    }
+
+    @PostMapping("/shelter/hide")
+    public ResponseEntity<?> hideByShelter(@RequestBody Long requestId, Authentication authentication) {
+        log.info("[adoption] Hiding {} by shelter {}", requestId, authentication.getName());
+
+        adoptionRequestService.hideShelterRequestOrThrow(requestId);
+
+        return ResponseEntity.ok("Request hidden by user");
+    }
 }

@@ -16,5 +16,10 @@ interface AdoptionApi {
     @POST("api/adoption/cancel")
     suspend fun cancelAdoptionRequest(@Body animalId: Long): Response<Unit>
 
+    @POST("api/adoption/shelter/hide")
+    suspend fun hideShelterAdoptionRequest(@Body requestId: Long): Response<Unit>
+
+    @POST("api/adoption/user/hide")
+    suspend fun hideUserAdoptionRequest(@Body requestId: Long): Response<Unit>
 
 }

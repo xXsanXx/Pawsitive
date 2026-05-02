@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -37,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
 import com.nastena.pawsitive.ui.common.AnimalImage
-import com.nastena.pawsitive.ui.common.PawsitiveTextButton
 import com.nastena.pawsitive.ui.common.localization.LocalizationUtils
 
 @Composable
@@ -121,7 +121,7 @@ fun ShelterHomeView(
             },
 
             confirmButton = {
-                PawsitiveTextButton(
+                Button(
                     onClick = { viewModel.onConfirmDelete(true) }
                 ) {
                     Text(stringResource(R.string.remove_animal_button))
@@ -129,7 +129,7 @@ fun ShelterHomeView(
             },
 
             dismissButton = {
-                PawsitiveTextButton(
+                Button(
                     onClick = { viewModel.onConfirmDelete(false) }
                 ) {
                     Text(stringResource(R.string.cancel_remove_animal))
