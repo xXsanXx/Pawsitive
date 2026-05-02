@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pawsitive</string>
+    <string name="app_name">Лапландия</string>
 
     <string name="error_title">Упс.. Ошибка!</string>
     <string name="error_ok">Ок</string>
@@ -55,6 +55,8 @@
 
     <!-- User Home -->
     <string name="user_home_animal_no_photo">Фотография отсутствует</string>
+    <string name="animal_details_title">Подробная информация о животном</string>
+
 
     <!-- Shelter Profile -->
     <string name="shelter_profile_title">Профиль</string>
@@ -91,6 +93,8 @@
     <!-- Add Shelter Animal -->
     <string name="add_animal_title">Новое животное</string>
     <string name="edit_animal_title">Редактирование животного</string>
+    <string name="shelter_home_title">Животные</string>
+
 
     <string name="add_animal_name_invalid">Имя животного от 2 до 50 букв</string>
     <string name="add_animal_name_is_empty">Поле не должно быть пустым</string>
@@ -151,7 +155,7 @@
     <string name="no_animal">Новых животных пока нет</string>
     <string name="hint">Свайпни карточку или используй кнопки ↓</string>
 
-    <string name="animal_birth_date">Дата рождения: %s</string>
+    <string name="animal_birth_date">Дата рождения</string>
 
     <string name="shelter_info_clicked">Узнать о приюте</string>
     <string name="shelter_info_label">Информация о приюте</string>

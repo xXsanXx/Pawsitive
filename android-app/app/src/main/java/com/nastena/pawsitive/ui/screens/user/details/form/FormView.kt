@@ -25,13 +25,13 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
@@ -439,7 +439,7 @@ private fun FormView(
                     label = { Text(stringResource(R.string.adoption_form_vaccination)) },
                     modifier = Modifier.fillMaxWidth(),
                     leadingIcon = {
-                        Icon(Icons.Default.MedicalServices, contentDescription = null)
+                        Icon(Icons.Default.Vaccines, contentDescription = null)
                     },
                     singleLine = false,
                     isError = vaccinationState.validation != ValidationState.Valid,

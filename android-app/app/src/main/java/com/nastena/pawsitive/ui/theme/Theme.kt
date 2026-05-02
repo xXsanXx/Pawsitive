@@ -13,6 +13,7 @@ private val LightColorsScheme = lightColorScheme(
 
     primary = PrimaryOrange,
     secondary = SecondarySand,
+    surfaceContainerHighest = SecondarySand,
 
     background = BackgroundCream,
     surface = BackgroundCream,

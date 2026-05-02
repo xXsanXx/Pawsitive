@@ -12,5 +12,4 @@ val OnSurfaceVariant = Color(0xFF333333)
 val TextPrimary = Color(0xFF333333)
 val TextSecondary = Color(0xFF6E6E6E)
 
-val SuccessGreen = Color(0xFFA7DCC4)
 val DangerCoral = Color(0xFFFF6E6E)

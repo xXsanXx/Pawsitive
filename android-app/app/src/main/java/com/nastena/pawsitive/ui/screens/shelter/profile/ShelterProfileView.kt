@@ -1,32 +1,36 @@
 package com.nastena.pawsitive.ui.screens.shelter.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nastena.pawsitive.R
@@ -66,110 +70,120 @@ private fun ShelterProfileView(
     onViewEvent: (ShelterProfileEvents) -> Unit
 ) {
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.TopCenter
-    ) {
+    Scaffold(
+        modifier = modifier.fillMaxSize()
+    ) { paddingValues ->
 
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(24.dp)
-                .widthIn(max = 420.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Top,
+            contentPadding = PaddingValues(vertical = 16.dp)
         ) {
 
-            Spacer(Modifier.height(32.dp))
+            item {
 
-            Text(
-                text = stringResource(R.string.shelter_profile_title),
-                style = MaterialTheme.typography.headlineMedium
-            )
+                Text(
+                    text = stringResource(R.string.shelter_profile_title),
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
-            Spacer(Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            ProfileField(
-                value = name,
-                label = R.string.shelter_profile_name,
-                icon = Icons.Default.Person
-            )
 
-            Spacer(Modifier.height(16.dp))
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
-            ProfileField(
-                value = email,
-                label = R.string.shelter_profile_email,
-                icon = Icons.Default.Email
-            )
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
 
-            Spacer(Modifier.height(16.dp))
+                        ProfileRow(Icons.Default.Person, name)
+                        Spacer(Modifier.height(12.dp))
 
-            ProfileField(
-                value = phone,
-                label = R.string.shelter_profile_phone,
-                icon = Icons.Default.Phone
-            )
+                        ProfileRow(Icons.Default.Email, email)
+                        Spacer(Modifier.height(12.dp))
 
-            Spacer(Modifier.height(16.dp))
+                        ProfileRow(Icons.Default.Phone, phone)
+                        Spacer(Modifier.height(12.dp))
 
-            ProfileField(
-                value = address,
-                label = R.string.shelter_profile_address,
-                icon = Icons.Default.LocationOn
-            )
+                        ProfileRow(Icons.Default.LocationOn, address)
+                    }
+                }
 
-            Spacer(Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            ProfileField(
+                HorizontalDivider()
 
-                value = info,
-                label = R.string.shelter_profile_info,
-                icon = Icons.Default.Info
-            )
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(Modifier.height(16.dp))
 
-            Button(
-                onClick = { onViewEvent(ShelterProfileEvents.EditingClicked) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Text(stringResource(R.string.shelter_profile_editing))
+                Text(
+                    text = stringResource(R.string.shelter_profile_info),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = info,
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = { onViewEvent(ShelterProfileEvents.EditingClicked) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        stringResource(R.string.shelter_profile_editing)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+
+                PawsitiveTextButton(
+                    onClick = { onViewEvent(ShelterProfileEvents.LogoutClicked) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.shelter_profile_logout_submit))
+                }
+
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
-
-            Spacer(Modifier.height(12.dp))
-
-            PawsitiveTextButton(
-                onClick = { onViewEvent(ShelterProfileEvents.LogoutClicked) }
-            ) {
-                Text(stringResource(R.string.shelter_profile_logout_submit))
-            }
-
-            Spacer(Modifier.height(24.dp))
         }
     }
 }
 
 @Composable
-private fun ProfileField(
-    value: String,
-    label: Int,
-    icon: androidx.compose.ui.graphics.vector.ImageVector
+private fun ProfileRow(
+    icon: ImageVector,
+    text: String
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = {},
-        readOnly = true,
-        label = { Text(stringResource(label)) },
-        modifier = Modifier.fillMaxWidth(),
-        leadingIcon = {
-            Icon(icon, contentDescription = null)
-        },
-        singleLine = false,
-        shape = MaterialTheme.shapes.medium
-    )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, contentDescription = null)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text)
+    }
 }

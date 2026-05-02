@@ -54,6 +54,11 @@ fun AnimalDetailsView(
 
             item {
 
+                Text(
+                    text = stringResource(R.string.animal_details_title),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -221,29 +226,6 @@ fun AnimalDetailsView(
                             }
                         )
                     }
-
-//                    if (animalState.adoptionStatus == AdoptionStatus.NONE ||
-//                        animalState.adoptionStatus == AdoptionStatus.CANCELED
-//                    ) {
-//
-//
-//
-//                    } else {
-//
-//                        Card(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            shape = MaterialTheme.shapes.medium
-//                        ) {
-//
-//                            Text(
-//                                text = ,
-//                                modifier = Modifier.padding(16.dp),
-//                                color = MaterialTheme.colorScheme.primary,
-//                                style = MaterialTheme.typography.bodyLarge
-//                            )
-//                        }
-//                    }
-
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }

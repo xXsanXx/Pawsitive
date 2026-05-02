@@ -1,5 +1,6 @@
 package com.nastena.pawsitive.ui.screens.shelter.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -54,6 +54,7 @@ fun ShelterHomeView(
 
         floatingActionButton = {
             FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.secondary,
                 onClick = {
                     viewModel.onViewEvent(ShelterHomeEvents.AddAnimalClicked)
                 }
@@ -74,10 +75,23 @@ fun ShelterHomeView(
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
 
+            item {
+                Text(
+                    text = stringResource(R.string.shelter_home_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                )
+            }
+
             itemsIndexed(animalsState) { index, animal ->
 
-                AnimalCard(
+                ShelterAnimalCard(
                     animal = animal,
+                    onClick = {
+                        viewModel.onViewEvent(
+                            ShelterHomeEvents.EditingClicked(index)
+                        )
+                    },
                     onEdit = {
                         viewModel.onViewEvent(
                             ShelterHomeEvents.EditingClicked(index)
@@ -89,11 +103,8 @@ fun ShelterHomeView(
                         )
                     }
                 )
-
             }
-
         }
-
     }
 
     if (confirmAnimalDeleteState?.isVisible == true) {
@@ -129,8 +140,9 @@ fun ShelterHomeView(
 }
 
 @Composable
-private fun AnimalCard(
+private fun ShelterAnimalCard(
     animal: ShelterHomeState.Animal,
+    onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -138,7 +150,8 @@ private fun AnimalCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable(onClick = onClick),
 
         shape = RoundedCornerShape(16.dp),
 
@@ -159,8 +172,8 @@ private fun AnimalCard(
 
             AnimalImage(
                 Modifier
-                    .clip(CircleShape)
-                    .size(72.dp),
+                    .size(72.dp)
+                    .clip(CircleShape),
                 animal.photoUrls.firstOrNull(),
                 ContentScale.Crop
             )
@@ -184,36 +197,21 @@ private fun AnimalCard(
                 )
 
                 Text(
-                    text = "${animal.age} ${
-                        stringResource(R.string.common_years)
-                    }",
+                    text = "${animal.age} ${stringResource(R.string.common_years)}",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Row {
 
-                IconButton(onClick = onEdit) {
-
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = null
-                    )
-                }
-
                 IconButton(onClick = onDelete) {
-
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
-
             }
-
         }
-
     }
-
 }
