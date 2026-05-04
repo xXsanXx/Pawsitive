@@ -53,6 +53,7 @@ fun ShelterInfoView(
     Scaffold(
         modifier = modifier.fillMaxSize(),
 
+
         topBar = {
             androidx.compose.material3.TopAppBar(
                 title = { Text(stringResource(R.string.shelter_info_label)) },
@@ -86,6 +87,7 @@ fun ShelterInfoView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
+
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary

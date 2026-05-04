@@ -590,7 +590,8 @@ private fun FormView(
                 OutlinedTextField(
                     value = phoneState.text,
                     onValueChange = {
-                        onViewEvent(FormEvents.Phone.TextUpdated(it))
+                        val digits = it.filter { c -> c.isDigit() }.take(10)
+                        onViewEvent(FormEvents.Phone.TextUpdated(digits))
                     },
                     label = { Text(stringResource(R.string.phone_label)) },
                     modifier = Modifier.fillMaxWidth(),

@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.screens.shelter.editing
+package com.nastena.pawsitive.ui.screens.shelter.profile.editing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

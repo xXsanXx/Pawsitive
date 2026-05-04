@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.screens.shelter.editing
+package com.nastena.pawsitive.ui.screens.shelter.profile.editing
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
@@ -19,7 +19,8 @@ class PhoneVisualTransformation(val mask: String, val maskNumber: Char) : Visual
             var textIndex = 0
             while (textIndex < trimmed.length && maskIndex < mask.length) {
                 if (mask[maskIndex] != maskNumber) {
-                    val nextDigitIndex = mask.indexOf(maskNumber, maskIndex).let { if (it == -1) mask.length else it }
+                    val nextDigitIndex = mask.indexOf(maskNumber, maskIndex)
+                        .let { if (it == -1) mask.length else it }
                     append(mask.substring(maskIndex, nextDigitIndex))
                     maskIndex = nextDigitIndex
                 }

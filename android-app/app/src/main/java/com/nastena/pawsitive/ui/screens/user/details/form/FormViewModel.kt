@@ -242,7 +242,7 @@ class FormViewModel(
 
                 _phoneState.update {
                     it.copy(
-                        text = response.phone.removePrefix("+7"),
+                        text = response.phone ?: "",
                         validation = ValidationState.Valid
                     )
                 }
@@ -350,7 +350,7 @@ class FormViewModel(
         val trimmedHealthIssues = _healthIssuesState.value.text.trim()
         val trimmedAdditionalInfo = _additionalInfoState.value.text.trim()
 
-        val trimmedPhone = "+7${_phoneState.value.text.trim()}"
+        val trimmedPhone = _phoneState.value.text.trim()
 
         // -------- BirthDate validation --------
         val isBirthDateValid = birthDate != null && birthDate < System.currentTimeMillis()
@@ -491,13 +491,11 @@ class FormViewModel(
                 it.copy(validation = ValidationState.Valid)
             }
         }
-        
+
 
         // -------- Phone validation --------
         if (!PHONE_REGEX.matcher(trimmedPhone).matches()) {
-            _phoneState.update {
-                it.copy(validation = ValidationState.InvalidFormat)
-            }
+            _phoneState.update { it.copy(validation = ValidationState.InvalidFormat) }
             return
         } else {
             _phoneState.update {

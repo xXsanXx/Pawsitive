@@ -23,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,67 +47,73 @@ fun ShelterRequestsView(
     val form by viewModel.formState.collectAsState()
     val confirmForm by viewModel.confirmFormState.collectAsState()
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 8.dp)
-    ) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+    ) { paddingValues ->
 
-        item {
-            Text(
-                text = stringResource(R.string.shelter_forms_title),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-            )
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+
+            item {
+                Text(
+                    text = stringResource(R.string.shelter_forms_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                )
+            }
+
+            items(form.size) { index ->
+                ShelterRequestCard(
+                    form = form[index],
+                    onClick = {
+                        viewModel.onViewEvent(
+                            ShelterRequestsEvents.GoToFormClicked(index)
+                        )
+                    },
+                    onHide = {
+                        viewModel.onViewEvent(
+                            ShelterRequestsEvents.HideRequest(index)
+                        )
+                    }
+                )
+            }
         }
 
-        items(form.size) { index ->
-            ShelterRequestCard(
-                form = form[index],
-                onClick = {
-                    viewModel.onViewEvent(
-                        ShelterRequestsEvents.GoToFormClicked(index)
+        if (confirmForm != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.onViewEvent(ShelterRequestsEvents.ConfirmCancelClicked(false))
+                },
+                title = {
+                    Text(
+                        stringResource(R.string.hide_request_button)
                     )
                 },
-                onHide = {
-                    viewModel.onViewEvent(
-                        ShelterRequestsEvents.HideRequest(index)
-                    )
+                text = { Text(stringResource(R.string.warning_cancel_request)) },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.onViewEvent(
+                            ShelterRequestsEvents.ConfirmCancelClicked(true)
+                        )
+                    }) {
+                        Text(stringResource(R.string.cancel_request_button_yes))
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        viewModel.onViewEvent(
+                            ShelterRequestsEvents.ConfirmCancelClicked(false)
+                        )
+                    }) {
+                        Text(stringResource(R.string.cancel_cancel_request_no))
+                    }
                 }
             )
         }
-    }
-
-    if (confirmForm != null) {
-        AlertDialog(
-            onDismissRequest = {
-                viewModel.onViewEvent(ShelterRequestsEvents.ConfirmCancelClicked(false))
-            },
-            title = {
-                Text(
-                    stringResource(R.string.hide_request_button)
-                )
-            },
-            text = { Text(stringResource(R.string.warning_cancel_request)) },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.onViewEvent(
-                        ShelterRequestsEvents.ConfirmCancelClicked(true)
-                    )
-                }) {
-                    Text(stringResource(R.string.cancel_request_button_yes))
-                }
-            },
-            dismissButton = {
-                Button(onClick = {
-                    viewModel.onViewEvent(
-                        ShelterRequestsEvents.ConfirmCancelClicked(false)
-                    )
-                }) {
-                    Text(stringResource(R.string.cancel_cancel_request_no))
-                }
-            }
-        )
     }
 }
 
@@ -138,8 +145,8 @@ private fun ShelterRequestCard(
                 .padding(16.dp),
 
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
+
+            ) {
 
             AnimalImage(
                 Modifier

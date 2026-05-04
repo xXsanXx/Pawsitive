@@ -1,4 +1,4 @@
-package com.nastena.pawsitive.ui.screens.shelter.editing
+package com.nastena.pawsitive.ui.screens.shelter.profile.editing
 
 import com.nastena.pawsitive.ui.common.validation.ValidationState
 

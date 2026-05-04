@@ -190,7 +190,9 @@ class UserProfileViewModel(
             },
             onSuccess = {
                 _adoptionState.update { requests ->
-                    requests.take(index) + requests.dropLast(index + 1)
+                    requests.toMutableList().apply {
+                        removeAt(index)
+                    }
                 }
                 _animalIds.removeAt(index)
                 _requestIds.removeAt(index)
@@ -198,19 +200,4 @@ class UserProfileViewModel(
         )
     }
 
-//    private fun cancelAdoptionRequest(animalIndex: Int) {
-//        val animalId: Long = _animalIds[animalIndex]
-//
-//        launchSave(
-//            operation = { _userRepository.cancelAdoptionRequest(animalId) },
-//            onSuccess = {
-//                mainViewModel.showMessage(R.string.request_cancelled)
-//                _adoptionState.update {
-//                    _adoptionState.value.take(animalIndex) +
-//                            _adoptionState.value.dropLast(animalIndex + 1)
-//                }
-//                _animalIds.removeIf { id: Long -> animalId == id }
-//            }
-//        )
-//    }
 }
